@@ -29,7 +29,7 @@
 Siyuan Shen, Nov. 2nd, 2023 @ Washington University in St. Louis, MO. USA
 
 
-This is version v0.0.0. for PM25 estimation over North America. The whole package include 4 main parts.
+This is version v0.0.0. for NH4 estimation over North America. The whole package include 4 main parts.
 
 1. Training Package -  This package is built for training the model. The hyperparamets, model structures, training variables, learning objectives, loss functions and other necessary information for training the model.
 
