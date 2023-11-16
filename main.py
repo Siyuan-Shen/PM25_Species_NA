@@ -12,7 +12,7 @@ from Evaluation_pkg.utils import *
 cfg = toml.load('./config.toml')
 
 if __name__ == '__main__':
-    typeName   = Get_typeName(bias=bias, normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
+    typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     nchannel   = len(channel_names)
 
     if Spatial_CrossValidation_Switch:

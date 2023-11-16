@@ -53,6 +53,7 @@ channel_names = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'Eta
 species = 'NH4' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
 # Only one of these can be true. Default is bias.
 bias = true   # learning objectives: bias = ground-based species observation - geophysical species concentration estimation
+normalize_bias = false
 normalize_species = false
 absolute_species  = false 
 log_species = false

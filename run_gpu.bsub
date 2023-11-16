@@ -1,0 +1,17 @@
+#!/bin/bash
+#BSUB -q general
+#BSUB -R 'gpuhost rusage[mem=300GB] span[ptile=16]'
+#BSUB -G compute-rvmartin
+#BSUB -gpu "num=1:gmodel=TeslaV100_SXM2_32GB"
+#BSUB -a 'docker(syword/python3-pytorch:2022.10)'
+#BSUB -J "Normal Spatial CV NH4"
+#BSUB -g /s.siyuan/Test
+#BSUB -N
+#BSUB -u s.siyuan@wustl.edu
+#BSUB -o job_output/job-%J-output.txt
+
+/bin/true
+
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/NH4/v0.0.0/
+python3 main.py
+
