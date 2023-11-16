@@ -34,9 +34,11 @@ txt_outdir = results_dir['txt_outdir']
 
 
 
-def Get_typeName(bias, normalize_species, absolute_species, log_species, species):
+def Get_typeName(bias, normalize_bias, normalize_species, absolute_species, log_species, species):
     if bias == True:
         typeName = '{}-bias'.format(species)
+    elif normalize_bias:
+        typeName = 'Normalized-{}-bias'.format(species)
     elif normalize_species == True:
         typeName = 'Normaized-{}'.format(species)
     elif absolute_species == True:

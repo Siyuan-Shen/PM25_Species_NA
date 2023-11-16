@@ -43,7 +43,9 @@ lr0 = HyperParameters['learning_rate']
 learning_objective = cfg['Training-Settings']['learning-objective']
 
 species = learning_objective['species']
+
 bias = learning_objective['bias']
+normalize_bias = learning_objective['normalize_bias']
 normalize_species = learning_objective['normalize_species']
 absolute_species = learning_objective['absolute_species']
 log_species = learning_objective['log_species']

@@ -33,7 +33,7 @@ def Normal_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
     
     nchannel   = len(channel_names)
     seed       = 19980130
-    typeName   = Get_typeName(bias=bias, normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
+    typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
     
     rkf = RepeatedKFold(n_splits=kfold, n_repeats=repeats, random_state=seed)
