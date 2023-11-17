@@ -102,7 +102,7 @@ class ResNet(nn.Module):
         self.width_per_group = width_per_group
 
         
-        self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
+        self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(self.in_channel)
 
         self.tanh = nn.Tanh()

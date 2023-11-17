@@ -33,7 +33,7 @@ def Get_XY_arraies(Normalized_TrainingData, true_input, X_Training_index, X_Test
     X_test,  y_test   = Normalized_TrainingData[X_Testing_index, :, :, :], true_input[Y_Testing_index]
     return X_train, X_test, y_train, y_test
 
-def Get_final_output(Validation_Prediction, geophysical_species,SPECIES_OBS,bias,normalize_species,absolute_species,log_species,Y_Testing_index ):
+def Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,Y_Testing_index ):
     """This function is used to convert the model estimation to absolute PM species concentration and to compare with the 
     observed PM species.
 
@@ -52,10 +52,10 @@ def Get_final_output(Validation_Prediction, geophysical_species,SPECIES_OBS,bias
     """
     if bias == True:
         final_data = Validation_Prediction + geophysical_species[Y_Testing_index]
+    elif normalize_bias == True:
+        final_data = Validation_Prediction * std + mean + geophysical_species[Y_Testing_index]
     elif normalize_species == True:
-        obs_std = np.std(SPECIES_OBS)
-        obs_mean = np.mean(SPECIES_OBS)
-        final_data = Validation_Prediction * obs_std + obs_mean
+        final_data = Validation_Prediction * std + mean
     elif absolute_species == True:
         final_data = Validation_Prediction
     elif log_species == True:
