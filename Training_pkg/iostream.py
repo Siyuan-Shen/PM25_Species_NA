@@ -49,18 +49,32 @@ def load_geophysical_biases_data(species:str):
     longitudes = species_monthly_data.variables["longitude"][:]
     return geophysical_species, latitudes, longitudes
 
-def Learning_Object_Datasets(bias:bool,Normlized_Speices:bool,Absolute_Species:bool, Log_PM25:bool, species:str):
+def Learning_Object_Datasets(bias:bool,Normalized_bias:bool,Normlized_Speices:bool,Absolute_Species:bool, Log_PM25:bool, species:str):
     if bias == True:
         true_input, lat, lon  = load_geophysical_biases_data(species=species)
+        mean = 0
+        std = 1
+        return true_input, mean, std
+    elif Normalized_bias == True:
+        bias_data, lat, lon  = load_geophysical_biases_data(species=species)
+        bias_mean = np.mean(bias_data)
+        bias_std = np.std(bias_data)
+        true_input = (bias_data - bias_mean) / bias_std
+        return true_input, bias_mean, bias_std
     elif Normlized_Speices == True:
         obs_data, lat, lon  = load_monthly_obs_data(species=species)
         obs_mean = np.mean(obs_data)
         obs_std = np.std(obs_data)
         true_input = (obs_data - obs_mean) / obs_std
+        return true_input, obs_mean, obs_std
     elif Absolute_Species == True:
         true_input ,lat, lon  = load_monthly_obs_data(species=species)
+        mean = 0
+        std = 1
+        return true_input, mean, std
     elif Log_PM25 == True:
         obs_data ,lat, lon  = load_monthly_obs_data(species=species)
         true_input = np.log(obs_data+1)
-    return true_input, lat, lon
-
+        mean = 0
+        std = 1
+        return true_input, mean, std
