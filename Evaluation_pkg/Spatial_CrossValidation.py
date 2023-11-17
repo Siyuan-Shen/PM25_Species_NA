@@ -29,7 +29,7 @@ def Normal_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
     
     SPECIES_OBS, lat, lon = load_monthly_obs_data(species=species)
     geophysical_species, lat, lon = load_geophysical_species_data(species=species)
-    true_input, lat, lon = Learning_Object_Datasets(bias=bias,Normlized_Speices=normalize_species,Absolute_Species=absolute_species,Log_PM25=log_species,species=species)
+    true_input, mean, std = Learning_Object_Datasets(bias=bias,Normalized_bias=normalize_bias,Normlized_Speices=normalize_species,Absolute_Species=absolute_species,Log_PM25=log_species,species=species)
     
     nchannel   = len(channel_names)
     seed       = 19980130
@@ -78,8 +78,8 @@ def Normal_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
             # *------------------------------------------------------------------------------*#
             Validation_Prediction = predict(X_test, cnn_model, 3000)
             Training_Prediction   = predict(X_train, cnn_model, 3000)
-            final_data = Get_final_output(Validation_Prediction, geophysical_species,SPECIES_OBS,bias,normalize_species,absolute_species,log_species,Y_Testing_index)
-            train_final_data = Get_final_output(Training_Prediction, geophysical_species,SPECIES_OBS,bias,normalize_species,absolute_species,log_species,Y_Training_index)
+            final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,Y_Testing_index)
+            train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,Y_Training_index)
             if ForcedSlopeUnity:
                 final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[Y_Training_index]
                                                    ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
