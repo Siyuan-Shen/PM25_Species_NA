@@ -3,6 +3,7 @@ import numpy as np
 import os
 import csv
 from Evaluation_pkg.utils import *
+from Evaluation_pkg.data_func import *
 
 def save_trained_model(cnn_model, model_outdir, typeName, version, species, nchannel, special_name, count, width, height):
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
@@ -11,15 +12,19 @@ def save_trained_model(cnn_model, model_outdir, typeName, version, species, ncha
     model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}.pt'.format(typeName, species, width,height, nchannel,special_name, count)
     torch.save(cnn_model, model_outfile)
 
-def save_loss_accuracy(model_outdir, loss, accuracy, typeName, version, species, nchannel, special_name, width, height):
+def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height):
 
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
     loss_outfile = outdir + 'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
     accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
+    valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
+    valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
     np.save(loss_outfile, loss)
     np.save(accuracy_outfile, accuracy)
+    np.save(valid_loss_outfile, valid_loss)
+    np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
 def save_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height):
@@ -55,9 +60,13 @@ def load_loss_accuracy(model_outdir, typeName, version, species, nchannel, speci
                 os.makedirs(outdir)
     loss_outfile = outdir +'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
     accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
+    valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
+    valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
     loss = np.load(loss_outfile)
     accuracy = np.load(accuracy_outfile)
-    return loss, accuracy
+    valid_loss = np.load(valid_loss_outfile )
+    valid_accuracy = np.load(valid_accuracy_outfile )
+    return loss, accuracy, valid_loss, valid_accuracy
 
 def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_annual_CV_R2,training_month_CV_R2,
                 geo_annual_CV_R2, geo_month_CV_R2,
@@ -101,7 +110,8 @@ def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_a
             month_CV_RMSE[imonth,-1] = np.mean(month_CV_RMSE[imonth,0:kfold * repeats])
             training_month_CV_R2[imonth,-1] = np.mean(training_month_CV_R2[imonth,0:kfold * repeats])
             geo_month_CV_R2[imonth,-1] = np.mean(geo_month_CV_R2[imonth,0:kfold * repeats])
-            writer.writerow([' -------------------------- {} ------------------------'.format(MONTH[imonth]), '\n R2 - Max: ', str(np.round(np.max(month_CV_R2[imonth,:]), 4)), 'Min: ',
+            writer.writerow([' -------------------------- {} ------------------------'.format(MONTH[imonth]), 
+                             '\n R2 - Max: ', str(np.round(np.max(month_CV_R2[imonth,:]), 4)), 'Min: ',
                              str(np.round(np.min(month_CV_R2[imonth,:]), 4)), 'Avg: ',str(np.round(month_CV_R2[imonth,-1],4)),
                              '\nSlope - Max: ', str(np.round(np.max(month_CV_slope[imonth,:]), 4)), 'Min: ',
                              str(np.round(np.min(month_CV_slope[imonth,:]), 4)), 'Avg: ',str(np.round(month_CV_slope[imonth,-1],4)),
@@ -113,3 +123,44 @@ def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_a
                              str(np.round(geo_month_CV_R2[imonth,-1],4))])
 
     return
+
+
+def AVD_output_text(outfile:str,status:str,
+                test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2,slope_CV_R2 ):
+    
+    MONTH = ['Annual','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_CV_R2_Alltime, NRMSE_CV_R2_Alltime,slope_CV_R2_Alltime = calculate_Alltime_Statistics_results(test_beginyear,test_endyear,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2,NRMSE_CV_R2, slope_CV_R2)
+
+    with open(outfile,status) as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Area: {} ; Time Period: {} - {}'.format('NA', test_beginyear, test_endyear)])
+        
+        for imonth in MONTH:
+            writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
+                            '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+
+                             '\n Slope - Avg: ', str(np.round(slope_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(slope_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_CV_R2_Alltime['Alltime'][imonth][2],4)),
+
+                             '\n RMSE -  Avg: ', str(np.round(RMSE_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(RMSE_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_CV_R2_Alltime['Alltime'][imonth][2],4)),
+
+                             '\n NRMSE -  Avg: ', str(np.round(NRMSE_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(NRMSE_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_CV_R2_Alltime['Alltime'][imonth][2],4)),
+
+                             '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),
+
+                             '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 
+                             
+                             #'\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             #str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 
+
+                             #'\n PWA co-monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             #str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 
+                             ])
+                
+
+    return 

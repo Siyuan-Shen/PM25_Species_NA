@@ -3,7 +3,20 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.nn as nn
 
+from Training_pkg.utils import *
 
+
+activation_func = activation_function_table()
+
+
+def resnet_block_lookup_table(blocktype):
+    if blocktype == 'BasicBlock':
+        return BasicBlock
+    elif blocktype == 'Bottleneck':
+        return Bottleneck
+    else:
+        print(' Wrong Key Word! BasicBlock or Bottleneck only! ')
+        return None
 class BasicBlock(nn.Module):  
     # F(X) and X has the same dimensions after two convolutional layers
     # expansion是F(X)相对X维度拓展的倍数
@@ -15,7 +28,7 @@ class BasicBlock(nn.Module):
         self.bn1 = nn.BatchNorm2d(out_channel)  
         self.conv2 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel,kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channel)
-        self.tanh = nn.Tanh()
+        self.tanh = activation_func
         self.downsample = downsample
     def forward(self, x):
         identity = x
@@ -57,7 +70,7 @@ class Bottleneck(nn.Module):
         self.conv3 = nn.Conv2d(in_channels=width, out_channels=out_channel * self.expansion,kernel_size=1, stride=1, bias=False)  # unsqueeze channels
         self.bn3 = nn.BatchNorm2d(out_channel * self.expansion)
 
-        self.Tanh = nn.Tanh()
+        self.Tanh = activation_func
         self.downsample = downsample
 
     def forward(self, x):
@@ -105,7 +118,7 @@ class ResNet(nn.Module):
         self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(self.in_channel)
 
-        self.tanh = nn.Tanh()
+        self.tanh = activation_func
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         # _make_layer(残差块类型，残差块中第一个卷积层的卷积核个数，残差块个数，残差块中卷积步长)函数：生成多个连续的残差块的残差结构

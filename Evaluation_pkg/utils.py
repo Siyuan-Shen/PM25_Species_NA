@@ -18,7 +18,8 @@ kfold = Spatial_Trainning_Settings['kfold']
 repeats = Spatial_Trainning_Settings['repeats']
 beginyears = Spatial_Trainning_Settings['beginyears']
 endyears = Spatial_Trainning_Settings['endyears']
-
+test_beginyear = Spatial_Trainning_Settings['test_beginyear']
+test_endyear = Spatial_Trainning_Settings['test_endyear']
 #######################################################################################
 # Forced Slope Unity Settings
 ForcedSlopeUnityTable = cfg['Spatial-CrossValidation']['Forced-Slope-Unity']
@@ -46,6 +47,135 @@ def Get_typeName(bias, normalize_bias, normalize_species, absolute_species, log_
     elif log_species == True:
         typeName = 'Log-{}'.format(species)
     return  typeName
+
+
+def initialize_AVD_DataRecording(beginyear:int,endyear:int):
+    """This is used to return data recording dict. dict = { area: {Year : {Month : np.array() }}}
+
+    Args:
+        Areas (list): _description_
+        Area_beginyears (dict): _description_
+        endyear (int): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    
+    final_data_recording = {}
+    obs_data_recording = {}
+    geo_data_recording = {}
+    testing_population_data_recording  = {}
+    training_final_data_recording = {}
+    training_obs_data_recording = {}
+    training_dataForSlope_recording = {}
+
+    
+    for iyear in range(endyear-beginyear+1): 
+            print(str(beginyear+iyear))   
+            final_data_recording[str(beginyear+iyear)] = {}
+            obs_data_recording[str(beginyear+iyear)] = {}
+            geo_data_recording[str(beginyear+iyear)] = {}
+            testing_population_data_recording[str(beginyear+iyear)] = {}
+            training_final_data_recording[str(beginyear+iyear)] = {}
+            training_obs_data_recording[str(beginyear+iyear)] = {}
+            training_dataForSlope_recording[str(beginyear+iyear)] = {}
+
+            for imonth in MONTH:
+                final_data_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+                obs_data_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+                geo_data_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+                testing_population_data_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+                training_final_data_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+                training_obs_data_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+                training_dataForSlope_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+             
+    return final_data_recording, obs_data_recording, geo_data_recording, testing_population_data_recording, training_final_data_recording, training_obs_data_recording, training_dataForSlope_recording
+
+def initialize_AVD_CV_dict(test_beginyear:int,test_endyear:int):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    test_CV_R2   = {}
+    train_CV_R2  = {}
+    geo_CV_R2    = {}
+    RMSE_CV_R2   = {}
+    NRMSE_CV_R2  = {}
+    slope_CV_R2  = {}
+    #PWAModel     = {}
+    #PWAMonitors  = {}
+    
+    for iyear in range(test_endyear-test_beginyear+1):
+            test_CV_R2[str(test_beginyear+iyear)]  = {}
+            train_CV_R2[str(test_beginyear+iyear)]  = {}
+            geo_CV_R2[str(test_beginyear+iyear)]  = {}
+            RMSE_CV_R2[str(test_beginyear+iyear)]  = {}
+            NRMSE_CV_R2[str(test_beginyear+iyear)]  = {}
+            slope_CV_R2[str(test_beginyear+iyear)]  = {}
+            #PWAModel[str(test_beginyear+iyear)]  = {}
+            #PWAMonitors[str(test_beginyear+iyear)]  = {}
+            
+            for imonth in MONTH:
+                test_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                train_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                geo_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                RMSE_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                NRMSE_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                slope_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                #PWAModel[str(test_beginyear+iyear)][imonth]  = -1.0
+                #PWAMonitors[str(test_beginyear+iyear)][imonth]  = -1.0
+
+    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2, slope_CV_R2, slope_CV_R2# PWAModel, PWAMonitors
+
+
+def initialize_AVD_CV_Alltime_dict():
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    test_CV_R2_Alltime   = {'Alltime':{}}
+    train_CV_R2_Alltime  = {'Alltime':{}}
+    geo_CV_R2_Alltime    = {'Alltime':{}}
+    RMSE_CV_R2_Alltime   = {'Alltime':{}}
+    NRMSE_CV_R2_Alltime   = {'Alltime':{}}
+    slope_CV_R2_Alltime  = {'Alltime':{}}
+    #PWAModel_Alltime     = {}
+    #PWAMonitors_Alltime  = {}
+    
+    for imonth in MONTH:
+            ## np.zeros((3),dtype=np.float64) - 0 - mean, 1 - min, 2 - max
+            test_CV_R2_Alltime['Alltime'][imonth]  = np.zeros((3),dtype=np.float64)
+            train_CV_R2_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
+            geo_CV_R2_Alltime['Alltime'][imonth]   = np.zeros((3),dtype=np.float64)
+            RMSE_CV_R2_Alltime['Alltime'][imonth]  = np.zeros((3),dtype=np.float64)
+            NRMSE_CV_R2_Alltime['Alltime'][imonth]  = np.zeros((3),dtype=np.float64)
+            slope_CV_R2_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
+            #PWAModel_Alltime['Alltime'][imonth]    = np.zeros((3),dtype=np.float64)
+            #PWAMonitors_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
+    return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_CV_R2_Alltime, NRMSE_CV_R2_Alltime, slope_CV_R2_Alltime#, PWAModel_Alltime, PWAMonitors_Alltime
+
+def get_annual_longterm_array(beginyear, endyear, final_data_recording,obs_data_recording):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    final_longterm_data = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
+    obs_longterm_data   = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
+    count = 0
+    for iyear in range(endyear-beginyear+1):
+        for imonth in range(len(MONTH)):
+            final_longterm_data += final_data_recording[str(beginyear+iyear)][MONTH[imonth]]
+            obs_longterm_data   += obs_data_recording[str(beginyear+iyear)][MONTH[imonth]]
+            count += 1
+    final_longterm_data = final_longterm_data/count
+    obs_longterm_data   = obs_longterm_data/count
+    return final_longterm_data, obs_longterm_data
+
+def get_monthly_longterm_array(beginyear, imonth, endyear, final_data_recording,obs_data_recording):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    final_longterm_data = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
+    obs_longterm_data   = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
+    count = 0
+    for iyear in range(endyear-beginyear+1):
+    
+        final_longterm_data += final_data_recording[str(beginyear+iyear)][MONTH[imonth]]
+        obs_longterm_data   += obs_data_recording[str(beginyear+iyear)][MONTH[imonth]]
+        count += 1
+    final_longterm_data = final_longterm_data/count
+    obs_longterm_data   = obs_longterm_data/count
+    return final_longterm_data, obs_longterm_data
 
 def initialize_multimodels_CV_Dic(kfold:int, repeats:int, beginyears:list,):
 

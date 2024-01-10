@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from Training_pkg.Loss_Func import *
-from Training_pkg.Net_Construction import *
+
 import toml
 
 cfg = toml.load('./config.toml')
@@ -36,7 +36,42 @@ HyperParameters = cfg['Training-Settings']['hyper-parameters']
 channel_names = HyperParameters['channel_names']
 epoch = HyperParameters['epoch']
 batchsize = HyperParameters['batchsize']
-lr0 = HyperParameters['learning_rate']
+
+#######################################################################################
+# Net Structure Settings
+
+net_structure_settings = cfg['Training-Settings']['net_structure_settings']
+
+ResNet_setting      = net_structure_settings['ResNet']['Settings']
+ResNet_Blocks       = net_structure_settings['ResNet']['Blocks']
+ResNet_blocks_num   = net_structure_settings['ResNet']['blocks_num']
+
+#######################################################################################
+# learning rate settings
+lr_settings = cfg['Training-Settings']['learning_rate']
+lr0 = lr_settings['learning_rate0']
+
+
+### Strategy
+ExponentialLR = lr_settings['ExponentialLR']['Settings']
+ExponentialLR_gamma = lr_settings['ExponentialLR']['gamma']
+
+CosineAnnealingLR = lr_settings['CosineAnnealingLR']['Settings']
+CosineAnnealingLR_T_max = lr_settings['CosineAnnealingLR']['T_max']
+CosineAnnealingLR_eta_min = lr_settings['CosineAnnealingLR']['eta_min']
+
+CosineAnnealingRestartsLR = lr_settings['CosineAnnealingRestartsLR']['Settings']
+CosineAnnealingRestartsLR_T_0 = lr_settings['CosineAnnealingRestartsLR']['T_0']
+CosineAnnealingRestartsLR_T_mult = lr_settings['CosineAnnealingRestartsLR']['T_mult']
+CosineAnnealingRestartsLR_eta_min = lr_settings['CosineAnnealingRestartsLR']['eta_min']
+
+#######################################################################################
+# activation func settings
+activation_func_settings = cfg['Training_Settings']['activation_func']
+activation_func_name = activation_func_settings['activation_func_name']
+ReLU_ACF = activation_func_settings['ReLU']['Settings']
+Tanh_ACF = activation_func_settings['Tanh']['Settings']
+GeLU_ACF = activation_func_settings['GeLU']['Settings']
 
 #######################################################################################
 # Learning Objectives Settings
@@ -58,26 +93,25 @@ Loss_type = Loss_Func['Loss_type']
 
 
 
-
-def loss_func_lookup_table():
-    loss_dic = {
-        'MSE' : nn.MSELoss,
-    }
-    return loss_dic
-
-def resnet_block_lookup_table(blocktype):
-    if blocktype == 'BasicBlock':
-        return BasicBlock
-    elif blocktype == 'Bottleneck':
-        return Bottleneck
-    else:
-        print(' Wrong Key Word! BasicBlock or Bottleneck only! ')
-        return None
+def activation_function_table():
+    if ReLU_ACF == True:
+        return nn.ReLU()
+    elif Tanh_ACF == True:
+        return nn.Tanh()
+    elif GeLU_ACF == True:
+        return nn.GELU()
     
-def Net_Structure_lookup_table(nchannel,block,blocks_num,):
-    Net_Structure_table = {
-        'normal_cnn' : Net(nchannel=nchannel),
-        'Resnet'     : ResNet(nchannel=nchannel,block=block,)
 
-    }
-    return
+def lr_strategy_lookup_table(optimizer):
+    if ExponentialLR:
+        return torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=ExponentialLR_gamma)
+    elif CosineAnnealingLR:
+        return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=CosineAnnealingLR_T_max,eta_min=CosineAnnealingLR_eta_min)
+    elif CosineAnnealingRestartsLR:
+        return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=CosineAnnealingRestartsLR_T_0,T_mult=CosineAnnealingRestartsLR_T_mult,eta_min=CosineAnnealingLR_eta_min)
+
+
+
+
+
+    
