@@ -35,6 +35,24 @@ txt_outdir = results_dir['txt_outdir']
 
 
 
+################################## BLOO Cross-Validation ################################
+
+BLOO_CrossValidation_Switch = cfg['BLOO-CrossValidation']['BLOO_CrossValidation_Switch']
+Buffer_size = cfg['BLOO-CrossValidation']['Buffer_size']
+
+#######################################################################################
+# BLOO Training Settings
+
+BLOO_TrainingSettings = cfg['BLOO-CrossValidation']['TrainingSettings']
+BLOO_kfold   = BLOO_TrainingSettings['kfold']
+BLOO_repeats = BLOO_TrainingSettings['repeats']
+BLOO_beginyears = BLOO_TrainingSettings['beginyears']
+BLOO_endyears   = BLOO_TrainingSettings['endyears']
+BLOO_test_beginyear = BLOO_TrainingSettings['test_beginyear']
+BLOO_test_endyear   = BLOO_TrainingSettings['test_endyear']
+
+
+
 def Get_typeName(bias, normalize_bias, normalize_species, absolute_species, log_species, species):
     if bias == True:
         typeName = '{}-bias'.format(species)
@@ -278,7 +296,7 @@ def initialize_MonthlyDataRecording_Dic(beginyears):
 ############# BLOO CV toolkits ####################
 
 
-def GetBufferTrainingIndex(test_index:np.array,train_index:np.array,buffer:float):
+def GetBufferTrainingIndex(test_index:np.array,train_index:np.array,buffer:float,sitelat:np.array, sitelon:np.array):
     """_summary_
 
     Args:
@@ -287,10 +305,56 @@ def GetBufferTrainingIndex(test_index:np.array,train_index:np.array,buffer:float
         buffer (float): _description_
     """
     time_start = time.time()
-    sitelat, sitelon = load_obs_loc()
     for isite in range(len(test_index)):
         train_index = find_sites_nearby(test_lat=sitelat[test_index[isite]],test_lon=sitelon[test_index[isite]],train_index=train_index,
                                         train_lat=sitelat,train_lon=sitelon,buffer_radius=buffer)
     time_end = time.time()
     print('Number of train index: ',len(train_index),'\nNumber of test index: ', len(test_index),'\nTime consume: ',str(np.round(time_end-time_start,4)),'s')
     return train_index
+
+
+def find_sites_nearby(test_lat: np.float32, test_lon: np.float32,train_index:np.array,
+                      train_lat: np.array, train_lon: np.array, buffer_radius: np.float32):
+    """This function is used to get the sites index within the buffe area and exclue them from the training index. 
+
+    Args:
+        test_lat (np.float32): Test site latitude.
+        test_lon (np.float32): Test site longitude.
+        train_index (np.array): Training index(remain). This function should be in a loop,
+        and all input training index already exclude other sites within the buffer zone near other testing site.
+        train_lat (np.array): The initial sites lat array.
+        train_lon (np.array): The initial sites lon array.
+        buffer_radius (np.float32): The buffer radius.
+
+    Returns:
+        np.array : The train index exclude the sites within the input test sites surronding buffer zone.
+    """
+    lat_min = max(-69.95, (test_lat - 0.009 * buffer_radius))
+    lat_max = min(59.95, (test_lat + 0.009 * buffer_radius))
+    lon_min = max(-179.95, (test_lon - 0.026 * buffer_radius))
+    lon_max = min(179.95, (test_lon + 0.026 * buffer_radius))
+    # Find the sites within the square first
+    lat_index = np.intersect1d(np.where(train_lat>lat_min),np.where(train_lat<lat_max))
+    lon_index = np.intersect1d(np.where(train_lon>lon_min),np.where(train_lon<lon_max))
+    sites_nearby_index = np.intersect1d(lat_index,lon_index)
+           
+    sites_lat_nearby = train_lat[sites_nearby_index]
+    sites_lon_nearby = train_lon[sites_nearby_index]
+
+    # Find the sites within the buffer zones
+    sites_within_radius_index = np.array([],dtype=int)
+    for isite in range(len(sites_nearby_index)):
+        distance = calculate_distance(test_lat,test_lon,train_lat[sites_nearby_index[isite]],train_lon[sites_nearby_index[isite]])
+        if distance < buffer_radius:
+            sites_within_radius_index = np.append(sites_within_radius_index,sites_nearby_index[isite])
+    sites_within_index,X_index,Y_index = np.intersect1d(train_index,sites_within_radius_index,return_indices=True)
+    train_index = np.delete(train_index,X_index)
+    return train_index 
+
+def calculate_distance(pixel_lat:np.float32,pixel_lon:np.float32,site_lat:np.float32,site_lon:np.float32,r=6371.01):
+    site_pos1 = pixel_lat * np.pi / 180.0
+    site_pos2 = pixel_lon * np.pi / 180.0
+    other_sites_pos1_array = site_lat * np.pi / 180.0
+    other_sites_pos2_array = site_lon * np.pi / 180.0
+    dist = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
+    return dist
