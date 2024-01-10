@@ -4,7 +4,7 @@
 #BSUB -G compute-rvmartin
 #BSUB -gpu "num=1:gmodel=TeslaV100_SXM2_32GB"
 #BSUB -a 'docker(syword/python3-pytorch:2023.12)'
-#BSUB -J "AVD Spatial CV PM25"
+#BSUB -J "AVD Spatial CV PM25 v1.0.0"
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu
@@ -12,6 +12,6 @@
 
 /bin/true
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v0.1.0/
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.0.0/
 python3 main.py
 

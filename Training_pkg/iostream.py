@@ -21,7 +21,7 @@ def load_monthly_obs_data(species:str):
     data = nc.Dataset(infile)
     SPECIES_OBS = data.variables[species][:]
     SPECIES_OBS = np.array(SPECIES_OBS)
-    SPECIES_OBS = np.reshape(SPECIES_OBS,SPECIES_OBS.shape[0]*SPECIES_OBS.shape[1])
+    SPECIES_OBS = np.reshape(SPECIES_OBS.T,SPECIES_OBS.shape[0]*SPECIES_OBS.shape[1])
 
     lat = data.variables["latitude"][:]
     lon = data.variables["longitude"][:]
@@ -32,7 +32,7 @@ def load_geophysical_species_data(species:str):
     species_monthly_data = nc.Dataset(infile)
     geophysical_species = species_monthly_data.variables[species][:]
     geophysical_species = np.array(geophysical_species)
-    geophysical_species = np.reshape(geophysical_species, geophysical_species.shape[0]*geophysical_species.shape[1])
+    geophysical_species = np.reshape(geophysical_species.T, geophysical_species.shape[0]*geophysical_species.shape[1])
 
     latitudes = species_monthly_data.variables["latitude"][:]
     longitudes = species_monthly_data.variables["longitude"][:]
@@ -43,7 +43,7 @@ def load_geophysical_biases_data(species:str):
     species_monthly_data = nc.Dataset(infile)
     geophysical_species = species_monthly_data.variables[species][:]
     geophysical_species = np.array(geophysical_species)
-    geophysical_species = np.reshape(geophysical_species,geophysical_species.shape[0]*geophysical_species.shape[1])
+    geophysical_species = np.reshape(geophysical_species.T,geophysical_species.shape[0]*geophysical_species.shape[1])
 
     latitudes = species_monthly_data.variables["latitude"][:]
     longitudes = species_monthly_data.variables["longitude"][:]
