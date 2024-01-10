@@ -30,6 +30,7 @@ class BasicBlock(nn.Module):
         self.bn2 = nn.BatchNorm2d(out_channel)
         self.tanh = activation_func
         self.downsample = downsample
+        
     def forward(self, x):
         identity = x
         if self.downsample is not None:

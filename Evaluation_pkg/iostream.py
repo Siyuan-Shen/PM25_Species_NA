@@ -164,3 +164,14 @@ def AVD_output_text(outfile:str,status:str,
                 
 
     return 
+
+def Output_Text_Sites_Number(outfile:str,status:str,train_index_number:np.array,test_index_number:np.array, buffer:float):
+    with open(outfile,status) as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Buffer size - {} km'.format(buffer),
+                        '\nTraining index number - Max: ',str(np.max(train_index_number)),' Min: ',str(np.min(train_index_number)),
+                         'Average: ',str(np.mean(train_index_number)),
+                         '\n Testing index number - Max: ',str(np.max(test_index_number)),' Min: ',str(np.min(test_index_number)),
+                         'Average: ',str(np.mean(test_index_number)),
+                         ' ---------------------------------------------------------'])
+    return
