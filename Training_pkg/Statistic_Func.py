@@ -35,6 +35,12 @@ def Cal_RMSE(x,y):
     RMSE = round(RMSE, 2)
     return RMSE
 
+def Cal_NRMSE(final_data,obs_data):
+    RMSE = np.sqrt(mean_squared_error(final_data, obs_data))
+    RMSE = round(RMSE, 2)
+    NRMSE = RMSE/np.mean(obs_data)
+    return NRMSE
+
 def linear_slope(x, y):
     N = len(x)
     sumx = sum(x)

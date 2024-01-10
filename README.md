@@ -29,7 +29,7 @@
 Siyuan Shen, Nov. 2nd, 2023 @ Washington University in St. Louis, MO. USA
 
 
-This is version v0.0.0. for NH4 estimation over North America. The whole package include 4 main parts.
+This is version v0.1.0 for PM25 estimation over North America. The whole package include 4 main parts. This version is used to test the AVD spatial CV and add the function of setting learning rate decay in config file.
 
 1. Training Package -  This package is built for training the model. The hyperparamets, model structures, training variables, learning objectives, loss functions and other necessary information for training the model.
 
