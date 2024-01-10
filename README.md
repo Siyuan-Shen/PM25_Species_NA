@@ -39,3 +39,10 @@ This is version v0.1.0 for PM25 estimation over North America. The whole package
 
 4. Visualization Package - This package is for all visualization tools, including map plotting, regression line, and other tools. 
 
+
+Version 1.0.0
+
+Siyuan Shen, Jan. 9th, 2024 @ Washington University in St. Louis, MO. USA
+
+1. Use spatial cross-validation to substitute long-term spatial cross-validation;
+2. Add settings of activation function, sturcture of network, loss function, and learning rate in config.toml.

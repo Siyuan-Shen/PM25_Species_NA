@@ -100,56 +100,58 @@ class ResNet(nn.Module):
 
     def __init__(self,
                  nchannel, # initial input channel
-                 block,  # 使用的残差块类型
-                 blocks_num,  # 每个卷积层，使用残差块的个数
-                 num_classes=1,  # 训练集标签的分类个数
-                 include_top=True,  # 是否在残差结构后接上pooling、fc、softmax
+                 block,  # block types
+                 blocks_num,  
+                 num_classes=1,  
+                 include_top=True, 
                  groups=1,
                  width_per_group=64):
 
         super(ResNet, self).__init__()
         self.include_top = include_top
-        self.in_channel = 64  # 第一层卷积输出特征矩阵的深度，也是后面层输入特征矩阵的深度
+        self.in_channel = 64  
 
         self.groups = groups
         self.width_per_group = width_per_group
+        self.actfunc = activation_func
+        # 输入层有RGB三个分量，使得输入特征矩阵的深度是3
+        
+        #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
+        #self.bn1 = nn.BatchNorm2d(self.in_channel)
+
+        #self.tanh = nn.Tanh()
+        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
+        ,nn.BatchNorm2d(self.in_channel)
+        ,activation_func
+        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
         
-        self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(self.in_channel)
-
-        self.tanh = activation_func
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-
-        # _make_layer(残差块类型，残差块中第一个卷积层的卷积核个数，残差块个数，残差块中卷积步长)函数：生成多个连续的残差块的残差结构
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
         self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
         self.layer3 = self._make_layer(block, 256, blocks_num[2], stride=1)
         self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
 
-        if self.include_top:  # 默认为True，接上pooling、fc、softmax
-            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # 自适应平均池化下采样，无论输入矩阵的shape为多少，output size均为的高宽均为1x1
-            # 使矩阵展平为向量，如（W,H,C）->(1,1,W*H*C)，深度为W*H*C
-            self.fc = nn.Linear(512 * block.expansion, num_classes)  # 全连接层，512 * block.expansion为输入深度，num_classes为分类类别个数
+        if self.include_top: 
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  
+            
+            self.fc = nn.Linear(512 * block.expansion, num_classes)
 
-        for m in self.modules():  # 初始化
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='tanh')
+        #for m in self.modules(): 
+        #    if isinstance(m, nn.Conv2d):
+        #        nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
 
-    # _make_layer()函数：生成多个连续的残差块，(残差块类型，残差块中第一个卷积层的卷积核个数，残差块个数，残差块中卷积步长)
+   
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
-
-        # 寻找：卷积步长不为1或深度扩张有变化，导致F(X)与X的shape不同的残差块，就要对X定义下采样函数，使之shape相同
         if stride != 1 or self.in_channel != channel * block.expansion:
             downsample = nn.Sequential(
                 nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
-
-        # layers用于顺序储存各连续残差块
-        # 每个残差结构，第一个残差块均为需要对X下采样的残差块，后面的残差块不需要对X下采样
         layers = []
-        # 添加第一个残差块，第一个残差块均为需要对X下采样的残差块
+        
         layers.append(block(self.in_channel,
                             channel,
                             downsample=downsample,
@@ -157,31 +159,31 @@ class ResNet(nn.Module):
                             groups=self.groups,
                             width_per_group=self.width_per_group))
 
-        self.in_channel = channel * block.expansion
-        # 后面的残差块不需要对X下采样
+        self.in_channel = channel * block.expansion # The input channel changed here!``
+        
         for _ in range(1, block_num):
             layers.append(block(self.in_channel,
                                 channel,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
-        # 以非关键字参数形式，将layers列表，传入Sequential(),使其中残差块串联为一个残差结构
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-
-        x = self.tanh(x)
+        #x = self.conv1(x)
+        #x = self.bn1(x)
+        #x = self.tanh(x)
         #x = self.maxpool(x)
 
+        x = self.layer0(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
 
-        if self.include_top:  # 一般为True
+        if self.include_top:  
             x = self.avgpool(x)
             x = torch.flatten(x, 1)
+            #x = self.actfunc(x)
             x = self.fc(x)
 
         return x
