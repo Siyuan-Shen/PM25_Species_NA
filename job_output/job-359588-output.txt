@@ -1,0 +1,141 @@
+2023.12: Pulling from syword/python3-pytorch
+4d32b49e2995: Pulling fs layer
+45893188359a: Pulling fs layer
+5ad1f2004580: Pulling fs layer
+6ddc1d0f9183: Pulling fs layer
+4cc43a803109: Pulling fs layer
+e94a4481e933: Pulling fs layer
+3e7e4c9bc2b1: Pulling fs layer
+9463aa3f5627: Pulling fs layer
+a4a0c690bc7d: Pulling fs layer
+59d451175f69: Pulling fs layer
+eaf45e9f32d1: Pulling fs layer
+5ad1f2004580: Waiting
+6ddc1d0f9183: Waiting
+d8d16d6af76d: Pulling fs layer
+e94a4481e933: Waiting
+9e04bda98b05: Pulling fs layer
+3e7e4c9bc2b1: Waiting
+4cc43a803109: Waiting
+9463aa3f5627: Waiting
+4f4fb700ef54: Pulling fs layer
+59d451175f69: Waiting
+eaf45e9f32d1: Waiting
+45893188359a: Waiting
+a4a0c690bc7d: Waiting
+4d32b49e2995: Waiting
+d8d16d6af76d: Waiting
+9e04bda98b05: Waiting
+4f4fb700ef54: Waiting
+600169a9eeb9: Pulling fs layer
+5ab4a4c79587: Pulling fs layer
+cc9c383bbe7e: Pulling fs layer
+28f0a4457214: Pulling fs layer
+c9fa92ce1ad6: Pulling fs layer
+6de187d8986c: Pulling fs layer
+776dd6381718: Pulling fs layer
+600169a9eeb9: Waiting
+cc9c383bbe7e: Waiting
+5ab4a4c79587: Waiting
+c9fa92ce1ad6: Waiting
+28f0a4457214: Waiting
+fbcec89863dc: Pulling fs layer
+cc9bd67c83a5: Pulling fs layer
+6de187d8986c: Waiting
+776dd6381718: Waiting
+b14fad4790ba: Pulling fs layer
+fbcec89863dc: Waiting
+2e662c1f02bf: Pulling fs layer
+b14fad4790ba: Waiting
+cc9bd67c83a5: Waiting
+43fd87c93a0e: Pulling fs layer
+c25c11c90147: Pulling fs layer
+21f8a0e7678c: Pulling fs layer
+38498f1bac59: Pulling fs layer
+2e662c1f02bf: Waiting
+be1dcb77f928: Pulling fs layer
+43fd87c93a0e: Waiting
+c25c11c90147: Waiting
+cbb8b770c5f1: Pulling fs layer
+38498f1bac59: Waiting
+570f80eab64d: Pulling fs layer
+21f8a0e7678c: Waiting
+3a68c3ed38b1: Pulling fs layer
+cbb8b770c5f1: Waiting
+44048c6af4c5: Pulling fs layer
+be1dcb77f928: Waiting
+570f80eab64d: Waiting
+3a68c3ed38b1: Waiting
+aa81cbfe793b: Pulling fs layer
+44048c6af4c5: Waiting
+7be5ff0e99ab: Pulling fs layer
+aa81cbfe793b: Waiting
+fcaebb8600f0: Pulling fs layer
+7be5ff0e99ab: Waiting
+5fcfa55efbe2: Pulling fs layer
+fcaebb8600f0: Waiting
+30e2d0565dc1: Pulling fs layer
+571612189481: Pulling fs layer
+41b606023507: Pulling fs layer
+b46fc2bc9527: Pulling fs layer
+5fcfa55efbe2: Waiting
+30e2d0565dc1: Waiting
+571612189481: Waiting
+41b606023507: Waiting
+218cc4dc57a5: Pulling fs layer
+312f4a0d232a: Pulling fs layer
+e4b105bef9a0: Pulling fs layer
+775c8d6f4c51: Pulling fs layer
+b46fc2bc9527: Waiting
+312f4a0d232a: Waiting
+218cc4dc57a5: Waiting
+e4b105bef9a0: Waiting
+2c18555974d9: Pulling fs layer
+195694503e93: Pulling fs layer
+2c18555974d9: Waiting
+3da302afe87d: Pulling fs layer
+1de5baebe784: Pulling fs layer
+3da302afe87d: Waiting
+daa1689f89a6: Pulling fs layer
+172af9d2deb4: Pulling fs layer
+910228c3f4b1: Pulling fs layer
+1de5baebe784: Waiting
+daa1689f89a6: Waiting
+27674beec71b: Pulling fs layer
+172af9d2deb4: Waiting
+73aaa0846f0b: Pulling fs layer
+910228c3f4b1: Waiting
+d9d670c3461b: Pulling fs layer
+6ed282db30a5: Pulling fs layer
+1a84db2fbe27: Pulling fs layer
+7aa7ce4b10f7: Pulling fs layer
+eaf67a8a2185: Pulling fs layer
+b30c401c302c: Pulling fs layer
+b0edfa449e40: Pulling fs layer
+7aa7ce4b10f7: Waiting
+b0edfa449e40: Waiting
+eaf67a8a2185: Waiting
+1a84db2fbe27: Waiting
+d9d670c3461b: Waiting
+b30c401c302c: Waiting
+6ed282db30a5: Waiting
+4d32b49e2995: Verifying Checksum
+4d32b49e2995: Download complete
+45893188359a: Verifying Checksum
+45893188359a: Download complete
+4d32b49e2995: Pull complete
+6ddc1d0f9183: Verifying Checksum
+6ddc1d0f9183: Download complete
+5ad1f2004580: Verifying Checksum
+5ad1f2004580: Download complete
+e94a4481e933: Verifying Checksum
+e94a4481e933: Download complete
+3e7e4c9bc2b1: Verifying Checksum
+3e7e4c9bc2b1: Download complete
+9463aa3f5627: Verifying Checksum
+9463aa3f5627: Download complete
+a4a0c690bc7d: Verifying Checksum
+a4a0c690bc7d: Download complete
+59d451175f69: Verifying Checksum
+59d451175f69: Download complete
+45893188359a: 
