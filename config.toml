@@ -54,7 +54,7 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 
 [BLOO-CrossValidation]
 
-BLOO_CrossValidation_Switch                           = true
+BLOO_CrossValidation_Switch                           = false
 Buffer_size                                           = 0
 
 [BLOO-CrossValidation.TrainingSettings]
@@ -112,9 +112,9 @@ CosineAnnealingRestartsLR.eta_min                     = 0
 [Training_Settings.activation_func]
 
 activation_func_name                                  = 'relu'
-ReLU.Settings                                         = true
+ReLU.Settings                                         = false
 Tanh.Settings                                         = false
-GeLU.Settings                                         = false
+GeLU.Settings                                         = true
 
 
 [Training-Settings.hyper-parameters]
