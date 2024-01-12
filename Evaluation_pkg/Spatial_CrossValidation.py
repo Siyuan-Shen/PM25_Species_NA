@@ -68,6 +68,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
                 yearly_train_index  = GetXIndex(index=train_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
+                yearly_test_Yindex  = GetYIndex(index=test_index,beginyear=(beginyears[imodel]+iyear), endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
+                yearly_train_Yindex = GetYIndex(index=train_index,beginyear=(beginyears[imodel]+iyear), endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
                 yearly_test_input  = Normalized_TrainingData[yearly_test_index,:,:,:]
                 yearly_train_input = Normalized_TrainingData[yearly_train_index,:,:,:]
 
@@ -84,9 +86,9 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                 ## Recording observation and prediction for this model this fold.
                 # *------------------------------------------------------------------------------*#
 
-                Validation_obs_data   = SPECIES_OBS[yearly_test_index]
-                Training_obs_data     = SPECIES_OBS[yearly_train_index]
-                Geophysical_test_data = geophysical_species[yearly_test_index]
+                Validation_obs_data   = SPECIES_OBS[yearly_test_Yindex]
+                Training_obs_data     = SPECIES_OBS[yearly_train_Yindex]
+                Geophysical_test_data = geophysical_species[yearly_test_Yindex]
 
                 for imonth in range(len(MONTH)):
                     final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]          = np.append(final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], final_data[imonth*len(test_index):(imonth+1)*len(test_index)])
