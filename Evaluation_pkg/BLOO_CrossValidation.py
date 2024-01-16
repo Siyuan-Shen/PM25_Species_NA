@@ -17,7 +17,7 @@ from Training_pkg.Net_Construction import *
 
 from Evaluation_pkg.utils import *
 from Evaluation_pkg.data_func import GetXIndex,GetYIndex,Get_XY_indices, Get_XY_arraies, Get_final_output, ForcedSlopeUnity_Func, CalculateAnnualR2, CalculateMonthR2, calculate_Statistics_results
-from Evaluation_pkg.iostream import save_trained_model, output_text, save_loss_accuracy, save_data_recording, load_data_recording, AVD_output_text, Output_Text_Sites_Number
+from Evaluation_pkg.iostream import save_trained_model, output_text, save_loss_accuracy, save_data_recording, load_data_recording, AVD_output_text, Output_Text_Sites_Number, save_BLOO_data_recording, save_BLOO_loss_accuracy, load_BLOO_data_recording, load_BLOO_loss_accuracy
 
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure
 
@@ -75,13 +75,15 @@ def BLOO_AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Trai
                 yearly_train_index  = GetXIndex(index=train_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
                 yearly_test_input  = Normalized_TrainingData[yearly_test_index,:,:,:]
                 yearly_train_input = Normalized_TrainingData[yearly_train_index,:,:,:]
-
+                yearly_test_Yindex  = GetYIndex(index=test_index,beginyear=(beginyears[imodel]+iyear), endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
+                yearly_train_Yindex = GetYIndex(index=train_index,beginyear=(beginyears[imodel]+iyear), endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
+                
                 Validation_Prediction = predict(yearly_test_input, cnn_model, 3000)
                 Training_Prediction   = predict(yearly_train_input, cnn_model, 3000)
-                final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_test_index)
-                train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_train_index)
+                final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_test_Yindex)
+                train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_train_Yindex)
                 if ForcedSlopeUnity:
-                    final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_index]
+                    final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_Yindex]
                                                    ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
                                                    endyear=beginyears[imodel]+iyear,beginyear=beginyears[imodel]+iyear,EachMonth=EachMonthForcedSlopeUnity)
 
@@ -89,9 +91,9 @@ def BLOO_AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Trai
                 ## Recording observation and prediction for this model this fold.
                 # *------------------------------------------------------------------------------*#
 
-                Validation_obs_data   = SPECIES_OBS[yearly_test_index]
-                Training_obs_data     = SPECIES_OBS[yearly_train_index]
-                Geophysical_test_data = geophysical_species[yearly_test_index]
+                Validation_obs_data   = SPECIES_OBS[yearly_test_Yindex]
+                Training_obs_data     = SPECIES_OBS[yearly_train_Yindex]
+                Geophysical_test_data = geophysical_species[yearly_test_Yindex]
 
                 for imonth in range(len(MONTH)):
                     final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]          = np.append(final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], final_data[imonth*len(test_index):(imonth+1)*len(test_index)])
@@ -107,7 +109,7 @@ def BLOO_AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Trai
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording)
         
-    txtfile_outdir = txt_outdir + '{}/{}/Results/results-SpatialCV/'.format(species, version)
+    txtfile_outdir = txt_outdir + '{}/{}/Results/results-BLOOCV/'.format(species, version)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
     
@@ -116,18 +118,16 @@ def BLOO_AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Trai
     Output_Text_Sites_Number(outfile=txt_outfile, status='w', train_index_number=train_index_number, test_index_number=test_index_number, buffer=Buffer_size)
     AVD_output_text(outfile=txt_outfile,status='a', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE_CV_R2=RMSE_CV_R2, NRMSE_CV_R2=NRMSE_CV_R2,
                         slope_CV_R2=slope_CV_R2)
-    save_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
-                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
+    save_BLOO_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
+                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,buffer_radius=Buffer_size)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=test_beginyear, endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
-    save_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
-                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height)
+    save_BLOO_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
+                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=Buffer_size)
            
     for imonth in range(len(MONTH)):
         final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=test_beginyear, imonth=imonth,endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
-        save_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
-                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height)
+        save_BLOO_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
+                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=Buffer_size)
       
-
-
 
     return

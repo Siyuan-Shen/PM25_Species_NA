@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from Training_pkg.Loss_Func import *
 
 import toml
 
