@@ -98,6 +98,7 @@ def predict(inputarray, model, batchsize):
     final_output = np.array(final_output)
     predictinput = DataLoader(Dataset_Val(inputarray), batch_size= batchsize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
     with torch.no_grad():
         for i, image in enumerate(predictinput):
             image = image.to(device)

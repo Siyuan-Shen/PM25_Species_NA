@@ -30,8 +30,7 @@ def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy,
 def save_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
-        os.makedirs(outdir)
-    
+        os.makedirs(outdir) 
     obs_data_outfile   = outdir + '{}-{}-Obs-DataRecording_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, MONTH
                                                                                             ,width, height, nchannel,special_name)
     final_data_outfile = outdir + '{}-{}-Final-DataRecording_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, MONTH
@@ -40,6 +39,35 @@ def save_data_recording(obs_data, final_data,species, version, typeName, beginye
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
     return
+
+def save_BLOO_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
+    outdir = txt_outdir + '{}/{}/Results/results-BLOO_DataRecording/'.format(species, version)
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir) 
+    obs_data_outfile   = outdir + '{}-{}-Obs-BLOODataRecording_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    final_data_outfile = outdir + '{}-{}-Final-BLOODataRecording_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    
+    np.save(obs_data_outfile, obs_data)
+    np.save(final_data_outfile, final_data)
+    return
+
+def save_BLOO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height, buffer_radius):
+
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    loss_outfile = outdir + 'BLOOCV_loss_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,typeName, species, width, height, nchannel,special_name)
+    accuracy_outfile = outdir + 'BLOOCV_accuracy_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,typeName, species, width, height, nchannel,special_name)
+    valid_loss_outfile = outdir + 'BLOOCV_valid_loss_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,typeName, species, width, height, nchannel,special_name)
+    valid_accuracy_outfile = outdir + 'BLOOCV_valid_accuracy_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,typeName, species, width, height, nchannel,special_name)
+    np.save(loss_outfile, loss)
+    np.save(accuracy_outfile, accuracy)
+    np.save(valid_loss_outfile, valid_loss)
+    np.save(valid_accuracy_outfile, valid_accuracy)
+    return
+
 
 def load_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height):
     indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
@@ -62,6 +90,34 @@ def load_loss_accuracy(model_outdir, typeName, version, species, nchannel, speci
     accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
     valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
     valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, width, height, nchannel,special_name)
+    loss = np.load(loss_outfile)
+    accuracy = np.load(accuracy_outfile)
+    valid_loss = np.load(valid_loss_outfile )
+    valid_accuracy = np.load(valid_accuracy_outfile )
+    return loss, accuracy, valid_loss, valid_accuracy
+
+
+def load_BLOO_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
+    indir = txt_outdir + '{}/{}/Results/results-BLOO_DataRecording/'.format(species, version)
+    obs_data_infile   = indir + '{}-{}-Obs-BLOODataRecording_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    final_data_infile = indir + '{}-{}-Final-BLOODataRecording_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    
+    obs_data = np.load(obs_data_infile)
+    final_data = np.load(final_data_infile)
+
+    return obs_data, final_data
+
+def load_BLOO_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height, buffer_radius):
+
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    loss_outfile = outdir +'BLOOCV_loss_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, typeName, species, width, height, nchannel,special_name)
+    accuracy_outfile = outdir + 'BLOOCV_accuracy_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, typeName, species, width, height, nchannel,special_name)
+    valid_loss_outfile = outdir + 'BLOOCV_valid_loss_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, typeName, species, width, height, nchannel,special_name)
+    valid_accuracy_outfile = outdir + 'BLOO CV_valid_accuracy_{}km_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, typeName, species, width, height, nchannel,special_name)
     loss = np.load(loss_outfile)
     accuracy = np.load(accuracy_outfile)
     valid_loss = np.load(valid_loss_outfile )
