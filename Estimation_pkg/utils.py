@@ -39,6 +39,7 @@ Extent = Map_Estimation_Settings['Extent']
 #######################################################################################################################
 
 GeoPM25_AOD_ETA_input_indir         = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoPM25_AOD_ETA_input/'
+GeoSpecies_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoSpecies/'
 GEOS_Chem_input_indir               = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GEOS-Chem_input/'
 Anthropogenic_Emissions_input_indir = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Anthropogenic_Emissions_input/'
 Offline_Emissions_input_indir       = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Offline_Emissions_input/'
@@ -58,6 +59,15 @@ def inputfiles_table(YYYY, MM):
         'AOD'                : GeoPM25_AOD_ETA_input_indir + '{}/AOD_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
         'ETA'                : GeoPM25_AOD_ETA_input_indir + '{}/ETA_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
         'GeoPM25'            : GeoPM25_AOD_ETA_input_indir + '{}/geophysical_PM25_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+
+        #####################[Variables from Geophysical Species] ###################
+        'GeoNIT'             : GeoSpecies_input_indir + '{}/Geophysical_NO3_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GeoNH4'             : GeoSpecies_input_indir + '{}/Geophysical_NH4_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GeoSO4'             : GeoSpecies_input_indir + '{}/Geophysical_SO4_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GeoBC'              : GeoSpecies_input_indir + '{}/Geophysical_BC_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GeoOM'              : GeoSpecies_input_indir + '{}/Geophysical_OM_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GeoDUST'            : GeoSpecies_input_indir + '{}/Geophysical_DUST_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GeoSS'              : GeoSpecies_input_indir + '{}/Geophysical_SS_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
 
         ##################### [Variables from GEOS-Chem] ###################
         'GC_PM25'            : GEOS_Chem_input_indir + '{}/PM25_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
