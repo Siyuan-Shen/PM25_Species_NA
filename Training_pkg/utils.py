@@ -45,6 +45,13 @@ ResNet_setting      = net_structure_settings['ResNet']['Settings']
 ResNet_Blocks       = net_structure_settings['ResNet']['Blocks']
 ResNet_blocks_num   = net_structure_settings['ResNet']['blocks_num']
 
+LateFusion_setting      = net_structure_settings['LateFusion']['Settings']
+LateFusion_Blocks       = net_structure_settings['LateFusion']['Blocks']
+LateFusion_blocks_num   = net_structure_settings['LateFusion']['blocks_num']
+LateFusion_initial_channels     = net_structure_settings['LateFusion']['initial_channels']
+LateFusion_latefusion_channels  = net_structure_settings['LateFusion']['LateFusion_channels']
+
+
 #######################################################################################
 # learning rate settings
 lr_settings = cfg['Training-Settings']['learning_rate']
@@ -90,7 +97,12 @@ Loss_Func = cfg['Training-Settings']['Loss-Functions']
 
 Loss_type = Loss_Func['Loss_type']
 
+#######################################################################################
+# CombineWithGeophysical Settings
+CombineWithGeophysical = cfg['Training-Settings']['CombineWithGeophysical']
 
+combine_with_GeophysicalSpeceis_Switch                = CombineWithGeophysical['combine_with_GeophysicalSpeceis_Switch']
+cutoff_size                                           = CombineWithGeophysical['cutoff_size']
 
 def activation_function_table():
     if ReLU_ACF == True:
@@ -111,6 +123,14 @@ def lr_strategy_lookup_table(optimizer):
 
 
 
-
-
+def find_latfusion_index():
+    initial_channel_index = []
+    for i in range(len(LateFusion_initial_channels)):
+        initial_channel_index.append(channel_names.index(LateFusion_initial_channels[i]))
+    
+    latefusion_channel_index = []
+    for i in range(len(LateFusion_latefusion_channels)):
+        latefusion_channel_index.append(channel_names.index(LateFusion_latefusion_channels[i]))
+    
+    return initial_channel_index, latefusion_channel_index
     

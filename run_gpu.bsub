@@ -1,10 +1,10 @@
 #!/bin/bash
 #BSUB -q general
-#BSUB -R 'gpuhost rusage[mem=300GB] span[hosts=1]'
+#BSUB -R 'gpuhost rusage[mem=300GB] span[ptile=16]'
 #BSUB -G compute-rvmartin
-#BSUB -gpu "num=1:gmodel=NVIDIAA100_SXM4_40GB"
+#BSUB -gpu "num=1:gmodel=TeslaV100_SXM2_32GB"
 #BSUB -a 'docker(syword/python3-pytorch:2023.12)'
-#BSUB -J "Estimation Test"
+#BSUB -J "PM25 Map 2011-2019"
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu

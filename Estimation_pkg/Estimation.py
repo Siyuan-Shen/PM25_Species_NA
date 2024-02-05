@@ -4,9 +4,10 @@ import os
 import gc
 import netCDF4 as nc
 from Estimation_pkg.utils import *
+from Estimation_pkg.data_func import *
 from Estimation_pkg.training_func import Train_Model_forEstimation
 from Estimation_pkg.predict_func import map_predict
-from Estimation_pkg.iostream import load_map_data, load_trained_model_forEstimation, save_final_map_data
+from Estimation_pkg.iostream import load_map_data, load_trained_model_forEstimation, save_final_map_data, load_estimation_map_data,save_combinedGeo_map_data
 
 from Training_pkg.iostream import load_TrainingVariables
 from Training_pkg.data_func import normalize_Func
@@ -16,8 +17,7 @@ from Evaluation_pkg.utils import *
 
 def Estimation_Func():
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
-    
-    
+
     if Train_model_Switch:
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         Train_Model_forEstimation(train_beginyears=Training_beginyears,train_endyears=Training_endyears,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
@@ -41,4 +41,16 @@ def Estimation_Func():
                     save_final_map_data(final_data=final_map_data,YYYY=YEAR,MM=MM[imonth],extent=Extent,SPECIES=species,version=version,special_name=special_name)
                     del map_input, final_map_data
                     gc.collect()
+    if Derive_combinedGeo_MapData_Switch:
+        coefficients = Get_coefficient_map()
+        for imodel in range(len(Estiamtion_trained_beginyears)):
+            for YEAR in Estimation_years[imodel]:
+                for imonth in Estiamtion_months:
+                    MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
+                    CNN_Species = load_estimation_map_data(YYYY=YEAR,MM=MM[imonth],SPECIES=species,version=version,
+                                                           special_name=special_name)
+                    Combined_species = Combine_CNN_GeophysicalSpecies(CNN_Species=CNN_Species,coefficient=coefficients,YYYY=YEAR,MM=MM[imonth])
+                    save_combinedGeo_map_data(final_data=Combined_species,YYYY=YEAR,MM=MM[imonth],extent=Extent,
+                                              SPECIES=species,version=version,special_name=special_name)
+                    
     return

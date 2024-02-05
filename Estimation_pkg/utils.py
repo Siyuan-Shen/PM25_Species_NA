@@ -14,6 +14,8 @@ Estimation_outdir = cfg['Pathway']['Estimation-dir']['Estimation_outdir']
 Estimation_Switch = cfg['Estimation-Settings']['Estimation_Switch']
 Train_model_Switch = cfg['Estimation-Settings']['Train_model_Switch']
 Map_estimation_Switch = cfg['Estimation-Settings']['Map_estimation_Switch']
+Estimation_visualization_Switch = cfg['Estimation-Settings']['Estimation_visualization_Switch']
+Derive_combinedGeo_MapData_Switch = cfg['Estimation-Settings']['Derive_combinedGeo_MapData_Switch']
 
 #######################################################################################
 # Estiamtion Training Settings
@@ -32,11 +34,27 @@ Estiamtion_trained_beginyears = Map_Estimation_Settings['Estiamtion_trained_begi
 Estiamtion_trained_endyears   = Map_Estimation_Settings['Estiamtion_trained_endyears']
 Extent = Map_Estimation_Settings['Extent']
 
+#######################################################################################
+# Visualization Settings
+Visualization_Settings = cfg['Estimation-Settings']['Visualization_Settings']
+
+Map_Plot_Switch                                       = Visualization_Settings['Map_Plot_Switch']       # Switch for plotting the map of estimated concentration. 
+Map_Plot_YEARS                                        = Visualization_Settings['Map_Plot_YEARS']
+Map_Plot_MONTHS                                       = Visualization_Settings['Map_Plot_MONTHS']
+Map_Plot_Area                                         = Visualization_Settings['Map_Plot_Area']
+Map_Plot_Extent                                       = Visualization_Settings['Map_Plot_Extent']
+
+#######################################################################################
+# Combine With Geophysical Settings
+Coefficient_start_distance  = cfg['Estimation-Settings']['CombineWithGeophysical_Settings']['Coefficient_start_distance']
+
+
 #######################################################################################################################
 #######################################################################################################################
 ###################################################### INPUT VARIABLES ################################################
 #######################################################################################################################
 #######################################################################################################################
+
 
 GeoPM25_AOD_ETA_input_indir         = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoPM25_AOD_ETA_input/'
 GeoSpecies_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoSpecies/'
@@ -47,7 +65,8 @@ Meteorology_input_indir             = '/my-projects/Projects/PM25_Speices_DL_202
 LandCover_input_indir               = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/LandCover_input/'
 Geographical_Variables_input_indir  = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Geographical_Variables_input/'
 Global_CNN_PM25_input_indir         = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GL_CNN_PM25/'
-
+GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GFED4_Emissions_input/'
+Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
 def inputfiles_table(YYYY, MM):
     inputfiles_dic = {
         #####################[Variables from Satellite] ###################
@@ -96,6 +115,10 @@ def inputfiles_table(YYYY, MM):
         ##################### [Variables from Offline Natural Emissions] ###################
         'DST_offline_emi'    : Offline_Emissions_input_indir + '{}/DST-em-EMI_Total_001x001_NA_{}{}.npy'.format(YYYY,YYYY,MM),
         'SSLT_offline_emi'   : Offline_Emissions_input_indir + '{}/SSLT-em-EMI_Total_001x001_NA_{}{}.npy'.format(YYYY,YYYY,MM),
+        
+        ##################### [Variables from GFED4 Dry Matter Emissions] ###################
+
+        'Total_DM'           : GFED4_input_indir + '{}/GFED4-DM_TOTL_001x001_{}{}.npy'.format(YYYY, YYYY, MM),
 
         ##################### [Variables from Meteorology] ###################
         'PBLH'               : Meteorology_input_indir + '{}/PBLH_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
@@ -117,6 +140,10 @@ def inputfiles_table(YYYY, MM):
         'S3'                 : Geographical_Variables_input_indir + 'Spherical_Coordinates/Spherical_Coordinates_3.npy',
         'Lat'                : '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/tSATLAT_NA_MAP.npy',
         'Lon'                : '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/tSATLON_NA_MAP.npy',
-        'elevation'          : Geographical_Variables_input_indir + 'elevation/elevartion_001x001_NA.npy'
+        'elevation'          : Geographical_Variables_input_indir + 'elevation/elevartion_001x001_NA.npy',
+
+        ###################### [Population Information] ####################
+        'Population'         : Population_input_indir + 'WorldPopGrid-{}-0.01.npy'.format(YYYY),
+
     }
     return inputfiles_dic

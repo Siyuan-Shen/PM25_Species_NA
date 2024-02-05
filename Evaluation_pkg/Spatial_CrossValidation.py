@@ -17,7 +17,7 @@ from Training_pkg.Net_Construction import *
 
 from Evaluation_pkg.utils import *
 from Evaluation_pkg.data_func import GetXIndex,GetYIndex,Get_XY_indices, Get_XY_arraies, Get_final_output, ForcedSlopeUnity_Func, CalculateAnnualR2, CalculateMonthR2, calculate_Statistics_results
-from Evaluation_pkg.iostream import save_trained_model, output_text, save_loss_accuracy, save_data_recording, load_data_recording, AVD_output_text
+from Evaluation_pkg.iostream import load_coMonitor_Population,save_trained_model, output_text, save_loss_accuracy, save_data_recording, load_data_recording, AVD_output_text
 
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure
 
@@ -32,6 +32,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     geophysical_species, lat, lon = load_geophysical_species_data(species=species)
     true_input, mean, std = Learning_Object_Datasets(bias=bias,Normalized_bias=normalize_bias,Normlized_Speices=normalize_species,Absolute_Species=absolute_species,Log_PM25=log_species,species=species)
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
+    population_data = load_coMonitor_Population()
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     nchannel   = len(channel_names)
     seed       = 19980130
@@ -55,11 +56,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
             ## Training Process.
             # *------------------------------------------------------------------------------*#
 
-            if ResNet_setting:
-                block = resnet_block_lookup_table(ResNet_Blocks)
-                cnn_model = ResNet(nchannel=nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
-    
- 
+            cnn_model = initial_network(width=width)
+
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
@@ -77,6 +75,12 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                 Training_Prediction   = predict(yearly_train_input, cnn_model, 3000)
                 final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_test_Yindex)
                 train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_train_Yindex)
+                
+                if combine_with_GeophysicalSpeceis_Switch:
+                    nearest_distance = get_nearest_test_distance(area_test_index=test_index,area_train_index=train_index,site_lat=lat,site_lon=lon)
+                    coeficient = get_coefficients(nearest_site_distance=nearest_distance,cutoff_size=cutoff_size,beginyear=beginyears[imodel],
+                                              endyear = endyears[imodel])
+                    final_data = (1.0-coeficient)*final_data + coeficient * geophysical_species[yearly_test_Yindex]
                 if ForcedSlopeUnity:
                     final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_Yindex]
                                                    ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
@@ -89,28 +93,29 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                 Validation_obs_data   = SPECIES_OBS[yearly_test_Yindex]
                 Training_obs_data     = SPECIES_OBS[yearly_train_Yindex]
                 Geophysical_test_data = geophysical_species[yearly_test_Yindex]
+                population_test_data  = population_data[yearly_test_index]
 
                 for imonth in range(len(MONTH)):
-                    final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]          = np.append(final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], final_data[imonth*len(test_index):(imonth+1)*len(test_index)])
-                    obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]            = np.append(obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Validation_obs_data[imonth*len(test_index):(imonth+1)*len(test_index)])
-                    geo_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]            = np.append(geo_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Geophysical_test_data[imonth*len(test_index):(imonth+1)*len(test_index)])
-                    training_final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]] = np.append(training_final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], train_final_data[imonth*len(train_index):(imonth+1)*len(train_index)])
-                    training_obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]   = np.append(training_obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Training_obs_data[imonth*len(train_index):(imonth+1)*len(train_index)])
-                 
+                    final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]              = np.append(final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], final_data[imonth*len(test_index):(imonth+1)*len(test_index)])
+                    obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]                = np.append(obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Validation_obs_data[imonth*len(test_index):(imonth+1)*len(test_index)])
+                    geo_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]                = np.append(geo_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Geophysical_test_data[imonth*len(test_index):(imonth+1)*len(test_index)])
+                    training_final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]     = np.append(training_final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], train_final_data[imonth*len(train_index):(imonth+1)*len(train_index)])
+                    training_obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]       = np.append(training_obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Training_obs_data[imonth*len(train_index):(imonth+1)*len(train_index)])
+                    testing_population_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]] = np.append(testing_population_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], population_test_data[imonth*len(test_index):(imonth+1)*len(test_index)])
         count += 1
 
-    test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2, slope_CV_R2 = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
+    test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
-                                                                                                                training_obs_data_recording=training_obs_data_recording)
+                                                                                                                training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording)
         
     txtfile_outdir = txt_outdir + '{}/{}/Results/results-SpatialCV/'.format(species, version)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
     
     txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(typeName,species,version,nchannel,width,height,special_name)
-    AVD_output_text(outfile=txt_outfile,status='w', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE_CV_R2=RMSE_CV_R2, NRMSE_CV_R2=NRMSE_CV_R2,
-                        slope_CV_R2=slope_CV_R2)
+    AVD_output_text(outfile=txt_outfile,status='w', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
     save_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=test_beginyear, endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
