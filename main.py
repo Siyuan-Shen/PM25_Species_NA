@@ -2,7 +2,7 @@ import toml
 import os
 from Training_pkg.utils import *
 from Training_pkg.iostream import load_TrainingVariables
-from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure
+from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure, plot_save_estimation_map_figure
 from visualization_pkg.Evaluation_plot import regression_plot
 from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation
@@ -10,7 +10,8 @@ from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording
 from Evaluation_pkg.utils import *
 from Estimation_pkg.Estimation import Estimation_Func
 from Estimation_pkg.utils import *
-
+from Uncertainty_pkg.uncertainty_estimation import Derive_Estimation_Uncertainty
+from Uncertainty_pkg.utils import Uncertainty_Switch
 
 cfg = toml.load('./config.toml')
 
@@ -51,16 +52,22 @@ if __name__ == '__main__':
     if BLOO_CrossValidation_Switch:
         cfg_outdir = Config_outdir + '{}/{}/Results/results-BLOOCV/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
-        if not os.path.isdir(cfg_outdir):
-            os.makedirs(cfg_outdir)
-        cfg_outfile = cfg_outdir + 'config_BLOO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(Buffer_size,typeName,species,version,nchannel,width,height,special_name)
-        BLOO_AVD_Spatial_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
-        f = open(cfg_outfile,'w')
-        toml.dump(cfg, f)
-        f.close()
+        for buffer_radius in Buffer_size:
+            if not os.path.isdir(cfg_outdir):
+                os.makedirs(cfg_outdir)
+            cfg_outfile = cfg_outdir + 'config_BLOO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
+            BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+            f = open(cfg_outfile,'w')
+            toml.dump(cfg, f)
+            f.close()
 
     if Estimation_Switch:
         Estimation_Func()
+
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        if Estimation_visualization_Switch:
+            plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,typeName=typeName,width=
+                                            width,height=height,species=species,version=version,Area=Map_Plot_Area,PLOT_YEARS=Map_Plot_YEARS, PLOT_MONTHS=Map_Plot_MONTHS)
         cfg_outdir = Config_outdir + '{}/{}/Estimation/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
@@ -69,5 +76,16 @@ if __name__ == '__main__':
         toml.dump(cfg, f)
         f.close()
 
+
+    if Uncertainty_Switch:
+        Derive_Estimation_Uncertainty()
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        cfg_outdir = Config_outdir + '{}/{}/Uncertainty_Results/configuration-files/'.format(species, version)
+        if not os.path.isdir(cfg_outdir):
+            os.makedirs(cfg_outdir)
+        cfg_outfile = cfg_outdir + 'config_Uncertainty_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
+        f = open(cfg_outfile,'w')
+        toml.dump(cfg, f)
+        f.close()
 
 

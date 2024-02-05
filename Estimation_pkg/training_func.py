@@ -31,9 +31,7 @@ def Train_Model_forEstimation(train_beginyears, train_endyears, width, height, s
         learning_objective_index   = GetYIndex(index=site_index,beginyear=train_beginyears[imodel],endyear=train_endyears[imodel],sitenumber=sitesnumber)
         testing_array_index        = GetXIndex(index=np.array(range(100)),beginyear=train_beginyears[imodel],endyear=train_endyears[imodel],sitenumber=sitesnumber) # These two testing arrrays are meaningless here
         teating_objective_index    = GetYIndex(index=np.array(range(100)),beginyear=train_beginyears[imodel],endyear=train_endyears[imodel],sitenumber=sitesnumber) #
-        if ResNet_setting:
-                block = resnet_block_lookup_table(ResNet_Blocks)
-                cnn_model = ResNet(nchannel=nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
+        cnn_model = initial_network(width=width)
         X_train = Normalized_TrainingData[training_array_index,:,:,:]
         y_train = true_input[learning_objective_index]
         X_test  = Normalized_TrainingData[testing_array_index,:,:,:] 

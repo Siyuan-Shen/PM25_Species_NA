@@ -1,9 +1,11 @@
 import torch
 import numpy as np
+import netCDF4 as nc
 import os
 import csv
 from Evaluation_pkg.utils import *
 from Evaluation_pkg.data_func import *
+from Training_pkg.utils import *
 
 def save_trained_model(cnn_model, model_outdir, typeName, version, species, nchannel, special_name, count, width, height):
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
@@ -68,6 +70,12 @@ def save_BLOO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accu
     np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
+def load_coMonitor_Population():
+    data = nc.Dataset(training_infile,'r')
+    width = np.array(data.variables['width'][:])[0]
+    height = np.array(data.variables['height'][:])[0]
+    Population_Dataset = np.array(data.variables['Population'][:,int((width-1)/2),int((height-1)/2)])
+    return Population_Dataset
 
 def load_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height):
     indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
@@ -128,6 +136,7 @@ def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_a
                 geo_annual_CV_R2, geo_month_CV_R2,
                 CV_slope,annual_CV_slope,month_CV_slope,
                 CV_RMSE,annual_CV_RMSE,month_CV_RMSE,
+
                 beginyear:str,endyear:str,species:str,kfold:int,repeats:int):
     
     MONTH = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
@@ -182,10 +191,10 @@ def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_a
 
 
 def AVD_output_text(outfile:str,status:str,
-                test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2,slope_CV_R2 ):
+                test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors):
     
     MONTH = ['Annual','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_CV_R2_Alltime, NRMSE_CV_R2_Alltime,slope_CV_R2_Alltime = calculate_Alltime_Statistics_results(test_beginyear,test_endyear,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2,NRMSE_CV_R2, slope_CV_R2)
+    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyear,test_endyear,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
 
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
@@ -195,27 +204,35 @@ def AVD_output_text(outfile:str,status:str,
             writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
                             '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
                              str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)),
 
-                             '\n Slope - Avg: ', str(np.round(slope_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(slope_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                             '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)),
 
-                             '\n RMSE -  Avg: ', str(np.round(RMSE_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(RMSE_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                             '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)),
 
-                             '\n NRMSE -  Avg: ', str(np.round(NRMSE_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(NRMSE_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                             '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)),
+                             
+                             '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)),
 
                              '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                             str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),
 
                              '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 
+                             str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)),
                              
-                             #'\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             #str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 
+                             '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)),
 
-                             #'\n PWA co-monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             #str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 
+                             '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)),
                              ])
                 
 
@@ -229,5 +246,5 @@ def Output_Text_Sites_Number(outfile:str,status:str,train_index_number:np.array,
                          'Average: ',str(np.mean(train_index_number)),
                          '\n Testing index number - Max: ',str(np.max(test_index_number)),' Min: ',str(np.min(test_index_number)),
                          'Average: ',str(np.mean(test_index_number)),
-                         ' ---------------------------------------------------------'])
+                         ' \n---------------------------------------------------------'])
     return

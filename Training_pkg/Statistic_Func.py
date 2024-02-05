@@ -40,6 +40,32 @@ def Cal_NRMSE(final_data,obs_data):
     RMSE = round(RMSE, 2)
     NRMSE = RMSE/np.mean(obs_data)
     return NRMSE
+def Cal_PWM_rRMSE(x,y,population):
+    Total_Population = np.sum(population)
+    Weighted_RMSE = np.sum(population*np.square(x-y)) 
+    PWA_RMSE = np.sqrt(Weighted_RMSE/Total_Population)
+    PWA_PM = np.sum(population*x)/Total_Population
+    PWA_rRMSE = PWA_RMSE/PWA_PM
+    PWA_rRMSE = round(PWA_rRMSE, 3)
+    return PWA_rRMSE
+def Calculate_PWA_PM25(Population_array:np.array, PM25_array:np.array):
+    """Calculate the Population Weighted PM2.5
+    Args:
+        Population_Map (np.array): _description_
+        PM25_Map (np.array): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    
+    if Population_array.shape == PM25_array.shape:
+        Total_Population = np.sum(Population_array)
+        Weighted_PM25 = np.sum(Population_array*PM25_array) 
+        PWA_PM25 = Weighted_PM25/Total_Population 
+    else:
+        print('PM25_Map Dim: ', PM25_array.shape,'Population Map Dim: ',Population_array.shape)
+        print('Error Calculate_PWA_PM25 - The dimensions of Population_Map and PM25_Map are different!')
+    return PWA_PM25
 
 def linear_slope(x, y):
     N = len(x)

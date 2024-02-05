@@ -115,33 +115,36 @@ def initialize_AVD_CV_dict(test_beginyear:int,test_endyear:int):
     test_CV_R2   = {}
     train_CV_R2  = {}
     geo_CV_R2    = {}
-    RMSE_CV_R2   = {}
-    NRMSE_CV_R2  = {}
-    slope_CV_R2  = {}
-    #PWAModel     = {}
-    #PWAMonitors  = {}
+    RMSE         = {}
+    NRMSE        = {}
+    PWM_NRMSE    = {}
+    slope        = {}
+    PWAModel     = {}
+    PWAMonitors  = {}
     
     for iyear in range(test_endyear-test_beginyear+1):
-            test_CV_R2[str(test_beginyear+iyear)]  = {}
+            test_CV_R2[str(test_beginyear+iyear)]   = {}
             train_CV_R2[str(test_beginyear+iyear)]  = {}
-            geo_CV_R2[str(test_beginyear+iyear)]  = {}
-            RMSE_CV_R2[str(test_beginyear+iyear)]  = {}
-            NRMSE_CV_R2[str(test_beginyear+iyear)]  = {}
-            slope_CV_R2[str(test_beginyear+iyear)]  = {}
-            #PWAModel[str(test_beginyear+iyear)]  = {}
-            #PWAMonitors[str(test_beginyear+iyear)]  = {}
+            geo_CV_R2[str(test_beginyear+iyear)]    = {}
+            RMSE[str(test_beginyear+iyear)]         = {}
+            NRMSE[str(test_beginyear+iyear)]        = {}
+            PWM_NRMSE[str(test_beginyear+iyear)]    = {}
+            slope[str(test_beginyear+iyear)]        = {}
+            PWAModel[str(test_beginyear+iyear)]     = {}
+            PWAMonitors[str(test_beginyear+iyear)]  = {}
             
             for imonth in MONTH:
-                test_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
+                test_CV_R2[str(test_beginyear+iyear)][imonth]   = -1.0
                 train_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
-                geo_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
-                RMSE_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
-                NRMSE_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
-                slope_CV_R2[str(test_beginyear+iyear)][imonth]  = -1.0
-                #PWAModel[str(test_beginyear+iyear)][imonth]  = -1.0
-                #PWAMonitors[str(test_beginyear+iyear)][imonth]  = -1.0
+                geo_CV_R2[str(test_beginyear+iyear)][imonth]    = -1.0
+                RMSE[str(test_beginyear+iyear)][imonth]         = -1.0
+                NRMSE[str(test_beginyear+iyear)][imonth]        = -1.0
+                PWM_NRMSE[str(test_beginyear+iyear)][imonth]    = -1.0
+                slope[str(test_beginyear+iyear)][imonth]        = -1.0
+                PWAModel[str(test_beginyear+iyear)][imonth]     = -1.0
+                PWAMonitors[str(test_beginyear+iyear)][imonth]  = -1.0
 
-    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2, slope_CV_R2, slope_CV_R2# PWAModel, PWAMonitors
+    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE,slope, PWAModel, PWAMonitors
 
 
 def initialize_AVD_CV_Alltime_dict():
@@ -149,23 +152,25 @@ def initialize_AVD_CV_Alltime_dict():
     test_CV_R2_Alltime   = {'Alltime':{}}
     train_CV_R2_Alltime  = {'Alltime':{}}
     geo_CV_R2_Alltime    = {'Alltime':{}}
-    RMSE_CV_R2_Alltime   = {'Alltime':{}}
-    NRMSE_CV_R2_Alltime   = {'Alltime':{}}
-    slope_CV_R2_Alltime  = {'Alltime':{}}
-    #PWAModel_Alltime     = {}
-    #PWAMonitors_Alltime  = {}
+    RMSE_Alltime         = {'Alltime':{}}
+    NRMSE_Alltime        = {'Alltime':{}}
+    PWM_NRMSE_Alltime    = {'Alltime':{}}
+    slope_Alltime        = {'Alltime':{}}
+    PWAModel_Alltime     = {'Alltime':{}}
+    PWAMonitors_Alltime  = {'Alltime':{}}
     
     for imonth in MONTH:
             ## np.zeros((3),dtype=np.float64) - 0 - mean, 1 - min, 2 - max
             test_CV_R2_Alltime['Alltime'][imonth]  = np.zeros((3),dtype=np.float64)
             train_CV_R2_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
             geo_CV_R2_Alltime['Alltime'][imonth]   = np.zeros((3),dtype=np.float64)
-            RMSE_CV_R2_Alltime['Alltime'][imonth]  = np.zeros((3),dtype=np.float64)
-            NRMSE_CV_R2_Alltime['Alltime'][imonth]  = np.zeros((3),dtype=np.float64)
-            slope_CV_R2_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
-            #PWAModel_Alltime['Alltime'][imonth]    = np.zeros((3),dtype=np.float64)
-            #PWAMonitors_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
-    return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_CV_R2_Alltime, NRMSE_CV_R2_Alltime, slope_CV_R2_Alltime#, PWAModel_Alltime, PWAMonitors_Alltime
+            RMSE_Alltime['Alltime'][imonth]        = np.zeros((3),dtype=np.float64)
+            NRMSE_Alltime['Alltime'][imonth]       = np.zeros((3),dtype=np.float64)
+            PWM_NRMSE_Alltime['Alltime'][imonth]   = np.zeros((3),dtype=np.float64)
+            slope_Alltime['Alltime'][imonth]       = np.zeros((3),dtype=np.float64)
+            PWAModel_Alltime['Alltime'][imonth]    = np.zeros((3),dtype=np.float64)
+            PWAMonitors_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
+    return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime, PWAModel_Alltime, PWAMonitors_Alltime
 
 def get_annual_longterm_array(beginyear, endyear, final_data_recording,obs_data_recording):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -358,3 +363,50 @@ def calculate_distance(pixel_lat:np.float32,pixel_lon:np.float32,site_lat:np.flo
     other_sites_pos2_array = site_lon * np.pi / 180.0
     dist = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
     return dist
+
+def calculate_distance_forArray(site_lat:np.float32,site_lon:np.float32,
+                                SATLAT_MAP:np.array,SATLON_MAP:np.array,r=6371.01):
+    site_pos1 = site_lat * np.pi / 180.0
+    site_pos2 = site_lon * np.pi / 180.0
+    other_sites_pos1_array = SATLAT_MAP * np.pi / 180.0
+    other_sites_pos2_array = SATLON_MAP * np.pi / 180.0
+    dist_map = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
+    return dist_map
+def get_nearest_test_distance(area_test_index,area_train_index, site_lon, site_lat):
+    """This function is used to calcaulate the nearest distance from one site in 
+    testing datasets to the whole training datasets.
+
+    Args:
+        area_test_index (numpy): Testing index
+        area_train_index (numpy): Training index
+    return: nearest distances for testing datasets. len(area_test_index)
+    """
+    nearest_site_distance = np.full((len(area_test_index)),-999.99)
+    for index in range(len(area_test_index)):
+        temp_lat, temp_lon = site_lat[area_test_index[index]], site_lon[area_test_index[index]]
+        other_sites_distances = calculate_distance_forArray(site_lat=temp_lat,site_lon=temp_lon,
+                                                            SATLAT_MAP=site_lat[area_train_index],SATLON_MAP=site_lon[area_train_index])
+        nearest_site_distance[index] = min(other_sites_distances[np.where(other_sites_distances>0.0)]) # We take 110 kilometers for one degree
+    
+    return nearest_site_distance
+
+def get_coefficients(nearest_site_distance,cutoff_size,beginyear,endyear):
+    """This function is used to calculate the coefficient of the combine with Geophysical PM2.5
+
+    Args:
+        nearest_site_distance (_type_): _description_
+        beginyear (_type_): _description_
+        endyear (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    coefficient = (nearest_site_distance - cutoff_size)/(nearest_site_distance+0.0000001)
+    coefficient[np.where(coefficient<0.0)]=0.0
+    coefficient = np.square(coefficient)
+    coefficients = np.zeros((12 * (endyear - beginyear + 1) * len(nearest_site_distance)), dtype=int)  
+    for i in range(12 * (endyear - beginyear + 1)):  
+        coefficients[i * len(nearest_site_distance):(i + 1) * len(nearest_site_distance)] = coefficient
+    
+    return coefficients
+    

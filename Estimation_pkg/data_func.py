@@ -1,4 +1,22 @@
 import numpy as np
+import os
+from Uncertainty_pkg.iostream import load_pixels_nearest_sites_distances_map
+from Estimation_pkg.iostream import load_map_data
+from Estimation_pkg.utils import *
+from Training_pkg.utils import *
+
+def crop_mapdata(init_map,extent):
+    bottom_lat = extent[0]
+    top_lat    = extent[1]
+    left_lon   = extent[2]
+    right_lon  = extent[3]
+
+    lat_start_index = int((bottom_lat - 10.005)* 100)
+    lon_start_index = int((left_lon + 169.995) * 100 )
+    lat_end_index = int((top_lat - 10.005) * 100 )
+    lon_end_index = int((right_lon + 169.995)*100 )
+    cropped_mapdata = init_map[lat_start_index:lat_end_index+1,lon_start_index:lon_end_index+1]
+    return cropped_mapdata
 
 def get_extent_index(extent)->np.array:
     '''
@@ -42,3 +60,23 @@ def get_landtype(YYYY,extent)->np.array:
     for ix in range(len(lat_index)):
         output[ix,:] = landtype[lat_index[ix],lon_index]
     return output
+
+def Get_coefficient_map():
+    outdir = Estimation_outdir + '{}/{}/Map_Estimation/'.format(species,version)
+    outfile = outdir + '{}_coefficient_startDistance_{}km.npy'.format(species,Coefficient_start_distance)
+    if os.path.exists(outfile):
+        coefficient = np.load(outfile)
+    else:
+        nearest_site_distance_forEachPixel = load_pixels_nearest_sites_distances_map()
+        coefficient = (nearest_site_distance_forEachPixel - Coefficient_start_distance)/(nearest_site_distance_forEachPixel+1.0)
+        coefficient[np.where(coefficient<0.0)]=0.0
+        coefficient = np.square(coefficient)
+        np.save(outfile,coefficient)
+    return coefficient
+
+def Combine_CNN_GeophysicalSpecies(CNN_Species,coefficient,
+                                YYYY,MM):
+   GeophysicalSpecies = load_map_data('Geo{}'.format(species),YYYY=YYYY,MM=MM)
+   Cropped_GeophysicalSpecies = crop_mapdata(init_map=GeophysicalSpecies,extent=Extent)
+   Combined_Species = (1.0-coefficient)*CNN_Species + coefficient * Cropped_GeophysicalSpecies
+   return Combined_Species

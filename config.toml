@@ -10,7 +10,7 @@ geophysical_biases_data_dir                           = '/my-projects/Projects/P
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TraningDatasets/PM25/PM25-cnn_TrainingData_51channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TraningDatasets/PM25/PM25-cnn_TrainingData_52channels_11x11_200001-201912.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -24,16 +24,19 @@ Config_outdir                                         = '/my-projects/Projects/P
 [Pathway.Figures-dir]
 
 Loss_Accuracy_outdir                                  = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
+Estimation_Map_outdir                                 = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
+Uncertainty_Map_outdir                                = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Estimation-dir]
 
 Estimation_outdir                                     = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
+Uncertainty_outdir                                    = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 #########################################################################################################################################################
 
 [Spatial-CrossValidation]
 
 Spatial_CrossValidation_Switch                        = false
-Spatial_CV_LossAccuracy_plot_Switch                   = false
+Spatial_CV_LossAccuracy_plot_Switch                   = true
 
 [Spatial-CrossValidation.Training_Settings]
 
@@ -58,7 +61,7 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 [BLOO-CrossValidation]
 
 BLOO_CrossValidation_Switch                           = false
-Buffer_size                                           = 200
+Buffer_size                                           = [200]
 
 [BLOO-CrossValidation.TrainingSettings]
 
@@ -79,20 +82,58 @@ Estimation_Switch                                     = true
 Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
+Derive_combinedGeo_MapData_Switch                     = true
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-endyears                                              = [2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+beginyears                                            = [2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+endyears                                              = [2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2018,2019]
-Estiamtion_trained_endyears                           = [2018,2019]
+Estiamtion_trained_beginyears                         = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Estiamtion_trained_endyears                           = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Estimation_years                                      = [[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
+Estiamtion_months                                     = [0,1,2,3,4,5,6,7,8,9,10,11]
+Extent                                                = [10.055,69.945,-169.945,-50.055]
+
+[Estimation-Settings.Visualization_Settings]
+
+Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
+Map_Plot_YEARS                                        = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
+Map_Plot_Area                                         = 'NA'
+Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
+
+[Estimation-Settings.CombineWithGeophysical_Settings]
+
+Coefficient_start_distance                            = 130
+
+#########################################################################################################################################################
+
+[Uncertainty-Settings]
+
+Uncertainty_Switch                                    = false
+Derive_distances_map_Switch                           = true
+Derive_rRMSE_map_Switch                               = true
+Derive_absolute_Uncertainty_map_Switch                = true
+Uncertainty_visualization_Switch                      = true
+
+
+
+[Uncertainty-Settings.Map_Estimation_Settings]
+
 Estimation_years                                      = [[2018],[2019]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
 Estiamtion_months                                     = [0,1,2,3,4,5,6,7,8,9,10,11]
-Extent                                                = [10.05,69.95,-169.95,-50.05]
+Extent                                                = [10.055,69.945,-169.945,-50.055]
+Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
 
+[Uncertainty-Settings.Visualization_Settings]
+
+Uncertainty_Plot_Switch                               = true       # Switch for plotting the map of estimated concentration. 
+Uncertainty_Plot_YEARS                                = [2018]
+Uncertainty_Plot_MONTHS                               = ['01']
+Uncertainty_Plot_Area                                 = 'NA'
 
 
 
@@ -103,7 +144,7 @@ Extent                                                = [10.05,69.95,-169.95,-50
 [Training-Settings.identity]
 
 version                                               = 'v1.0.0'
-special_name                                          = '_ResNet_Basic1111_1'
+special_name                                          = '_ResNet_Basic1111_2'
 
 [Training-Settings.learning-objective]
 
@@ -122,6 +163,19 @@ log_species                                           = false
 ResNet.Settings                                       = true
 ResNet.Blocks                                         = 'BasicBlock'
 ResNet.blocks_num                                     = [1,1,1,1]
+
+LateFusion.Settings                                   = false
+LateFusion.Blocks                                     = 'BasicBlock'
+LateFusion.blocks_num                                 = [1,1,1,1]
+LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 
+                                                       'GL_CNN_PM25',
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
+                                                       'NH3_anthro_emi', 'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 'NMVOC_anthro_emi',
+                                                       'DST_offline_emi', 'SSLT_offline_emi',
+                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
+                                                       'Urban_Builtup_Lands'] 
+LateFusion.LateFusion_channels                         = ['GeoPM25','Lat', 'Lon','elevation',]
+
 [Training-Settings.learning_rate]
 
 learning_rate0                                        = 0.01
@@ -155,16 +209,22 @@ channel_names                                         = ['EtaAOD_Bias', 'EtaCoas
                                                         #'GeoNIT','GeoNH4','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'GL_CNN_PM25',
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
-                                                       'NH3_anthro_emi', 'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi', #'OC_anthro_emi', 'BC_anthro_emi', 'NMVOC_anthro_emi',
-                                                       #'DST_offline_emi', 'SSLT_offline_emi',
-                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',]
-                                                       #'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 'Urban_Builtup_Lands',
-                                                       #'S1','S2','S3','elevation'] #  'Lat', 'Lon',
+                                                       'NH3_anthro_emi', 'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 'NMVOC_anthro_emi',
+                                                       'DST_offline_emi', 'SSLT_offline_emi',
+                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
+                                                       'Urban_Builtup_Lands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       'Lat', 'Lon','elevation',#'S1','S2','S3','  'Lat', 'Lon',
+                                                        #'Population'
+                                                       ] 
 
 
 [Training-Settings.Loss-Functions]
 
 Loss_type                                             = 'MSE'
 
+[Training-Settings.CombineWithGeophysical]
+
+combine_with_GeophysicalSpeceis_Switch                = false
+cutoff_size                                           = 130
 
 

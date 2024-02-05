@@ -1,5 +1,5 @@
 import numpy as np
-from Training_pkg.Statistic_Func import linear_regression,regress2, Cal_RMSE, Cal_NRMSE
+from Training_pkg.Statistic_Func import linear_regression,regress2, Cal_RMSE, Cal_NRMSE,Cal_PWM_rRMSE,Calculate_PWA_PM25
 from Evaluation_pkg.utils import *
     
 
@@ -90,9 +90,9 @@ def ForcedSlopeUnity_Func(train_final_data,train_obs_data,test_final_data,train_
 
 
 
-def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_recording, obs_data_recording, geo_data_recording, training_final_data_recording, training_obs_data_recording):
+def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_recording, obs_data_recording, geo_data_recording, training_final_data_recording, training_obs_data_recording,testing_population_data_recording):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2, slope_CV_R2, slope_CV_R2 = initialize_AVD_CV_dict(test_beginyear=test_beginyear,test_endyear=test_endyear)
+    test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE,slopes, PWAModel, PWAMonitors = initialize_AVD_CV_dict(test_beginyear=test_beginyear,test_endyear=test_endyear)
     
     for iyear in range(test_endyear-test_beginyear+1):
             for imonth in MONTH:
@@ -100,86 +100,105 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 test_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(final_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth])
                 train_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)][imonth], training_obs_data_recording[str(test_beginyear+iyear)][imonth])
                 geo_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(geo_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth])
-                RMSE_CV_R2[str(test_beginyear+iyear)][imonth] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth])
-                NRMSE_CV_R2[str(test_beginyear+iyear)][imonth] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth])
+                RMSE[str(test_beginyear+iyear)][imonth] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth])
+                NRMSE[str(test_beginyear+iyear)][imonth] = Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth],testing_population_data_recording[str(test_beginyear+iyear)][imonth])
+                PWM_NRMSE[str(test_beginyear+iyear)][imonth] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)][imonth], obs_data_recording[str(test_beginyear+iyear)][imonth])
+                
                 regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)][imonth],_y=final_data_recording[str(test_beginyear+iyear)][imonth],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
                 intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
-                slope_CV_R2[str(test_beginyear+iyear)][imonth]= slope
-                
+                slopes[str(test_beginyear+iyear)][imonth] = slope
+                PWAModel[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth],PM25_array=final_data_recording[str(test_beginyear+iyear)][imonth])
+                PWAMonitors[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth],PM25_array=obs_data_recording[str(test_beginyear+iyear)][imonth])
                 if imonth == 'Jan':
                     final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)][imonth]
                     obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)][imonth]
                     geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)][imonth]
                     training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)][imonth]
+                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth]
                     training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)][imonth]
+                    PWAModel[str(test_beginyear+iyear)]['Annual']  = PWAModel[str(test_beginyear+iyear)][imonth]
+                    PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)][imonth]
                 else:
                     final_data_recording[str(test_beginyear+iyear)]['Annual'] += final_data_recording[str(test_beginyear+iyear)][imonth]
                     obs_data_recording[str(test_beginyear+iyear)]['Annual'] += obs_data_recording[str(test_beginyear+iyear)][imonth]
                     geo_data_recording[str(test_beginyear+iyear)]['Annual'] += geo_data_recording[str(test_beginyear+iyear)][imonth]
                     training_final_data_recording[str(test_beginyear+iyear)]['Annual'] += training_final_data_recording[str(test_beginyear+iyear)][imonth]
+                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth]
                     training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] += training_obs_data_recording[str(test_beginyear+iyear)][imonth]
+                    PWAModel[str(test_beginyear+iyear)]['Annual']  += PWAModel[str(test_beginyear+iyear)][imonth]
+                    PWAMonitors[str(test_beginyear+iyear)]['Annual'] += PWAMonitors[str(test_beginyear+iyear)][imonth]
                     
             final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+            testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+            PWAModel[str(test_beginyear+iyear)]['Annual'] = PWAModel[str(test_beginyear+iyear)]['Annual']/12.0
+            PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)]['Annual']/12.0
             
             print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, 'Annual'))
             test_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
             train_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)]['Annual'], training_obs_data_recording[str(test_beginyear+iyear)]['Annual'])
             geo_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(geo_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
-            RMSE_CV_R2[str(test_beginyear+iyear)]['Annual'] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
-            NRMSE_CV_R2[str(test_beginyear+iyear)]['Annual'] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
+            RMSE[str(test_beginyear+iyear)]['Annual'] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
+            NRMSE[str(test_beginyear+iyear)]['Annual'] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
+            PWM_NRMSE[str(test_beginyear+iyear)]['Annual'] = Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'],testing_population_data_recording[str(test_beginyear+iyear)]['Annual'])
             
+            PWAModel[str(test_beginyear+iyear)]['Annual'] = Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'],final_data_recording[str(test_beginyear+iyear)]['Annual'])
+            PWAMonitors [str(test_beginyear+iyear)]['Annual'] = Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'],obs_data_recording[str(test_beginyear+iyear)]['Annual'])
             regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)]['Annual'],_y=final_data_recording[str(test_beginyear+iyear)]['Annual'],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
             intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
-            slope_CV_R2[str(test_beginyear+iyear)]['Annual'] = slope
+            slopes[str(test_beginyear+iyear)]['Annual'] = slope
             
 
-    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2, slope_CV_R2
+    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slopes, PWAModel, PWAMonitors
 
 
-def calculate_Alltime_Statistics_results(test_beginyear:dict,test_endyear:int,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE_CV_R2, NRMSE_CV_R2,slope_CV_R2):
+def calculate_Alltime_Statistics_results(test_beginyear:dict,test_endyear:int,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PWM_NRMSE, slope,PWAModel,PWAMonitors ):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Annual']
-    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_CV_R2_Alltime, NRMSE_CV_R2_Alltime, slope_CV_R2_Alltime = initialize_AVD_CV_Alltime_dict()
+    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime, slope_Alltime,PWAModel_Alltime, PWAMonitors_Alltime = initialize_AVD_CV_Alltime_dict()
     
     for imonth in MONTH:
             temp_test_CV_R2_Alltime   = np.array([],dtype=np.float64)
             temp_train_CV_R2_Alltime  = np.array([],dtype=np.float64)
             temp_geo_CV_R2_Alltime    = np.array([],dtype=np.float64)
-            temp_RMSE_CV_R2_Alltime   = np.array([],dtype=np.float64)
-            temp_NRMSE_CV_R2_Alltime  = np.array([],dtype=np.float64)
-            temp_slope_CV_R2_Alltime  = np.array([],dtype=np.float64)
-            #temp_PWAModel_Alltime     = np.array([],dtype=np.float64)
-            #temp_PWAMonitors_Alltime  = np.array([],dtype=np.float64)
+            temp_RMSE_Alltime         = np.array([],dtype=np.float64)
+            temp_NRMSE_Alltime        = np.array([],dtype=np.float64)
+            temp_PWM_NRMSE_Alltime    = np.array([],dtype=np.float64)
+            temp_slope_Alltime        = np.array([],dtype=np.float64)
+            temp_PWAModel_Alltime     = np.array([],dtype=np.float64)
+            temp_PWAMonitors_Alltime  = np.array([],dtype=np.float64)
             for iyear in range(test_endyear-test_beginyear+1):
                 print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, imonth))
                 temp_test_CV_R2_Alltime  = np.append(temp_test_CV_R2_Alltime, test_CV_R2[str(test_beginyear+iyear)][imonth])
                 temp_train_CV_R2_Alltime = np.append(temp_train_CV_R2_Alltime, train_CV_R2[str(test_beginyear+iyear)][imonth])
                 temp_geo_CV_R2_Alltime   = np.append(temp_geo_CV_R2_Alltime, geo_CV_R2[str(test_beginyear+iyear)][imonth])
-                temp_RMSE_CV_R2_Alltime  = np.append(temp_RMSE_CV_R2_Alltime, RMSE_CV_R2[str(test_beginyear+iyear)][imonth])
-                temp_NRMSE_CV_R2_Alltime = np.append(temp_NRMSE_CV_R2_Alltime, NRMSE_CV_R2[str(test_beginyear+iyear)][imonth])
-                temp_slope_CV_R2_Alltime = np.append(temp_slope_CV_R2_Alltime, slope_CV_R2[str(test_beginyear+iyear)][imonth])
-                #temp_PWAModel_Alltime    = np.append(temp_PWAModel_Alltime, PWAModel[str(test_beginyear+iyear)][imonth])
-                #temp_PWAMonitors_Alltime = np.append(temp_PWAMonitors_Alltime, PWAMonitors[str(test_beginyear+iyear)][imonth])
+                temp_RMSE_Alltime        = np.append(temp_RMSE_Alltime, RMSE[str(test_beginyear+iyear)][imonth])
+                temp_NRMSE_Alltime       = np.append(temp_NRMSE_Alltime, NRMSE[str(test_beginyear+iyear)][imonth])
+                temp_PWM_NRMSE_Alltime   = np.append(temp_PWM_NRMSE_Alltime, PWM_NRMSE[str(test_beginyear+iyear)][imonth])
+                temp_slope_Alltime       = np.append(temp_slope_Alltime, slope[str(test_beginyear+iyear)][imonth])
+                temp_PWAModel_Alltime    = np.append(temp_PWAModel_Alltime, PWAModel[str(test_beginyear+iyear)][imonth])
+                temp_PWAMonitors_Alltime = np.append(temp_PWAMonitors_Alltime, PWAMonitors[str(test_beginyear+iyear)][imonth])
             
             test_CV_R2_Alltime['Alltime'][imonth]     = get_mean_min_max_statistic(temp_test_CV_R2_Alltime)
             train_CV_R2_Alltime['Alltime'][imonth]    = get_mean_min_max_statistic(temp_train_CV_R2_Alltime)
             geo_CV_R2_Alltime['Alltime'][imonth]      = get_mean_min_max_statistic(temp_geo_CV_R2_Alltime)
-            RMSE_CV_R2_Alltime['Alltime'][imonth]     = get_mean_min_max_statistic(temp_RMSE_CV_R2_Alltime)
-            NRMSE_CV_R2_Alltime['Alltime'][imonth]    = get_mean_min_max_statistic(temp_NRMSE_CV_R2_Alltime)
-            slope_CV_R2_Alltime['Alltime'][imonth]    = get_mean_min_max_statistic(temp_slope_CV_R2_Alltime)
-            #PWAModel_Alltime['Alltime'][imonth]       = get_mean_min_max_statistic(temp_PWAModel_Alltime)
-            #PWAMonitors_Alltime['Alltime'][imonth]    = get_mean_min_max_statistic(temp_PWAMonitors_Alltime)
+            RMSE_Alltime['Alltime'][imonth]           = get_mean_min_max_statistic(temp_RMSE_Alltime)
+            NRMSE_Alltime['Alltime'][imonth]          = get_mean_min_max_statistic(temp_NRMSE_Alltime)
+            PWM_NRMSE_Alltime['Alltime'][imonth]      = get_mean_min_max_statistic(temp_NRMSE_Alltime)
+            slope_Alltime['Alltime'][imonth]          = get_mean_min_max_statistic(temp_slope_Alltime)
+            PWAModel_Alltime['Alltime'][imonth]       = get_mean_min_max_statistic(temp_PWAModel_Alltime)
+            PWAMonitors_Alltime['Alltime'][imonth]    = get_mean_min_max_statistic(temp_PWAMonitors_Alltime)
 
-    return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_CV_R2_Alltime, NRMSE_CV_R2_Alltime, slope_CV_R2_Alltime
+    return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime
 
 def get_mean_min_max_statistic(temp_CV):
-    temp_array = np.zeros((3),dtype=np.float64)
+    temp_array = np.zeros((4),dtype=np.float64)
     temp_array[0] = np.mean(temp_CV)
     temp_array[1] = np.min(temp_CV)
     temp_array[2] = np.max(temp_CV)
+    temp_array[3] = np.std(temp_CV)
     return temp_array
 
 def CalculateAnnualR2(test_index,final_data,test_obs_data,beginyear,endyear):

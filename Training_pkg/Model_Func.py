@@ -22,7 +22,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
     criterion = loss_func_lookup_table(Loss_Type=Loss_type)
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
     scheduler = lr_strategy_lookup_table(optimizer=optimizer)
-    if Loss_type == 'MSE':
+    if Loss_type == 'MSE' and ResNet_setting:
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
             counts = 0
@@ -33,6 +33,72 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
                 labels = labels.to(device)
                 optimizer.zero_grad()  # Set grads to zero
                 outputs = model(images) #dimension: Nx1
+                outputs = torch.squeeze(outputs)
+                loss = criterion(outputs, labels)
+                loss.backward()  ## backward
+                optimizer.step()  ## refresh training parameters
+                losses.append(loss.item())
+
+                # Calculate R2
+                y_hat = outputs.cpu().detach().numpy()
+                y_true = labels.cpu().detach().numpy()
+
+               
+                #torch.cuda.empty_cache()
+                print('Epoch: ', epoch, ' i th: ', i)
+                #print('y_hat:', y_hat)
+                R2 = linear_regression(y_hat,y_true)
+                R2 = np.round(R2, 4)
+                #pred = y_hat.max(1, keepdim=True)[1] # 得到最大值及索引，a.max[0]为最大值，a.max[1]为最大值的索引
+                correct += R2
+                counts  += 1
+                if (i + 1) % 10 == 0:
+                # 每10个batches打印一次loss
+                    print('Epoch : %d/%d, Iter : %d/%d,  Loss: %.4f' % (epoch + 1, TOTAL_EPOCHS,
+                                                                    i + 1, len(X_train) // BATCH_SIZE,
+                                                                    loss.item()))
+            valid_correct = 0
+            valid_counts  = 0
+            scheduler.step() 
+            for i, (valid_images, valid_labels) in enumerate(validation_loader):
+                model.eval()
+                valid_images = valid_images.to(device)
+                valid_labels = valid_labels.to(device)
+                valid_output = model(valid_images)
+                valid_output = torch.squeeze(valid_output)
+                valid_loss   = criterion(valid_output, valid_labels)
+                valid_losses.append(valid_loss.item())
+                test_y_hat   = valid_output.cpu().detach().numpy()
+                test_y_true  = valid_labels.cpu().detach().numpy()
+                Valid_R2 = linear_regression(test_y_hat,test_y_true)
+                Valid_R2 = np.round( Valid_R2, 4)
+                valid_correct += Valid_R2
+                valid_counts  += 1    
+                print('Epoch : %d/%d, Iter : %d/%d,  Validate Loss: %.4f, Validate R2: %.4f' % (epoch + 1, TOTAL_EPOCHS,
+                                                                    i + 1, len(X_train) // BATCH_SIZE,
+                                                                    valid_loss.item(), Valid_R2)) 
+            accuracy = correct / counts
+            test_accuracy = valid_correct / valid_counts
+            print('Epoch: ',epoch, ', Training Loss: ', loss.item(),', Training accuracy:',accuracy, ', \nTesting Loss:', valid_loss.item(),', Testing accuracy:', test_accuracy)
+
+            train_acc.append(accuracy)
+            test_acc.append(test_accuracy)
+            print('Epoch: ',epoch,'\nLearning Rate:',optimizer.param_groups[0]['lr'])
+            
+       
+            # Each epoch calculate test data accuracy
+    if Loss_type == 'MSE' and LateFusion_setting:
+        initial_channel_index, latefusion_channel_index = find_latfusion_index()
+        for epoch in range(TOTAL_EPOCHS):
+            correct = 0
+            counts = 0
+            for i, (images, labels) in enumerate(train_loader):
+                model.train()
+                images = images.to(device)
+                labels = torch.squeeze(labels.type(torch.FloatTensor))
+                labels = labels.to(device)
+                optimizer.zero_grad()  # Set grads to zero
+                outputs = model(images[:,initial_channel_index,:,:], images[:,latefusion_channel_index,:,:]) #dimension: Nx1
                 outputs = torch.squeeze(outputs)
                 loss = criterion(outputs, labels)
                 loss.backward()  ## backward
