@@ -31,8 +31,8 @@ def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.arr
     PM25_Map = np.nan_to_num(PM25_Map, nan=5.0, posinf=3.0, neginf=2.0)
 
     Cropped_Population_Map = crop_map_data(Population_Map,population_Lat,population_Lon,extent)
-    Croppeed_PM25_Map      = crop_map_data(PM25_Map, PM25_LAT, PM25_LON)
-    PWA_PM25 = Calculate_PWA_PM25(Population_Map=Cropped_Population_Map, PM25_Map=Croppeed_PM25_Map)
+    Croppeed_PM25_Map      = crop_map_data(PM25_Map, PM25_LAT, PM25_LON,Extent=extent)
+    PWA_PM25 = Calculate_PWA_PM25(Population_array=Cropped_Population_Map, PM25_array=Croppeed_PM25_Map)
     ax = plt.axes(projection=ccrs.PlateCarree())
     m1 = 0
     m2 = np.mean(PM25_Map) * 1.5 #min(int(abs(PWA_PM25) * 2.5),120)
@@ -58,7 +58,7 @@ def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.arr
     #ax.text(extent[2], extent[1], '$RMSE = $' + str(RMSE), style='italic', fontsize=12)
     
     ax.text(extent[0]+0.01*abs(extent[1]-extent[0]),extent[2]+0.05*abs(extent[3]-extent[2]),'PWM ' + r'$\rm{PM_{2.5} = }$' + str(round(PWA_PM25,1)) +r' $\rm{(\mu g/m^3)}$', style='italic',fontsize = 6)
-    ax.text(extent[0]+0.01*abs(extent[1]-extent[0]),extent[2]+0.10*abs(extent[3]-extent[2]),'{} {}'.format(YYYY,MONTH[MM]), style='italic',fontsize = 6)
+    ax.text(extent[0]+0.01*abs(extent[1]-extent[0]),extent[2]+0.10*abs(extent[3]-extent[2]),'{} {}'.format(YYYY,MM), style='italic',fontsize = 6)
     
    # plt.scatter(PM25_Sites_LON, PM25_Sites_LAT, c=PM25_Sites, s=0.1,
     #                linewidths=0.1, marker='o', edgecolors='black', vmin=0, vmax=m2,

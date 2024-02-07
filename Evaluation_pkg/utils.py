@@ -33,7 +33,19 @@ results_dir = cfg['Pathway']['Results-dir']
 
 txt_outdir = results_dir['txt_outdir']
 
+#######################################################################################
+# Fixed number Spatial CV Training Settings
+FixNumber_Spatial_CrossValidation_Switch = cfg['FixNumber-SpatialCrossValidation']['FixNumber_CrossValidation_Switch']
 
+FixNumber_Spatial_Settings = cfg['FixNumber-SpatialCrossValidation']['TrainingSettings']
+Fixnumber_kfold  = FixNumber_Spatial_Settings['kfold']
+Fixnumber_repeats = FixNumber_Spatial_Settings['repeats']
+Fixnumber_beginyears = FixNumber_Spatial_Settings['beginyears']
+Fixnumber_endyears   = FixNumber_Spatial_Settings['endyears']
+Fixnumber_test_beginyear = FixNumber_Spatial_Settings['test_beginyear'] 
+Fixnumber_test_endyear   = FixNumber_Spatial_Settings['test_endyear'] 
+Fixednumber_test_sites   = FixNumber_Spatial_Settings['fixednumber_test_sites']
+Fixednumber_train_sites  = FixNumber_Spatial_Settings['fixednumber_train_sites']
 
 ################################## BLOO Cross-Validation ################################
 
@@ -298,6 +310,29 @@ def initialize_MonthlyDataRecording_Dic(beginyears):
     return monthly_final_test, monthly_obs_test
 
 
+def GetFixedNumber_TrainingIndex(test_index:np.array,train_index:np.array,fixed_test_number:int,fixed_train_number:int):
+    """This function is used to find fixed number of test sites and fixed number of training sites in B-LOO CV
+
+    Args:
+        test_index (np.array): _description_
+        train_index (np.array): _description_
+        buffer (float): _description_
+        fixed_test_number (int): _description_
+        fixed_train_number (int): _description_
+    """
+    selected_test_index = np.random.choice(test_index,fixed_test_number,replace=False)
+    #for isite in range(len(selected_test_index)):
+     #   temp_index = selected_test_index[isite]
+    #    train_index = find_sites_nearby(test_lat=sitelat[temp_index],test_lon=sitelon[temp_index],
+       #                                 train_index=train_index,train_lat=sitelat,train_lon=sitelon,buffer_radius=buffer)
+    #print('Radius: ',buffer,' - INIT Training index number: ',len(train_index))
+    if len(train_index)<fixed_train_number:
+        return selected_test_index,train_index
+    else:
+        selected_train_index = np.random.choice(train_index, fixed_train_number, replace=False)
+        return selected_test_index,selected_train_index
+
+
 ############# BLOO CV toolkits ####################
 
 
@@ -314,7 +349,7 @@ def GetBufferTrainingIndex(test_index:np.array,train_index:np.array,buffer:float
         train_index = find_sites_nearby(test_lat=sitelat[test_index[isite]],test_lon=sitelon[test_index[isite]],train_index=train_index,
                                         train_lat=sitelat,train_lon=sitelon,buffer_radius=buffer)
     time_end = time.time()
-    print('Number of train index: ',len(train_index),'\nNumber of test index: ', len(test_index),'\nTime consume: ',str(np.round(time_end-time_start,4)),'s')
+    #print('Number of train index: ',len(train_index),'\nNumber of test index: ', len(test_index),'\nTime consume: ',str(np.round(time_end-time_start,4)),'s')
     return train_index
 
 

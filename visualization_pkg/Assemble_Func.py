@@ -25,10 +25,10 @@ def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,typeName:str,width:
             for MM in PLOT_MONTHS:
                 Estimation_Map_Figure_outfile = save_estimation_map_figure(typeName=typeName,species=species,
                                                                    version=version,Area=Area,nchannel=len(channel_names),width=width,height=height,
-                                                                   special_name=special_name)
+                                                                   special_name=special_name,YYYY=YEAR,MM=MM)
                 SPECIES_Map, lat, lon = load_estimation_map_data(YYYY=YEAR,MM=MM,SPECIES=species,version=version,special_name=special_name)
                 Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=YEAR,MM=MM)
-                Plot_Species_Map_Figures(PM25_Map=SPECIES_Map,PM25_LAT=lat,PM25_LON=lon,Population_Map=Population_Map,extent=Map_Plot_Extent,outfile=Estimation_Map_Figure_outfile
+                Plot_Species_Map_Figures(PM25_Map=SPECIES_Map,PM25_LAT=lat,PM25_LON=lon,Population_Map=Population_Map,population_Lat=Pop_lat,population_Lon=Pop_lon,extent=Map_Plot_Extent,outfile=Estimation_Map_Figure_outfile
                                          ,YYYY=YEAR,MM=MM)
     return
 
