@@ -49,7 +49,7 @@ test_endyear                                          = 2019
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = true
+regression_plot_switch                                = false
 
 [Spatial-CrossValidation.Forced-Slope-Unity]
 
@@ -61,16 +61,34 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 [BLOO-CrossValidation]
 
 BLOO_CrossValidation_Switch                           = false
-Buffer_size                                           = [200]
+Buffer_size                                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
 
 [BLOO-CrossValidation.TrainingSettings]
 
-kfold                                                 = 10
+kfold                                                 = 30
 repeats                                               = 1
 beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 test_beginyear                                        = 2001
 test_endyear                                          = 2019
+
+
+#########################################################################################################################################################
+
+[FixNumber-SpatialCrossValidation]
+
+FixNumber_CrossValidation_Switch                      = false
+
+[FixNumber-SpatialCrossValidation.TrainingSettings]
+
+kfold                                                 = 30
+repeats                                               = 1
+beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+test_beginyear                                        = 2001
+test_endyear                                          = 2019
+fixednumber_test_sites                                = []
+fixednumber_train_sites                               = []
 
 
 
@@ -79,15 +97,15 @@ test_endyear                                          = 2019
 [Estimation-Settings]
 
 Estimation_Switch                                     = true
-Train_model_Switch                                    = true
+Train_model_Switch                                    = false
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
-Derive_combinedGeo_MapData_Switch                     = true
+Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-endyears                                              = [2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
@@ -100,10 +118,10 @@ Extent                                                = [10.055,69.945,-169.945,
 [Estimation-Settings.Visualization_Settings]
 
 Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
-Map_Plot_YEARS                                        = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Map_Plot_YEARS                                        = [2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
-Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
+Map_Plot_Extent                                       = [10.055,69.945,-169.945,-40.055]
 
 [Estimation-Settings.CombineWithGeophysical_Settings]
 
@@ -113,25 +131,25 @@ Coefficient_start_distance                            = 130
 
 [Uncertainty-Settings]
 
-Uncertainty_Switch                                    = false
+Uncertainty_Switch                                    = true
 Derive_distances_map_Switch                           = true
-Derive_rRMSE_map_Switch                               = true
-Derive_absolute_Uncertainty_map_Switch                = true
-Uncertainty_visualization_Switch                      = true
+Derive_rRMSE_map_Switch                               = false
+Derive_absolute_Uncertainty_map_Switch                = false
+Uncertainty_visualization_Switch                      = false
 
 
 
 [Uncertainty-Settings.Map_Estimation_Settings]
 
-Estimation_years                                      = [[2018],[2019]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
+Estimation_years                                      = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Estiamtion_months                                     = [0,1,2,3,4,5,6,7,8,9,10,11]
-Extent                                                = [10.055,69.945,-169.945,-50.055]
 Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
 
 [Uncertainty-Settings.Visualization_Settings]
 
-Uncertainty_Plot_Switch                               = true       # Switch for plotting the map of estimated concentration. 
-Uncertainty_Plot_YEARS                                = [2018]
+Uncertainty_Plot_Switch                               = false       # Switch for plotting the map of estimated concentration. 
+Uncertainty_Plot_YEARS                                = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Uncertainty_Plot_Extent                               = [10.055,69.945,-169.945,-50.055]
 Uncertainty_Plot_MONTHS                               = ['01']
 Uncertainty_Plot_Area                                 = 'NA'
 

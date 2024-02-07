@@ -4,8 +4,8 @@ from Training_pkg.utils import *
 from Training_pkg.iostream import load_TrainingVariables
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure, plot_save_estimation_map_figure
 from visualization_pkg.Evaluation_plot import regression_plot
-from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation
-from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation
+from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
+from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
 from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording
 from Evaluation_pkg.utils import *
 from Estimation_pkg.Estimation import Estimation_Func
@@ -57,10 +57,23 @@ if __name__ == '__main__':
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_BLOO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
             BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+            #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
 
+    if FixNumber_Spatial_CrossValidation_Switch:
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-FixNumberCV/'.format(species, version)
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        for i in range(len(Fixednumber_test_sites)):
+            if not os.path.isdir(cfg_outdir):
+                os.makedirs(cfg_outdir)
+            cfg_outfile = cfg_outdir + 'config_FixNumber_SpatialCV_{}-test-sites_{}-train-sites_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(Fixednumber_test_sites[i],Fixednumber_train_sites[i],typeName,species,version,nchannel,width,height,special_name)
+            FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_train_site=Fixednumber_train_sites[i],Fixednumber_test_site=Fixednumber_test_sites[i],width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+            f = open(cfg_outfile,'w')
+            toml.dump(cfg, f)
+            f.close()
+            
     if Estimation_Switch:
         Estimation_Func()
 

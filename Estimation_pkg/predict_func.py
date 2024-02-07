@@ -44,7 +44,7 @@ def map_predict(inputmap:np.array, model, train_mean:np.array,train_std:np.array
             output[ix,land_index[0]] = temp_output
     Total_end_time = time.time()
     Total_map_predict_time = Total_end_time - Total_start_time
-    print(YYYY, MM, 'Prediction Ended! Time is ', Total_map_predict_time, 's')
+    print(YYYY, MM, 'Prediction Ended! Time is ', Total_map_predict_time, 's', '\nShape of Map:', output.shape)
 
     return output
 
@@ -54,9 +54,9 @@ def map_final_output(output,extent,YYYY,MM, SPECIES, bias,normalize_bias,normali
     GeoSpecies = np.load(infiles['Geo{}'.format(SPECIES)])
     
     if bias == True:
-        final_data = output + GeoSpecies[lat_index, lon_index]
+        final_data = output + GeoSpecies[lat_index[0]:lat_index[-1]+1,lon_index[0]:lon_index[-1]+1]
     elif normalize_bias == True:
-        final_data = output * std + mean + GeoSpecies[lat_index, lon_index]
+        final_data = output * std + mean + GeoSpecies[lat_index[0]:lat_index[-1]+1,lon_index[0]:lon_index[-1]+1]
     elif normalize_species == True:
         final_data = output * std + mean
     elif absolute_species == True:
