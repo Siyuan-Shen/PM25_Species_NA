@@ -113,7 +113,7 @@ Estiamtion_trained_beginyears                         = [2011,2012,2013,2014,201
 Estiamtion_trained_endyears                           = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Estimation_years                                      = [[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
 Estiamtion_months                                     = [0,1,2,3,4,5,6,7,8,9,10,11]
-Extent                                                = [10.055,69.945,-169.945,-50.055]
+Extent                                                = [10.055,69.945,-169.945,-40.055]
 
 [Estimation-Settings.Visualization_Settings]
 
@@ -186,7 +186,7 @@ LateFusion.Settings                                   = false
 LateFusion.Blocks                                     = 'BasicBlock'
 LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 
-                                                       'GL_CNN_PM25',
+                                                       'GL_CNN_PM25','NA_CNN_PM25',
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
                                                        'NH3_anthro_emi', 'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 'NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
