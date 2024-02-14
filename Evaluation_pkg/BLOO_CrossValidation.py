@@ -122,7 +122,7 @@ def BLOO_AVD_Spatial_CrossValidation(buffer_radius,width, height, sitesnumber,st
     txt_outfile =  txtfile_outdir + 'Buffered-{}km-{}fold-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(buffer_radius,BLOO_kfold,typeName,species,version,nchannel,width,height,special_name)
 
     Output_Text_Sites_Number(outfile=txt_outfile, status='w', train_index_number=train_index_number, test_index_number=test_index_number, buffer=buffer_radius)
-    AVD_output_text(outfile=txt_outfile,status='w', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
+    AVD_output_text(outfile=txt_outfile,status='a', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
     save_BLOO_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,buffer_radius=buffer_radius)
