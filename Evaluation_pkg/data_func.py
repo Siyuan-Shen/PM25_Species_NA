@@ -186,7 +186,7 @@ def calculate_Alltime_Statistics_results(test_beginyear:dict,test_endyear:int,te
             geo_CV_R2_Alltime['Alltime'][imonth]      = get_mean_min_max_statistic(temp_geo_CV_R2_Alltime)
             RMSE_Alltime['Alltime'][imonth]           = get_mean_min_max_statistic(temp_RMSE_Alltime)
             NRMSE_Alltime['Alltime'][imonth]          = get_mean_min_max_statistic(temp_NRMSE_Alltime)
-            PWM_NRMSE_Alltime['Alltime'][imonth]      = get_mean_min_max_statistic(temp_NRMSE_Alltime)
+            PWM_NRMSE_Alltime['Alltime'][imonth]      = get_mean_min_max_statistic(temp_PWM_NRMSE_Alltime)
             slope_Alltime['Alltime'][imonth]          = get_mean_min_max_statistic(temp_slope_Alltime)
             PWAModel_Alltime['Alltime'][imonth]       = get_mean_min_max_statistic(temp_PWAModel_Alltime)
             PWAMonitors_Alltime['Alltime'][imonth]    = get_mean_min_max_statistic(temp_PWAMonitors_Alltime)

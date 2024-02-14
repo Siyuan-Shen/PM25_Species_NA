@@ -225,7 +225,7 @@ batchsize                                             = 128
 
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
                                                         #'GeoNIT','GeoNH4','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
-                                                       'GL_CNN_PM25',
+                                                       'GL_CNN_PM25','NA_CNN_PM25',
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
                                                        'NH3_anthro_emi', 'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 'NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
