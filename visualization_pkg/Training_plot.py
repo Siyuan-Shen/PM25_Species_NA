@@ -41,5 +41,6 @@ def plot_loss_accuracy_with_epoch(loss, accuracy, outfile):
     fig.suptitle("Loss and R2 vs Epoch", fontsize=32)
 
     fig.savefig(outfile, dpi=1000,transparent = True,bbox_inches='tight' )
+    plt.close()
     return                                                                                                                                                                                                                                                                                                                
 

@@ -40,6 +40,7 @@ def load_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_
     lat = MapData.variables['latitude'][:]
     lon = MapData.variables['longitude'][:]
     SPECIES_Map = MapData.variables[SPECIES][:]
+    SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
 
 def save_trained_model_forEstimation(cnn_model, model_outdir, typeName, version, species, nchannel, special_name,beginyear, endyear, width, height):
