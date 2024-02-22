@@ -1,5 +1,5 @@
 import toml
-
+import numpy as np
 cfg = toml.load('./config.toml')
 
 #######################################################################################
@@ -25,3 +25,11 @@ Uncertainty_Plot_MONTHS = Uncertainty_Visualization_Settings['Uncertainty_Plot_M
 Uncertainty_Plot_Area   = Uncertainty_Visualization_Settings['Uncertainty_Plot_Area']
 Uncertainty_Plot_Extent = Uncertainty_Visualization_Settings['Uncertainty_Plot_Extent']
 
+def get_extent_lat_lon_map(lat_index,lon_index,SATLAT,SATLON):
+    extent_lat_map = np.zeros((len(lat_index),len(lon_index)),dtype=np.float32)
+    extent_lon_map = np.zeros((len(lat_index),len(lon_index)),dtype=np.float32)
+    for iy in range(len(lon_index)):
+        extent_lat_map[:,iy] = SATLAT[lat_index]
+    for ix in range(len(lat_index)):
+        extent_lon_map[ix,:] = SATLON[lon_index]
+    return extent_lat_map,extent_lon_map

@@ -68,6 +68,7 @@ Global_CNN_PM25_input_indir         = '/my-projects/Projects/PM25_Speices_DL_202
 NA_CNN_PM25_input_indir             = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/NorthAmerica_CNN_PM25/v1.0.0/'
 GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GFED4_Emissions_input/'
 Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
+
 def inputfiles_table(YYYY, MM):
     inputfiles_dic = {
         #####################[Variables from Satellite] ###################
@@ -124,12 +125,12 @@ def inputfiles_table(YYYY, MM):
         'Total_DM'           : GFED4_input_indir + '{}/GFED4-DM_TOTL_001x001_{}{}.npy'.format(YYYY, YYYY, MM),
 
         ##################### [Variables from Meteorology] ###################
-        'PBLH'               : Meteorology_input_indir + '{}/PBLH_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'PRECTOT'            : Meteorology_input_indir + '{}/PRECTOT_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'RH'                 : Meteorology_input_indir + '{}/RH_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'T2M'                : Meteorology_input_indir + '{}/T2M_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'U10M'               : Meteorology_input_indir + '{}/U10M_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'V10M'               : Meteorology_input_indir + '{}/V10M_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'PBLH'               : Meteorology_input_indir + '{}/PBLH_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'PRECTOT'            : Meteorology_input_indir + '{}/PRECTOT_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'RH'                 : Meteorology_input_indir + '{}/RH_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'T2M'                : Meteorology_input_indir + '{}/T2M_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'U10M'               : Meteorology_input_indir + '{}/U10M_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'V10M'               : Meteorology_input_indir + '{}/V10M_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
 
         ##################### [Variables from Land Cover] ###################
         'Crop_Nat_Vege_Mos'  : LandCover_input_indir + 'Cropland-Natural-Vegetation-Mosaics/Cropland-Natural-Vegetation-Mosaics-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),

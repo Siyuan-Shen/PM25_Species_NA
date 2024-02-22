@@ -32,13 +32,13 @@ def Estimation_Func():
     
         del  TrainingDatasets, Initial_Normalized_TrainingData,true_input
         gc.collect()
-
+        MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
         for imodel in range(len(Estiamtion_trained_beginyears)):
             model = load_trained_model_forEstimation(model_outdir=model_outdir,typeName=typeName,version=version,species=species, nchannel=len(channel_names),special_name=special_name,
                                                              beginyear=Estiamtion_trained_beginyears[imodel],endyear=Estiamtion_trained_endyears[imodel], width=width, height=height)
             for YEAR in Estimation_years[imodel]:
                 for imonth in Estiamtion_months:
-                    MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
+                    print('YEAR: {}, MONTH: {}'.format(YEAR,MM[imonth]))
                     map_input = load_map_data(channel_names=channel_names,YYYY=YEAR,MM=MM[imonth])
                     final_map_data = map_predict(inputmap=map_input,model=model,train_mean=input_mean,train_std=input_std,extent=Extent,width=width,nchannel=len(channel_names),YYYY=YEAR,MM=MM[imonth])
                     final_map_data = map_final_output(output=final_map_data,extent=Extent,YYYY=YEAR,MM=MM[imonth],SPECIES=species,bias=bias,

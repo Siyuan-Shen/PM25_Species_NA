@@ -27,15 +27,17 @@ def Derive_Estimation_Uncertainty():
     if Derive_absolute_Uncertainty_map_Switch:
         for iyear in range(len(Uncertainty_Estimation_years)):
             for imonth in range(len(Uncertainty_Estimation_months)):
-                Estimation_Map = load_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],MM=MONTH[Uncertainty_Estimation_months[imonth]],
+                print('Derive Absolute Uncertainty - YEAR:{}, MONTH:{}'.format(Uncertainty_Estimation_years[iyear],Uncertainty_Estimation_months[imonth]))
+                Estimation_Map,lat, lon = load_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],MM=Uncertainty_Estimation_months[imonth],
                                                           SPECIES=species,version=version,special_name=special_name)
-                rRMSE_Map      = load_rRMSE_map_data(MM=MONTH[Uncertainty_Estimation_months[imonth]],version=version,special_name=special_name)
+                rRMSE_Map,lat, lon      = load_rRMSE_map_data(MM=Uncertainty_Estimation_months[imonth],version=version,special_name=special_name)
+                print('rRMSE type:{}, Estimation type:{}'.format(type(rRMSE_Map),type(Estimation_Map)))
                 Absolute_Uncertainty_Map = rRMSE_Map * Estimation_Map
                 save_absolute_uncertainty_data(final_data=Absolute_Uncertainty_Map,YYYY=Uncertainty_Estimation_years[iyear],
-                                               MM=MONTH[Uncertainty_Estimation_months[imonth]])
+                                               MM=Uncertainty_Estimation_months[imonth])
     if Uncertainty_visualization_Switch:
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         typeNAME = Get_typeName(bias=bias,normalize_bias=normalize_bias,normalize_species=normalize_species,
-                                absolute_species=absolute_species,log_species=log_species)
+                                absolute_species=absolute_species,log_species=log_species,species=species)
         plot_save_uncertainty_map_figure(typeName=typeNAME,width=width,height=height,species=species,version=version,Area=Uncertainty_Plot_Area,PLOT_YEARS=Uncertainty_Estimation_years,PLOT_MONTHS=Uncertainty_Estimation_months)
     return

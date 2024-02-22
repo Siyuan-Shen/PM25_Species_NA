@@ -10,7 +10,7 @@ geophysical_biases_data_dir                           = '/my-projects/Projects/P
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TraningDatasets/PM25/PM25-cnn_TrainingData_52channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/PM25/PM25-cnn_TrainingData_54channels_11x11_200001-201912.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -36,7 +36,7 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 [Spatial-CrossValidation]
 
 Spatial_CrossValidation_Switch                        = false
-Spatial_CV_LossAccuracy_plot_Switch                   = true
+Spatial_CV_LossAccuracy_plot_Switch                   = false
 
 [Spatial-CrossValidation.Training_Settings]
 
@@ -65,7 +65,7 @@ Buffer_size                                           = [0,10,20,30,40,50,60,70,
 
 [BLOO-CrossValidation.TrainingSettings]
 
-kfold                                                 = 30
+kfold                                                 = 10
 repeats                                               = 1
 beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
@@ -96,32 +96,32 @@ fixednumber_train_sites                               = []
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = true
+Estimation_Switch                                     = false
 Train_model_Switch                                    = false
 Map_estimation_Switch                                 = true
-Estimation_visualization_Switch                       = true
+Estimation_visualization_Switch                       = false
 Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+beginyears                                            = [2001]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+endyears                                              = [2001]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
-Estiamtion_trained_endyears                           = [2011,2012,2013,2014,2015,2016,2017,2018,2019]
-Estimation_years                                      = [[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
+Estiamtion_trained_beginyears                         = [2001]
+Estiamtion_trained_endyears                           = [2001]
+Estimation_years                                      = [[2001]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
 Estiamtion_months                                     = [0,1,2,3,4,5,6,7,8,9,10,11]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 
 [Estimation-Settings.Visualization_Settings]
 
-Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
+Map_Plot_Switch                                       = false       # Switch for plotting the map of estimated concentration. 
 Map_Plot_YEARS                                        = [2011,2012,2013,2014,2015,2016,2017,2018,2019]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
-Map_Plot_Extent                                       = [10.055,69.945,-169.945,-40.055]
+Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
 
 [Estimation-Settings.CombineWithGeophysical_Settings]
 
@@ -132,25 +132,25 @@ Coefficient_start_distance                            = 130
 [Uncertainty-Settings]
 
 Uncertainty_Switch                                    = true
-Derive_distances_map_Switch                           = true
+Derive_distances_map_Switch                           = false
 Derive_rRMSE_map_Switch                               = false
 Derive_absolute_Uncertainty_map_Switch                = false
-Uncertainty_visualization_Switch                      = false
+Uncertainty_visualization_Switch                      = true
 
 
 
 [Uncertainty-Settings.Map_Estimation_Settings]
 
-Estimation_years                                      = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-Estiamtion_months                                     = [0,1,2,3,4,5,6,7,8,9,10,11]
+Estimation_years                                      = [2011,2012,2013,2014,2015,2016,2017]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Estiamtion_months                                     = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
 
 [Uncertainty-Settings.Visualization_Settings]
 
-Uncertainty_Plot_Switch                               = false       # Switch for plotting the map of estimated concentration. 
-Uncertainty_Plot_YEARS                                = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Uncertainty_Plot_Switch                               = true       # Switch for plotting the map of estimated concentration. 
+Uncertainty_Plot_YEARS                                = [2011,2012,2013,2014,2015,2016,2017]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Uncertainty_Plot_Extent                               = [10.055,69.945,-169.945,-50.055]
-Uncertainty_Plot_MONTHS                               = ['01']
+Uncertainty_Plot_MONTHS                               = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Uncertainty_Plot_Area                                 = 'NA'
 
 
@@ -225,7 +225,7 @@ batchsize                                             = 128
 
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
                                                         #'GeoNIT','GeoNH4','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
-                                                       'GL_CNN_PM25','NA_CNN_PM25',
+                                                       'GL_CNN_PM25',#'NA_CNN_PM25',
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
                                                        'NH3_anthro_emi', 'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 'NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
