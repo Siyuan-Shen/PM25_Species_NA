@@ -130,7 +130,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
                 model.eval()
                 valid_images = valid_images.to(device)
                 valid_labels = valid_labels.to(device)
-                valid_output = model(valid_images)
+                valid_output = model(valid_images[:,initial_channel_index,:,:], valid_images[:,latefusion_channel_index,:,:])
                 valid_output = torch.squeeze(valid_output)
                 valid_loss   = criterion(valid_output, valid_labels)
                 valid_losses.append(valid_loss.item())
@@ -165,14 +165,29 @@ def predict(inputarray, model, batchsize):
     predictinput = DataLoader(Dataset_Val(inputarray), batch_size= batchsize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    with torch.no_grad():
-        for i, image in enumerate(predictinput):
-            image = image.to(device)
-            output = model(image).cpu().detach().numpy()
-            final_output = np.append(final_output,output)
+    if ResNet_setting:
+        with torch.no_grad():
+            for i, image in enumerate(predictinput):
+                image = image.to(device)
+                output = model(image).cpu().detach().numpy()
+                final_output = np.append(final_output,output)
+    elif LateFusion_setting:
+        initial_channel_index, latefusion_channel_index = find_latfusion_index()
+        with torch.no_grad():
+            for i, image in enumerate(predictinput):
+                image = image.to(device)
+                output = model(image[:,initial_channel_index,:,:],image[:,latefusion_channel_index,:,:]).cpu().detach().numpy()
+                final_output = np.append(final_output,output)
 
     return final_output
 
+
+class SelfDesigned_LossFunction():
+    def __init__(self,Loss_Type,size_average=None,reduce=None,reduction:str='mean')->None:
+        super(SelfDesigned_LossFunction,self).__init__()
+        self.Loss_Type = Loss_Type
+    def forward(self):
+        return
 def loss_func_lookup_table(Loss_Type:str):
     if Loss_Type == 'MSE':
         return nn.MSELoss()

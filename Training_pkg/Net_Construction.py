@@ -216,10 +216,11 @@ class LateFusion_ResNet(nn.Module):
         super(LateFusion_ResNet, self).__init__()
         self.include_top = include_top
         self.in_channel = 64  
-
+        self.in_channel_lf = 16
         self.groups = groups
         self.width_per_group = width_per_group
         self.actfunc = activation_func
+        
         # 输入层有RGB三个分量，使得输入特征矩阵的深度是3
         self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
@@ -227,24 +228,25 @@ class LateFusion_ResNet(nn.Module):
         ,activation_func
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
-        
-        self.layer1 = self._make_layer(block, 64, blocks_num[0])
-        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
-        self.layer3 = self._make_layer_fused(block, 256, blocks_num[2], stride=1)
-        self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
-        
-
-        self.in_channel_lf = 16
         self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel_lf)
         ,activation_func
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        
+        self.layer1 = self._make_layer(block, 64, blocks_num[0])
+        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
+        self.layer3 = self._make_layer(block, 256, blocks_num[3], stride=1)
 
         self.layer1_lf = self._make_layer_lf(block, 32, blocks_num[0])
         self.layer2_lf = self._make_layer_lf(block, 64, blocks_num[1], stride=1)
         self.layer3_lf = self._make_layer_lf(block, 64, blocks_num[2], stride=1)
-        self.layer4_lf = self._make_layer_lf(block, 128, blocks_num[3], stride=1)
+
+        self.fuse_layer = self._make_layer_fused(block, 512, blocks_num[2], stride=1)
+        
+                
+        
+        
 
         if self.include_top: 
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  
@@ -304,8 +306,10 @@ class LateFusion_ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def _make_layer_fused(self, block, channel, block_num, stride=1):
-        downsample = None
-        
+        if stride != 1 or (self.in_channel_lf+self.in_channel) != channel * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.in_channel_lf+self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(channel * block.expansion))
         layers = []
         
         layers.append(block(self.in_channel_lf+self.in_channel,
@@ -315,7 +319,7 @@ class LateFusion_ResNet(nn.Module):
                             groups=self.groups,
                             width_per_group=self.width_per_group))
 
-        self.in_channel = self.in_channel_lf+self.in_channel# The input channel changed here!``
+        self.in_channel = channel * block.expansion # The input channel changed here!``
         
         for _ in range(1, block_num):
             layers.append(block(self.in_channel,
@@ -333,14 +337,16 @@ class LateFusion_ResNet(nn.Module):
         x = self.layer0(x)
         x = self.layer1(x)
         x = self.layer2(x)
+        x = self.layer3(x)
 
         x_lf = self.layer0_lf(x_lf)
         x_lf = self.layer1_lf(x_lf)
         x_lf = self.layer2_lf(x_lf)
-
+        x_lf = self.layer3_lf(x_lf)
+        
+        
         x = torch.cat((x,x_lf),1)
-        x = self.layer3(x)
-        x = self.layer4(x)
+        x = self.fuse_layer(x)
 
         if self.include_top:  
             x = self.avgpool(x)
