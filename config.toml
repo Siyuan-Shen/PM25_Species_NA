@@ -162,7 +162,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 [Training-Settings.identity]
 
 version                                               = 'v1.2.0'
-special_name                                          = '_FuseLayer4_1'
+special_name                                          = '_FuseLayer4_1_SeperateLoc'
 
 [Training-Settings.learning-objective]
 
@@ -188,13 +188,15 @@ LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
                                                         'GeoNIT','GeoNH4','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
-                                                       'NH3_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
-                                                       'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
-                                                       'Urban_Builtup_Lands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
+                                                       'NH3_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 
+                                                       'DST_offline_emi', 'SSLT_offline_emi',
+                                                       'Urban_Builtup_Lands', 
                                                        ] 
-LateFusion.LateFusion_channels                         = ['Lat', 'Lon','elevation']
+LateFusion.LateFusion_channels                         = [
+                                                        'Lat', 'Lon'
+                                                        ]
 
 [Training-Settings.learning_rate]
 
@@ -234,7 +236,7 @@ channel_names                                         = ['EtaAOD_Bias', 'EtaCoas
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                        'Urban_Builtup_Lands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
-                                                       'Lat', 'Lon','elevation',#'S1','S2','S3','  'Lat', 'Lon',
+                                                       'Lat', 'Lon'#,'elevation',#'S1','S2','S3','  'Lat', 'Lon',
                                                         #'Population'
                                                        ] 
 

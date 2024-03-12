@@ -19,10 +19,10 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
     test_acc  = []
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    criterion = loss_func_lookup_table(Loss_Type=Loss_type)
+    criterion = SelfDesigned_LossFunction()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
     scheduler = lr_strategy_lookup_table(optimizer=optimizer)
-    if Loss_type == 'MSE' and ResNet_setting:
+    if ResNet_setting:
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
             counts = 0
@@ -87,7 +87,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
             
        
             # Each epoch calculate test data accuracy
-    if Loss_type == 'MSE' and LateFusion_setting:
+    if LateFusion_setting:
         initial_channel_index, latefusion_channel_index = find_latfusion_index()
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
@@ -182,14 +182,14 @@ def predict(inputarray, model, batchsize):
     return final_output
 
 
-class SelfDesigned_LossFunction():
-    def __init__(self,Loss_Type,size_average=None,reduce=None,reduction:str='mean')->None:
+class SelfDesigned_LossFunction(nn.Module):
+    def __init__(self,size_average=None,reduce=None,reduction:str='mean')->None:
         super(SelfDesigned_LossFunction,self).__init__()
-        self.Loss_Type = Loss_Type
-    def forward(self):
-        return
-def loss_func_lookup_table(Loss_Type:str):
-    if Loss_Type == 'MSE':
-        return nn.MSELoss()
+        self.Loss_Type = Loss_type
+    def forward(self,model_output,target):
+        if self.Loss_Type == 'MSE':
+            loss = F.mse_loss(model_output, target)
+            return loss
+
     
     
