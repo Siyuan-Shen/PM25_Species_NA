@@ -1,10 +1,10 @@
 #!/bin/bash
 #BSUB -q general
-#BSUB -R 'gpuhost rusage[mem=300GB] span[hosts=1]'
+#BSUB -R 'gpuhost rusage[mem=150GB] span[hosts=1]'
 #BSUB -G compute-rvmartin
 #BSUB -gpu "num=1:gmodel=NVIDIAA40"
 #BSUB -a 'docker(syword/python3-pytorch:2023.12)'
-#BSUB -J "PM25 Map 2011-2019"
+#BSUB -J "NH4 Exclude Industrial Sites"
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu
@@ -12,6 +12,6 @@
 
 /bin/true
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.0.0/
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/NH4/v1.2.0-Exclude_Industrial_Sites
 python3 main.py
 

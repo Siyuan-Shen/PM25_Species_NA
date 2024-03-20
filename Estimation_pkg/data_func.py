@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import netCDF4 as nc
 from Uncertainty_pkg.iostream import load_pixels_nearest_sites_distances_map
 from Estimation_pkg.iostream import load_map_data
 from Estimation_pkg.utils import *
@@ -52,9 +53,17 @@ def get_GL_extent_index(extent)->np.array:
     return lat_index,lon_index
 
 def get_landtype(YYYY,extent)->np.array:
-    landtype_infile = '/my-projects/Projects/MLCNN_PM25_2021/data/inputdata/Other_Variables_MAP_INPUT/{}/MCD12C1_LandCoverMap_{}.npy'.format(YYYY,YYYY)
-    landtype = np.load(landtype_infile)
-    landtype = np.array(landtype,dtype=int)
+    #landtype_infile = '/my-projects/Projects/MLCNN_PM25_2021/data/inputdata/Other_Variables_MAP_INPUT/{}/MCD12C1_LandCoverMap_{}.npy'.format(YYYY,YYYY)
+    #landtype = np.load(landtype_infile)
+    Mask_indir = '/my-projects/mask/NA_Masks/Cropped_NA_Masks/'
+
+    Contiguous_US_data = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Contiguous United States.nc')
+    Canada_data        = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Canada.nc')
+    Alaska_data        = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Alaska.nc')
+    Contiguous_US_mask = np.array(Contiguous_US_data['regionmask'][:])
+    Canada_mask        = np.array(Canada_data['regionmask'][:])
+    Alaska_mask        = np.array(Alaska_data['regionmask'][:])
+    landtype = Contiguous_US_mask + Canada_mask + Alaska_mask
     lat_index,lon_index = get_GL_extent_index(extent=extent)
     output = np.zeros((len(lat_index),len(lon_index)), dtype=int)
     for ix in range(len(lat_index)):

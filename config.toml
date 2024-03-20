@@ -4,16 +4,16 @@
 
 [Pathway.observations-dir]
 
-ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/' 
-geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/'
-geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/'
-ground_observation_data_infile                        = '{}_monthly_observations.nc'
-geophysical_species_data_infile                       = '{}_monthly_geophysical_concentration.nc'
-geophysical_biases_data_infile                        = '{}_monthly_biases_concentration.nc'
+ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/Exclude_IndustrialSites_observations/' 
+geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/Exclude_IndustrialSites_observations/'
+geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/Exclude_IndustrialSites_observations/'
+ground_observation_data_infile                        = '{}_ExcludeIndustrialSites_monthly_observations.nc'
+geophysical_species_data_infile                       = '{}_monthly_ExcludeIndustrialSites_geophysical_concentration.nc'
+geophysical_biases_data_infile                        = '{}_monthly_ExcludeIndustrialSites_biases_concentration.nc'
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_54channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912_Exclude-Industrial-Sites.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -164,8 +164,8 @@ Uncertainty_Plot_Area                                 = 'NA'
 
 [Training-Settings.identity]
 
-version                                               = 'v1.2.0'
-special_name                                          = '1.2.0-Exclude_Industrial_Sites'
+version                                               = 'v1.2.0-Exclude_Industrial_Sites'
+special_name                                          = '_Exclude_Industrial_Sites'
 
 [Training-Settings.learning-objective]
 
@@ -189,16 +189,18 @@ LateFusion.Settings                                   = true
 LateFusion.Blocks                                     = 'BasicBlock'
 LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                        'GeoNIT','GeoNH4','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
-                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
-                                                       'NH3_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi', 
+                                                        'NH3_anthro_emi','OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
-                                                       'Urban_Builtup_Lands', 
+                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
+                                                       'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       #'S1','S2','S3','elevation',#'S1','S2','S3','  'Lat', 'Lon',
+                                                        #'Population'
                                                        ] 
 LateFusion.LateFusion_channels                         = [
-                                                        'Lat', 'Lon'
+                                                        'Lat', 'Lon','Month_of_Year',
                                                         ]
 
 [Training-Settings.learning_rate]
@@ -210,7 +212,7 @@ ExponentialLR.gamma                                   = 0.9
 
 CosineAnnealingLR.Settings                            = true
 CosineAnnealingLR.T_max                               = 10
-CosineAnnealingLR.eta_min                             = 1e-4
+CosineAnnealingLR.eta_min                             = 18
 
 CosineAnnealingRestartsLR.Settings                    = false
 CosineAnnealingRestartsLR.T_0                         = 10
@@ -232,14 +234,15 @@ epoch                                                 = 30
 batchsize                                             = 128
 
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                        'GeoNIT','GeoNH4','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
-                                                       'NH3_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                        'NH3_anthro_emi','OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
-                                                       'Urban_Builtup_Lands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
-                                                       'Lat', 'Lon'#,'elevation',#'S1','S2','S3','  'Lat', 'Lon',
+                                                       'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       'Month_of_Year',
+                                                       'Lat', 'Lon',#'S1','S2','S3','elevation',#'S1','S2','S3','  'Lat', 'Lon',
                                                         #'Population'
                                                        ] 
 
