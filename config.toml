@@ -7,10 +7,13 @@
 ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/' 
 geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/'
 geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/'
+ground_observation_data_infile                        = '{}_monthly_observations.nc'
+geophysical_species_data_infile                       = '{}_monthly_geophysical_concentration.nc'
+geophysical_biases_data_infile                        = '{}_monthly_biases_concentration.nc'
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/NH4/NH4-cnn_TrainingData_54channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_54channels_11x11_200001-201912.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -162,7 +165,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 [Training-Settings.identity]
 
 version                                               = 'v1.2.0'
-special_name                                          = '_FuseLayer4_1_SeperateLoc'
+special_name                                          = '1.2.0-Exclude_Industrial_Sites'
 
 [Training-Settings.learning-objective]
 

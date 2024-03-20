@@ -9,9 +9,12 @@ cfg = toml.load('./config.toml')
 # Observation Path
 obs_dir = cfg['Pathway']['observations-dir']
 
-geophysical_species_data_dir = obs_dir['geophysical_species_data_dir']
-geophysical_biases_data_dir  = obs_dir['geophysical_biases_data_dir']
-ground_observation_data_dir  = obs_dir['ground_observation_data_dir']
+geophysical_species_data_dir    = obs_dir['geophysical_species_data_dir']
+geophysical_biases_data_dir     = obs_dir['geophysical_biases_data_dir']
+ground_observation_data_dir     = obs_dir['ground_observation_data_dir']
+geophysical_species_data_infile = obs_dir['geophysical_species_data_infile']
+geophysical_biases_data_infile  = obs_dir['geophysical_biases_data_infile']
+ground_observation_data_infile  = obs_dir['ground_observation_data_infile']
 #######################################################################################
 # Training file Path
 Training_dir = cfg['Pathway']['TrainingModule-dir']
@@ -104,6 +107,13 @@ CombineWithGeophysical = cfg['Training-Settings']['CombineWithGeophysical']
 
 combine_with_GeophysicalSpeceis_Switch                = CombineWithGeophysical['combine_with_GeophysicalSpeceis_Switch']
 cutoff_size                                           = CombineWithGeophysical['cutoff_size']
+
+
+
+training_infile = training_infile.format(species,species)
+geophysical_biases_data_infile  = geophysical_biases_data_infile.format(species)
+geophysical_species_data_infile = geophysical_species_data_infile.format(species)
+ground_observation_data_infile  = ground_observation_data_infile.format(species)
 
 def activation_function_table():
     if ReLU_ACF == True:

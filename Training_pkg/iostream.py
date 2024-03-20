@@ -17,7 +17,7 @@ def load_TrainingVariables(nametags):
     return width, height, sitesnumber,start_YYYY, TrainingDatasets
 
 def load_monthly_obs_data(species:str):
-    infile = ground_observation_data_dir + '{}_monthly_observations.nc'.format(species)
+    infile = ground_observation_data_dir + ground_observation_data_infile
     data = nc.Dataset(infile)
     SPECIES_OBS = data.variables[species][:]
     SPECIES_OBS = np.array(SPECIES_OBS)
@@ -28,7 +28,7 @@ def load_monthly_obs_data(species:str):
     return SPECIES_OBS, lat, lon 
 
 def load_geophysical_species_data(species:str):
-    infile = geophysical_species_data_dir + '{}_monthly_geophysical_concentration.nc'.format(species)
+    infile = geophysical_species_data_dir + geophysical_species_data_infile
     species_monthly_data = nc.Dataset(infile)
     geophysical_species = species_monthly_data.variables[species][:]
     geophysical_species = np.array(geophysical_species)
@@ -39,7 +39,7 @@ def load_geophysical_species_data(species:str):
     return geophysical_species, latitudes, longitudes
 
 def load_geophysical_biases_data(species:str):
-    infile = geophysical_biases_data_dir + '{}_monthly_biases_concentration.nc'.format(species)
+    infile = geophysical_biases_data_dir + geophysical_biases_data_infile
     species_monthly_data = nc.Dataset(infile)
     geophysical_species = species_monthly_data.variables[species][:]
     geophysical_species = np.array(geophysical_species)
