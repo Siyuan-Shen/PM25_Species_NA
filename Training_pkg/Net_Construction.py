@@ -29,10 +29,8 @@ def initial_network(width):
     return cnn_model
 
 class BasicBlock(nn.Module):  
-    # F(X) and X has the same dimensions after two convolutional layers
-    # expansion是F(X)相对X维度拓展的倍数
-    expansion = 1  # 残差映射F(X)的维度有没有发生变化，1表示没有变化，downsample=None
-    # in_channel输入特征矩阵的深度(图像通道数，如输入层有RGB三个分量，使得输入特征矩阵的深度是3)，out_channel输出特征矩阵的深度(卷积核个数)，stride卷积步长，downsample是用来将残差数据和卷积数据的shape变的相同，可以直接进行相加操作。
+    
+    expansion = 1  
     def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel,kernel_size=3, stride=stride, padding=1, bias=False)
@@ -66,7 +64,7 @@ class Bottleneck(nn.Module):
     但在pytorch官方实现过程中是第一个1x1卷积层的步距是1, 第二个3x3卷积层步距是2,
     这么做的好处是能够在top1上提升大概0.5%的准确率。
     """
-    # expansion是F(X)相对X维度拓展的倍数
+    
     expansion = 4
 
     def __init__(self, in_channel, out_channel, stride=1, downsample=None, groups=1, width_per_group=64):
@@ -87,7 +85,7 @@ class Bottleneck(nn.Module):
 
     def forward(self, x):
         identity = x
-        # downsample是用来将残差数据和卷积数据的shape变的相同，可以直接进行相加操作。
+       
         if self.downsample is not None:
             identity = self.downsample(x)
 
@@ -126,7 +124,6 @@ class ResNet(nn.Module):
         self.groups = groups
         self.width_per_group = width_per_group
         self.actfunc = activation_func
-        # 输入层有RGB三个分量，使得输入特征矩阵的深度是3
         
         #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
         #self.bn1 = nn.BatchNorm2d(self.in_channel)
@@ -221,7 +218,7 @@ class LateFusion_ResNet(nn.Module):
         self.width_per_group = width_per_group
         self.actfunc = activation_func
         
-        # 输入层有RGB三个分量，使得输入特征矩阵的深度是3
+       
         self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
