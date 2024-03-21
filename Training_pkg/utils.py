@@ -54,6 +54,15 @@ LateFusion_blocks_num   = net_structure_settings['LateFusion']['blocks_num']
 LateFusion_initial_channels     = net_structure_settings['LateFusion']['initial_channels']
 LateFusion_latefusion_channels  = net_structure_settings['LateFusion']['LateFusion_channels']
 
+#######################################################################################
+# Optimizer settings
+
+Optimizer_settings = cfg['Training-Settings']['optimizer']
+
+Adam_settings      = cfg['Optimizer_settings']['Adam']['Settings']
+Adam_beta0         = cfg['Optimizer_settings']['Adam']['beta0']
+Adam_beta1         = cfg['Optimizer_settings']['Adam']['beta1']
+Adam_eps           = cfg['Optimizer_settings']['Adam']['eps']
 
 #######################################################################################
 # learning rate settings
@@ -147,3 +156,7 @@ def find_latfusion_index():
     
     return initial_channel_index, latefusion_channel_index
     
+
+def optimizer_lookup(model_parameters,learning_rate):
+    if Adam_settings:
+        return torch.optim.Adam(params=model_parameters,betas=(Adam_beta0, Adam_beta1),eps=Adam_eps, lr=learning_rate)

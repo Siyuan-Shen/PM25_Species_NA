@@ -203,6 +203,14 @@ LateFusion.LateFusion_channels                         = [
                                                         'Lat', 'Lon','Month_of_Year',
                                                         ]
 
+[Training-Settings.optimizer]
+
+Adam.Settings                                         = true
+Adam.beta0                                            = 0.9
+Adam.beta1                                            = 0.98
+Adam.eps                                              = 1e-9
+
+
 [Training-Settings.learning_rate]
 
 learning_rate0                                        = 0.01
