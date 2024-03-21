@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = '{}_monthly_biases_conce
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_56channels_11x11_200001-201912.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -163,7 +163,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 [Training-Settings.identity]
 
 version                                               = 'v1.2.1'
-special_name                                          = '_Adam_Test'
+special_name                                          = '_Add_CoarseDST'
 
 [Training-Settings.learning-objective]
 
@@ -189,7 +189,7 @@ LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
                                                         'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_CoarseDST','GC_SSLT',
                                                         'NH3_anthro_emi','OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
@@ -205,8 +205,8 @@ LateFusion.LateFusion_channels                         = [
 
 Adam.Settings                                         = true
 Adam.beta0                                            = 0.9
-Adam.beta1                                            = 0.98
-Adam.eps                                              = 1e-9
+Adam.beta1                                            = 0.999
+Adam.eps                                              = 1e-8
 
 
 [Training-Settings.learning_rate]
@@ -242,7 +242,7 @@ batchsize                                             = 128
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
                                                         'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_SSLT',
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_CoarseDST', 'GC_SSLT',
                                                         'NH3_anthro_emi','OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
