@@ -20,7 +20,8 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     criterion = SelfDesigned_LossFunction()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
+    #optimizer = torch.optim.Adam(params=model.parameters(),betas=(), lr=learning_rate)
+    optimizer = optimizer_lookup(model_parameters=model.parameters(),learning_rate=learning_rate)
     scheduler = lr_strategy_lookup_table(optimizer=optimizer)
     if ResNet_setting:
         for epoch in range(TOTAL_EPOCHS):
