@@ -4,16 +4,16 @@
 
 [Pathway.observations-dir]
 
-ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/Exclude_IndustrialSites_observations/' 
-geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/Exclude_IndustrialSites_observations/'
-geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/Exclude_IndustrialSites_observations/'
-ground_observation_data_infile                        = '{}_ExcludeIndustrialSites_monthly_observations.nc'
-geophysical_species_data_infile                       = '{}_monthly_ExcludeIndustrialSites_geophysical_concentration.nc'
-geophysical_biases_data_infile                        = '{}_monthly_ExcludeIndustrialSites_biases_concentration.nc'
+ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/' 
+geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/'
+geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/'
+ground_observation_data_infile                        = '{}_monthly_observations.nc'
+geophysical_species_data_infile                       = '{}_monthly_geophysical_concentration.nc'
+geophysical_biases_data_infile                        = '{}_monthly_biases_concentration.nc'
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912_Exclude-Industrial-Sites.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -140,8 +140,6 @@ Derive_rRMSE_map_Switch                               = false
 Derive_absolute_Uncertainty_map_Switch                = false
 Uncertainty_visualization_Switch                      = true
 
-
-
 [Uncertainty-Settings.Map_Estimation_Settings]
 
 Estimation_years                                      = [2011,2012,2013,2014,2015,2016,2017]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
@@ -164,8 +162,8 @@ Uncertainty_Plot_Area                                 = 'NA'
 
 [Training-Settings.identity]
 
-version                                               = 'v1.2.0-Exclude_Industrial_Sites'
-special_name                                          = '_Exclude_Industrial_Sites'
+version                                               = 'v1.2.1'
+special_name                                          = '_Adam_Test'
 
 [Training-Settings.learning-objective]
 
@@ -220,7 +218,7 @@ ExponentialLR.gamma                                   = 0.9
 
 CosineAnnealingLR.Settings                            = true
 CosineAnnealingLR.T_max                               = 10
-CosineAnnealingLR.eta_min                             = 18
+CosineAnnealingLR.eta_min                             = 1e-8
 
 CosineAnnealingRestartsLR.Settings                    = false
 CosineAnnealingRestartsLR.T_0                         = 10

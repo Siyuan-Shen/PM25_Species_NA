@@ -59,10 +59,10 @@ LateFusion_latefusion_channels  = net_structure_settings['LateFusion']['LateFusi
 
 Optimizer_settings = cfg['Training-Settings']['optimizer']
 
-Adam_settings      = cfg['Optimizer_settings']['Adam']['Settings']
-Adam_beta0         = cfg['Optimizer_settings']['Adam']['beta0']
-Adam_beta1         = cfg['Optimizer_settings']['Adam']['beta1']
-Adam_eps           = cfg['Optimizer_settings']['Adam']['eps']
+Adam_settings      = Optimizer_settings['Adam']['Settings']
+Adam_beta0         = Optimizer_settings['Adam']['beta0']
+Adam_beta1         = Optimizer_settings['Adam']['beta1']
+Adam_eps           = Optimizer_settings['Adam']['eps']
 
 #######################################################################################
 # learning rate settings
