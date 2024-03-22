@@ -54,6 +54,14 @@ LateFusion_blocks_num   = net_structure_settings['LateFusion']['blocks_num']
 LateFusion_initial_channels     = net_structure_settings['LateFusion']['initial_channels']
 LateFusion_latefusion_channels  = net_structure_settings['LateFusion']['LateFusion_channels']
 
+MultiHeadLateFusion_settings               = net_structure_settings['MultiHeadLateFusion']['Settings']
+MultiHeadLateFusion_Blocks                 = net_structure_settings['MultiHeadLateFusion']['Blocks']
+MultiHeadLateFusion_blocks_num             = net_structure_settings['MultiHeadLateFusion']['blocks_num']
+MultiHeadLateFusion_initial_channels       = net_structure_settings['MultiHeadLateFusion']['initial_channels']
+MultiHeadLateFusion_LateFusion_channels    = net_structure_settings['MultiHeadLateFusion']['LateFusion_channels']
+MultiHeadLateFusion_left_bin               = net_structure_settings['MultiHeadLateFusion']['left_bin']
+MultiHeadLateFusion_right_bin              = net_structure_settings['MultiHeadLateFusion']['right_bin']
+MultiHeadLateFusion_bins_number            = net_structure_settings['MultiHeadLateFusion']['bins_number']
 #######################################################################################
 # Optimizer settings
 
@@ -145,14 +153,14 @@ def lr_strategy_lookup_table(optimizer):
 
 
 
-def find_latfusion_index():
+def find_latfusion_index(initial_channels,late_fusion_channels):
     initial_channel_index = []
-    for i in range(len(LateFusion_initial_channels)):
-        initial_channel_index.append(channel_names.index(LateFusion_initial_channels[i]))
+    for i in range(len(initial_channels)):
+        initial_channel_index.append(channel_names.index(initial_channels[i]))
     
     latefusion_channel_index = []
-    for i in range(len(LateFusion_latefusion_channels)):
-        latefusion_channel_index.append(channel_names.index(LateFusion_latefusion_channels[i]))
+    for i in range(len(late_fusion_channels)):
+        latefusion_channel_index.append(channel_names.index(late_fusion_channels[i]))
     
     return initial_channel_index, latefusion_channel_index
     
