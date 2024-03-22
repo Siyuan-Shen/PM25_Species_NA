@@ -163,7 +163,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 [Training-Settings.identity]
 
 version                                               = 'v1.2.1'
-special_name                                          = '_Add_CoarseDST'
+special_name                                          = '_MultiHead_Test'
 
 [Training-Settings.learning-objective]
 
@@ -182,24 +182,46 @@ log_species                                           = false
 ResNet.Settings                                       = false
 ResNet.Blocks                                         = 'BasicBlock'
 ResNet.blocks_num                                     = [1,1,1,1]
-
-LateFusion.Settings                                   = true
+#############
+LateFusion.Settings                                   = false
 LateFusion.Blocks                                     = 'BasicBlock'
 LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
                                                         'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST', 'GC_CoarseDST','GC_SSLT',
-                                                        'NH3_anthro_emi','OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
+                                                        'NH3_anthro_emi',#'OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                        'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
-                                                       #'S1','S2','S3','elevation',#'S1','S2','S3','  'Lat', 'Lon',
+                                                       #,#'S1','S2','S3',' 
                                                         #'Population'
                                                        ] 
 LateFusion.LateFusion_channels                         = [
-                                                        'Lat', 'Lon','Month_of_Year',
+                                                         'Lat', 'Lon','elevation','Month_of_Year',
                                                         ]
+#############
+MultiHeadLateFusion.Settings                           = true
+MultiHeadLateFusion.Blocks                             = 'BasicBlock'
+MultiHeadLateFusion.blocks_num                         = [1,1,1,1]
+MultiHeadLateFusion.initial_channels                   = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
+                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                       'NA_CNN_PM25',#'GL_CNN_PM25'
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
+                                                        'NH3_anthro_emi',#'OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                       'DST_offline_emi', 'SSLT_offline_emi',
+                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
+                                                       'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       #,#'S1','S2','S3',' 
+                                                        #'Population'
+                                                       ] 
+MultiHeadLateFusion.LateFusion_channels                = [
+                                                         'Lat', 'Lon','elevation','Month_of_Year',
+                                                        ]
+MultiHeadLateFusion.left_bin                           = -10.0
+MultiHeadLateFusion.right_bin                          = 10.0
+MultiHeadLateFusion.bins_number                        = 201
+
 
 [Training-Settings.optimizer]
 
@@ -240,15 +262,15 @@ epoch                                                 = 30
 batchsize                                             = 128
 
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                       'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_CoarseDST', 'GC_SSLT',
-                                                        'NH3_anthro_emi','OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
+                                                       'NH3_anthro_emi',# 'OC_anthro_emi', 'BC_anthro_emi',  #'SO2_anthro_emi', 'NO_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                        'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
                                                        'Month_of_Year',
-                                                       'Lat', 'Lon',#'S1','S2','S3','elevation',#'S1','S2','S3','  'Lat', 'Lon',
+                                                       'Lat', 'Lon','elevation'#'S1','S2','S3',#'S1','S2','S3','  'Lat', 'Lon',
                                                         #'Population'
                                                        ] 
 
