@@ -157,7 +157,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
             # Each epoch calculate test data accuracy
     if MultiHeadLateFusion_settings:
         initial_channel_index, latefusion_channel_index = find_latfusion_index(initial_channels=MultiHeadLateFusion_initial_channels,late_fusion_channels=MultiHeadLateFusion_LateFusion_channels)
-        criterion_MH = SelfDesigned_LossFunction(losstype='CrossEntropyLoss')
+        criterion_MH = SelfDesigned_LossFunction(losstype=Classification_loss_type)
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
             counts = 0
@@ -173,12 +173,12 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
                 classification_output = torch.squeeze(classification_output)
 
                 loss = criterion(regression_output, labels)
-                loss.backward(retain_graph=True)  ## backward
+                loss.backward()  ## backward
                 
                 classification_labels = torch.tensor((labels-MultiHeadLateFusion_left_bin)/abs((MultiHeadLateFusion_right_bin-MultiHeadLateFusion_left_bin)/(MultiHeadLateFusion_bins_number-1)),dtype=torch.long)
                 classification_labels.to(device)
                 loss_MH = criterion_MH(classification_output, classification_labels)
-                loss_MH.backward(retain_graph=True) 
+                loss_MH.backward() #retain_graph=True
                 
                 optimizer.step()  ## refresh training parameters
                 losses.append(loss.item())
@@ -187,7 +187,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
                 bins = torch.tensor(np.linspace(MultiHeadLateFusion_left_bin,MultiHeadLateFusion_right_bin,MultiHeadLateFusion_bins_number)).float()
                 bins = bins.to(device)
 
-                outputs = 0.5*regression_output + 0.5*torch.matmul(classification_output,bins)
+                outputs = MultiHeadLateFusion_regression_portion*regression_output + MultiHeadLateFusion_classifcation_portion*torch.matmul(classification_output,bins)
                 y_hat = outputs.cpu().detach().numpy()
                 y_true = labels.cpu().detach().numpy()
 
@@ -220,7 +220,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
                 valid_losses.append(valid_loss.item())
                 bins = torch.tensor(np.linspace(MultiHeadLateFusion_left_bin,MultiHeadLateFusion_right_bin,MultiHeadLateFusion_bins_number)).float()
                 bins = bins.to(device)
-                valid_output = 0.5*valid_regression_output + 0.5*torch.matmul(valid_classification_output,bins)
+                valid_output = MultiHeadLateFusion_regression_portion*valid_regression_output + MultiHeadLateFusion_classifcation_portion*torch.matmul(valid_classification_output,bins)
 
                 test_y_hat   = valid_output.cpu().detach().numpy()
                 test_y_true  = valid_labels.cpu().detach().numpy()
@@ -274,7 +274,7 @@ def predict(inputarray, model, batchsize):
             classification_output = torch.squeeze(classification_output)
             bins = torch.tensor(np.linspace(MultiHeadLateFusion_left_bin,MultiHeadLateFusion_right_bin,MultiHeadLateFusion_bins_number)).float()
             bins = bins.to(device)
-            outputs = 0.5*regression_output + 0.5*torch.matmul(classification_output,bins)
+            outputs = MultiHeadLateFusion_regression_portion*regression_output + MultiHeadLateFusion_classifcation_portion*torch.matmul(classification_output,bins)
             print('regression_output shape: ',regression_output.shape, '\nclassification_output shape:', classification_output.shape,
                   '\nbins shape: ', bins.shape, '\noutputs shape: ', outputs.shape)
             outputs = outputs.cpu().detach().numpy()

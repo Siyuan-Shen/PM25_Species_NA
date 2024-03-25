@@ -62,6 +62,8 @@ MultiHeadLateFusion_LateFusion_channels    = net_structure_settings['MultiHeadLa
 MultiHeadLateFusion_left_bin               = net_structure_settings['MultiHeadLateFusion']['left_bin']
 MultiHeadLateFusion_right_bin              = net_structure_settings['MultiHeadLateFusion']['right_bin']
 MultiHeadLateFusion_bins_number            = net_structure_settings['MultiHeadLateFusion']['bins_number']
+MultiHeadLateFusion_regression_portion     = net_structure_settings['MultiHeadLateFusion']['regression_portion']
+MultiHeadLateFusion_classifcation_portion  = net_structure_settings['MultiHeadLateFusion']['classifcation_portion']
 #######################################################################################
 # Optimizer settings
 
@@ -117,7 +119,7 @@ log_species = learning_objective['log_species']
 Loss_Func = cfg['Training-Settings']['Loss-Functions']
 
 Loss_type = Loss_Func['Loss_type']
-
+Classification_loss_type = Loss_Func['Classification_loss_type']
 #######################################################################################
 # CombineWithGeophysical Settings
 CombineWithGeophysical = cfg['Training-Settings']['CombineWithGeophysical']
