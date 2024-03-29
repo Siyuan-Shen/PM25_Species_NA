@@ -34,7 +34,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
     population_data = load_coMonitor_Population()
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    nchannel   = len(channel_names)
+    nchannel   = Get_nchannels(channel_names=channel_names)
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
@@ -86,6 +86,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                                                    ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
                                                    endyear=beginyears[imodel]+iyear,beginyear=beginyears[imodel]+iyear,EachMonth=EachMonthForcedSlopeUnity)
 
+
+                
                 # *------------------------------------------------------------------------------*#
                 ## Recording observation and prediction for this model this fold.
                 # *------------------------------------------------------------------------------*#
@@ -146,7 +148,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
     population_data = load_coMonitor_Population()
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    nchannel   = len(channel_names)
+    nchannel   = Get_nchannels(channel_names=channel_names)
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
@@ -256,7 +258,7 @@ def Normal_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
     geophysical_species, lat, lon = load_geophysical_species_data(species=species)
     true_input, mean, std = Learning_Object_Datasets(bias=bias,Normalized_bias=normalize_bias,Normlized_Speices=normalize_species,Absolute_Species=absolute_species,Log_PM25=log_species,species=species)
     
-    nchannel   = len(channel_names)
+    nchannel   = Get_nchannels(channel_names=channel_names)
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))

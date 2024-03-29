@@ -64,7 +64,7 @@ def get_landtype(YYYY,extent)->np.array:
     Canada_mask        = np.array(Canada_data['regionmask'][:])
     Alaska_mask        = np.array(Alaska_data['regionmask'][:])
     landtype = Contiguous_US_mask + Canada_mask + Alaska_mask
-    lat_index,lon_index = get_GL_extent_index(extent=extent)
+    lat_index,lon_index = get_extent_index(extent=extent)
     output = np.zeros((len(lat_index),len(lon_index)), dtype=int)
     for ix in range(len(lat_index)):
         output[ix,:] = landtype[lat_index[ix],lon_index]

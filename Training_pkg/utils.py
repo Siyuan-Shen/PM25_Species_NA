@@ -38,7 +38,14 @@ HyperParameters = cfg['Training-Settings']['hyper-parameters']
 channel_names = HyperParameters['channel_names']
 epoch = HyperParameters['epoch']
 batchsize = HyperParameters['batchsize']
+Addtional_LogVariables_Settings = HyperParameters['Addtional_LogVariables_Settings']
+Addtional_LogVariables = HyperParameters['Addtional_LogVariables']
 
+GeoSpecies_Ratio_Settings = HyperParameters['GeoSpecies_Ratio_Settings']
+GeoSpecies_Ratio_variables = HyperParameters['GeoSpecies_Ratio_variables']
+
+Global_GeoSpecies_Settings = HyperParameters['Global_GeoSpecies_Settings']
+Global_GeoSpecies_variables = HyperParameters['Global_GeoSpecies_variables']
 #######################################################################################
 # Net Structure Settings
 
@@ -134,6 +141,16 @@ geophysical_biases_data_infile  = geophysical_biases_data_infile.format(species)
 geophysical_species_data_infile = geophysical_species_data_infile.format(species)
 ground_observation_data_infile  = ground_observation_data_infile.format(species)
 
+
+
+def Get_nchannels(channel_names):
+    if Addtional_LogVariables_Settings:
+        total_channel_names = channel_names + Addtional_LogVariables
+        nchannels = len(total_channel_names)
+    else:
+        nchannels = len(channel_names)
+    return nchannels
+
 def activation_function_table():
     if ReLU_ACF == True:
         return nn.ReLU()
@@ -163,6 +180,10 @@ def find_latfusion_index(initial_channels,late_fusion_channels):
     latefusion_channel_index = []
     for i in range(len(late_fusion_channels)):
         latefusion_channel_index.append(channel_names.index(late_fusion_channels[i]))
+    
+    if Addtional_LogVariables_Settings:
+        for i in range(len(Addtional_LogVariables)):
+            initial_channel_index.append(len(channel_names)-1+i)
     
     return initial_channel_index, latefusion_channel_index
     

@@ -12,8 +12,28 @@ def load_TrainingVariables(nametags):
     sitesnumber = np.array(data.variables['sites_number'])[0]
     start_YYYY  = np.array(data.variables['start_YYYY'])[0]
     TrainingDatasets = np.zeros((total_number,len(nametags),width,height),dtype=np.float64)
-    for i in range(len(nametags)):
-        TrainingDatasets[:,i,:,:] = np.array(data.variables[nametags[i]][:,:,:])
+    if GeoSpecies_Ratio_Settings:
+        for i in range(len(nametags)):
+            if nametags[i] in GeoSpecies_Ratio_variables:
+                TrainingDatasets[:,i,:,:] = np.array(data.variables[nametags[i]][:,:,:])/np.array(data.variables['NA_CNN_PM25'][:,:,:])
+            else:
+                TrainingDatasets[:,i,:,:] = np.array(data.variables[nametags[i]][:,:,:])
+    elif Global_GeoSpecies_Settings:
+        for i in range(len(nametags)):
+            if nametags[i] in Global_GeoSpecies_variables:
+                TrainingDatasets[:,i,:,:] = np.array(data.variables[nametags[i]][:,:,:])/np.array(data.variables['NA_CNN_PM25'][:,:,:])*np.array(data.variables['GL_CNN_PM25'][:,:,:])
+            else:
+                TrainingDatasets[:,i,:,:] = np.array(data.variables[nametags[i]][:,:,:])
+    else:
+        for i in range(len(nametags)):
+            TrainingDatasets[:,i,:,:] = np.array(data.variables[nametags[i]][:,:,:])
+
+        
+    if Addtional_LogVariables_Settings:
+        AdditionalDatasets = np.zeros((total_number,len(Addtional_LogVariables),width,height),dtype=np.float64)
+        for i in range(len(Addtional_LogVariables)):
+            AdditionalDatasets[:,i,:,:] = np.log(np.array(data.variables[Addtional_LogVariables[i]][:,:,:]))
+        TrainingDatasets = np.append(TrainingDatasets,AdditionalDatasets,axis=1)
     return width, height, sitesnumber,start_YYYY, TrainingDatasets
 
 def load_monthly_obs_data(species:str):

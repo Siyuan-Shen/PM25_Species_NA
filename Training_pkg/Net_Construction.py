@@ -21,15 +21,19 @@ def resnet_block_lookup_table(blocktype):
 def initial_network(width):
 
     if ResNet_setting:
+        nchannel = Get_nchannels(channel_names=channel_names)
         block = resnet_block_lookup_table(ResNet_Blocks)
-        cnn_model = ResNet(nchannel=len(channel_names),block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
+        cnn_model = ResNet(nchannel=nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
     elif LateFusion_setting:
+        nchannel = Get_nchannels(channel_names=LateFusion_initial_channels)
         block = resnet_block_lookup_table(LateFusion_Blocks)
-        cnn_model = LateFusion_ResNet(nchannel=len(LateFusion_initial_channels),nchannel_lf=len(LateFusion_latefusion_channels),block=block,blocks_num=LateFusion_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)
+        cnn_model = LateFusion_ResNet(nchannel=nchannel,nchannel_lf=len(LateFusion_latefusion_channels),block=block,blocks_num=LateFusion_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)
     elif MultiHeadLateFusion_settings:
+        nchannel = Get_nchannels(channel_names=MultiHeadLateFusion_initial_channels)
         block = resnet_block_lookup_table(MultiHeadLateFusion_Blocks)
-        cnn_model = MultiHead_LateFusion_ResNet(nchannel=len(MultiHeadLateFusion_initial_channels),nchannel_lf=len(MultiHeadLateFusion_LateFusion_channels),block=block,blocks_num=MultiHeadLateFusion_blocks_num,include_top=True,groups=1,width_per_group=width)
+        cnn_model = MultiHead_LateFusion_ResNet(nchannel=nchannel,nchannel_lf=len(MultiHeadLateFusion_LateFusion_channels),block=block,blocks_num=MultiHeadLateFusion_blocks_num,include_top=True,groups=1,width_per_group=width)
     return cnn_model
+
 
 class BasicBlock(nn.Module):  
     

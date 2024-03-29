@@ -18,7 +18,7 @@ from Evaluation_pkg.utils import *
 
 def Estimation_Func():
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
-
+    nchannel = Get_nchannels(channel_names=channel_names)
     if Train_model_Switch:
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         Train_Model_forEstimation(train_beginyears=Training_beginyears,train_endyears=Training_endyears,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
@@ -34,13 +34,13 @@ def Estimation_Func():
         gc.collect()
         MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
         for imodel in range(len(Estiamtion_trained_beginyears)):
-            model = load_trained_model_forEstimation(model_outdir=model_outdir,typeName=typeName,version=version,species=species, nchannel=len(channel_names),special_name=special_name,
+            model = load_trained_model_forEstimation(model_outdir=model_outdir,typeName=typeName,version=version,species=species, nchannel=nchannel,special_name=special_name,
                                                              beginyear=Estiamtion_trained_beginyears[imodel],endyear=Estiamtion_trained_endyears[imodel], width=width, height=height)
             for YEAR in Estimation_years[imodel]:
                 for imonth in Estiamtion_months:
                     print('YEAR: {}, MONTH: {}'.format(YEAR,MM[imonth]))
                     map_input = load_map_data(channel_names=channel_names,YYYY=YEAR,MM=MM[imonth])
-                    final_map_data = map_predict(inputmap=map_input,model=model,train_mean=input_mean,train_std=input_std,extent=Extent,width=width,nchannel=len(channel_names),YYYY=YEAR,MM=MM[imonth])
+                    final_map_data = map_predict(inputmap=map_input,model=model,train_mean=input_mean,train_std=input_std,extent=Extent,width=width,nchannel=nchannel,YYYY=YEAR,MM=MM[imonth])
                     final_map_data = map_final_output(output=final_map_data,extent=Extent,YYYY=YEAR,MM=MM[imonth],SPECIES=species,bias=bias,
                                                       normalize_bias=normalize_bias,normalize_species=normalize_species,absolute_species=absolute_species,
                                                       log_species=log_species,mean=mean,std=std)

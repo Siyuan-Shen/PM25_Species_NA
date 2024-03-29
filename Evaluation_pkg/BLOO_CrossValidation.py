@@ -34,7 +34,7 @@ def BLOO_AVD_Spatial_CrossValidation(buffer_radius,width, height, sitesnumber,st
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
     population_data = load_coMonitor_Population()
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    nchannel   = len(channel_names)
+    nchannel   = Get_nchannels()
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
