@@ -16,6 +16,12 @@ def GetYIndex(index,beginyear:int, endyear:int,sitenumber:int):
         Y_index[i * len(index):(i + 1) * len(index)] = ((beginyear - 1998)*12 + i) * sitenumber + index
     return Y_index   
 
+def Get_SecondStage_XIndex(beginyear:int, endyear:int, sitenumber:int):
+    X_index = np.zeros((12 * (endyear - beginyear + 1) * sitenumber), dtype=int)
+    for i in range(12 * (endyear - beginyear + 1)):
+        X_index[i * sitenumber:(i + 1) * sitenumber] = i * sitenumber + np.array(range(sitenumber))
+    return X_index
+
 def Get_XY_indices(train_index,test_index, beginyear, endyear, sitesnumber ):
     X_Training_index = GetXIndex(index=train_index,beginyear=beginyear,endyear=endyear,sitenumber=sitesnumber)
     X_Testing_index  = GetXIndex(index=test_index ,beginyear=beginyear,endyear=endyear,sitenumber=sitesnumber)

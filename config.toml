@@ -45,10 +45,10 @@ Spatial_CV_LossAccuracy_plot_Switch                   = false
 
 kfold                                                 = 10
 repeats                                               = 1
-beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+beginyears                                            = [2001]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+endyears                                              = [2001]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 test_beginyear                                        = 2001
-test_endyear                                          = 2019
+test_endyear                                          = 2001
 
 [Spatial-CrossValidation.Visualization_Settings]
 
@@ -162,12 +162,12 @@ Uncertainty_Plot_Area                                 = 'NA'
 
 [Training-Settings.identity]
 
-version                                               = 'v1.2.1'
-special_name                                          = '_TestCEDS_Emissions'
+version                                               = 'v1.3.0'
+special_name                                          = '_TwoStages_Test'
 
 [Training-Settings.learning-objective]
 
-species                                               = 'NH4' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
+species                                               = 'PM25' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
 
 # Only one of these can be true. Default is bias.
 bias                                                  = true   # learning objectives: bias = ground-based species observation - geophysical species concentration estimation
@@ -179,11 +179,11 @@ log_species                                           = false
 
 [Training-Settings.net_structure_settings]
 
-ResNet.Settings                                       = false
+ResNet.Settings                                       = true
 ResNet.Blocks                                         = 'BasicBlock'
 ResNet.blocks_num                                     = [1,1,1,1]
 #############
-LateFusion.Settings                                   = true
+LateFusion.Settings                                   = false
 LateFusion.Blocks                                     = 'BasicBlock'
 LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
@@ -259,12 +259,13 @@ Sigmoid.Settings                                      = false
 
 [Training-Settings.hyper-parameters]
 
+
 epoch                                                 = 30
 batchsize                                             = 128
 
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                       'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
-                                                       'NA_CNN_PM25',#'GL_CNN_PM25'
+                                                       #'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                       #'NA_CNN_PM25',#'GL_CNN_PM25'
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
                                                        'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', # 'OC_anthro_emi', 'BC_anthro_emi',  #'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
@@ -274,7 +275,8 @@ channel_names                                         = ['EtaAOD_Bias', 'EtaCoas
                                                        'Lat', 'Lon','elevation'#'S1','S2','S3',#'S1','S2','S3','  'Lat', 'Lon',
                                                         #'Population'
                                                        ] 
-
+TwoStage_Settings                                     = true
+TwoStage_Variables                                    = ['GC_NH4', 'GC_SO4', 'GC_NIT','GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',]
 
 [Training-Settings.Loss-Functions]
 

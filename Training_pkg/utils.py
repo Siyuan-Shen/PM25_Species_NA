@@ -38,7 +38,8 @@ HyperParameters = cfg['Training-Settings']['hyper-parameters']
 channel_names = HyperParameters['channel_names']
 epoch = HyperParameters['epoch']
 batchsize = HyperParameters['batchsize']
-
+TwoStage_Settings  = HyperParameters['TwoStage_Settings']
+TwoStage_Variables = HyperParameters['TwoStage_Variables']
 #######################################################################################
 # Net Structure Settings
 
@@ -133,6 +134,16 @@ training_infile = training_infile.format(species,species)
 geophysical_biases_data_infile  = geophysical_biases_data_infile.format(species)
 geophysical_species_data_infile = geophysical_species_data_infile.format(species)
 ground_observation_data_infile  = ground_observation_data_infile.format(species)
+
+
+def Get_MainStream_nchannels():
+    if ResNet_setting:
+        nchannel = len(channel_names)
+    elif LateFusion_setting:
+        nchannel = len(LateFusion_initial_channels)
+    elif MultiHeadLateFusion_settings:
+        nchannel = len(MultiHeadLateFusion_initial_channels)
+    return nchannel
 
 def activation_function_table():
     if ReLU_ACF == True:

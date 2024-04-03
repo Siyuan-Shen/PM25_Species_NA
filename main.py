@@ -17,7 +17,7 @@ cfg = toml.load('./config.toml')
 
 if __name__ == '__main__':
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
-    nchannel   = len(channel_names)
+    nchannel   = Get_MainStream_nchannels()
 
     if Spatial_CrossValidation_Switch:
         cfg_outdir = Config_outdir + '{}/{}/Results/results-SpatialCV/'.format(species, version)

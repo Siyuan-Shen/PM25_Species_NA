@@ -14,6 +14,13 @@ def save_trained_model(cnn_model, model_outdir, typeName, version, species, ncha
     model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}.pt'.format(typeName, species, width,height, nchannel,special_name, count)
     torch.save(cnn_model, model_outfile)
 
+def save_SecondStage_trained_model(cnn_model, model_outdir, typeName, version, species, nchannel, special_name, count, width, height):
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    model_outfile = outdir +  'SpatialCV_SecondStage_{}_{}_{}x{}_{}Channel{}_No{}.pt'.format(typeName, species, width,height, nchannel,special_name, count)
+    torch.save(cnn_model, model_outfile)
+
 def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height):
 
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
