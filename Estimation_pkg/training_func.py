@@ -16,11 +16,11 @@ from Evaluation_pkg.data_func import GetXIndex,GetYIndex
 
 from Estimation_pkg.iostream import save_trained_model_forEstimation
 
-def Train_Model_forEstimation(train_beginyears, train_endyears, width, height, sitesnumber,start_YYYY, TrainingDatasets):
+def Train_Model_forEstimation(train_beginyears, train_endyears, width, height, sitesnumber,start_YYYY, TrainingDatasets,total_channel_names,main_stream_channel_names, side_stream_nchannel_names):
     true_input, mean, std = Learning_Object_Datasets(bias=bias,Normalized_bias=normalize_bias,Normlized_Speices=normalize_species,Absolute_Species=absolute_species,Log_PM25=log_species,species=species)
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    nchannel   = len(channel_names)
+    nchannel   = len(total_channel_names)
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
@@ -39,7 +39,7 @@ def Train_Model_forEstimation(train_beginyears, train_endyears, width, height, s
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         cnn_model.to(device)
         torch.manual_seed(21)
-        train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch)
+        train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names,initial_channel_names=total_channel_names)
         save_trained_model_forEstimation(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name,beginyear=train_beginyears[imodel], endyear=train_endyears[imodel], width=width, height=height)
         del X_train, y_train
         gc.collect()

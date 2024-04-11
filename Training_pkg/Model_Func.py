@@ -9,7 +9,7 @@ import torch.nn.functional as F
 
 
 
-def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTAL_EPOCHS):
+def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTAL_EPOCHS,initial_channel_names,main_stream_channels,side_stream_channels):
     train_loader = DataLoader(Dataset(X_train, y_train), BATCH_SIZE, shuffle=True)
     validation_loader = DataLoader(Dataset(X_test, y_test), BATCH_SIZE, shuffle=True)
     print('*' * 25, type(train_loader), '*' * 25)
@@ -89,7 +89,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
        
             # Each epoch calculate test data accuracy
     if LateFusion_setting:
-        initial_channel_index, latefusion_channel_index = find_latfusion_index(initial_channels=LateFusion_initial_channels,late_fusion_channels=LateFusion_latefusion_channels)
+        initial_channel_index, latefusion_channel_index = find_latfusion_index(total_channel_names=initial_channel_names,initial_channels=main_stream_channels,late_fusion_channels=side_stream_channels)
         
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
@@ -156,7 +156,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
        
             # Each epoch calculate test data accuracy
     if MultiHeadLateFusion_settings:
-        initial_channel_index, latefusion_channel_index = find_latfusion_index(initial_channels=MultiHeadLateFusion_initial_channels,late_fusion_channels=MultiHeadLateFusion_LateFusion_channels)
+        initial_channel_index, latefusion_channel_index = find_latfusion_index(total_channel_names=initial_channel_names,initial_channels=main_stream_channels,late_fusion_channels=side_stream_channels)
         criterion_MH = SelfDesigned_LossFunction(losstype=Classification_loss_type)
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
@@ -244,7 +244,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
     return losses,  train_acc, valid_losses, test_acc
 
 
-def predict(inputarray, model, batchsize):
+def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channel_names,sidestream_channel_names):
     #output = np.zeros((), dtype = float)
     model.eval()
     final_output = []
@@ -259,14 +259,14 @@ def predict(inputarray, model, batchsize):
                 output = model(image).cpu().detach().numpy()
                 final_output = np.append(final_output,output)
     elif LateFusion_setting:
-        initial_channel_index, latefusion_channel_index = find_latfusion_index(initial_channels=LateFusion_initial_channels,late_fusion_channels=LateFusion_latefusion_channels)
+        initial_channel_index, latefusion_channel_index = find_latfusion_index(total_channel_names=initial_channel_names,initial_channels=mainstream_channel_names,late_fusion_channels=sidestream_channel_names)
         with torch.no_grad():
             for i, image in enumerate(predictinput):
                 image = image.to(device)
                 output = model(image[:,initial_channel_index,:,:],image[:,latefusion_channel_index,:,:]).cpu().detach().numpy()
                 final_output = np.append(final_output,output)
     elif MultiHeadLateFusion_settings:
-        initial_channel_index, latefusion_channel_index = find_latfusion_index(initial_channels=MultiHeadLateFusion_initial_channels,late_fusion_channels=MultiHeadLateFusion_LateFusion_channels)
+        initial_channel_index, latefusion_channel_index = find_latfusion_index(total_channel_names=initial_channel_names,initial_channels=mainstream_channel_names,late_fusion_channels=sidestream_channel_names)
         for i, image in enumerate(predictinput):
             image = image.to(device)
             regression_output, classification_output = model(image[:,initial_channel_index,:,:],image[:,latefusion_channel_index,:,:])

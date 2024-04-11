@@ -22,7 +22,7 @@ from Evaluation_pkg.iostream import load_coMonitor_Population,save_trained_model
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure
 
 
-def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingDatasets):
+def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingDatasets, total_channel_names,main_stream_channel_names, side_stream_nchannel_names):
     # *------------------------------------------------------------------------------*#
     ##   Initialize the array, variables and constants.
     # *------------------------------------------------------------------------------*#
@@ -34,7 +34,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
     population_data = load_coMonitor_Population()
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    nchannel   = len(channel_names)
+    nchannel   = len(total_channel_names)
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
@@ -61,7 +61,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
-            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch)
+            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
+                                                                   initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
             save_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height)
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
@@ -71,8 +72,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                 yearly_test_input  = Normalized_TrainingData[yearly_test_index,:,:,:]
                 yearly_train_input = Normalized_TrainingData[yearly_train_index,:,:,:]
 
-                Validation_Prediction = predict(yearly_test_input, cnn_model, 3000)
-                Training_Prediction   = predict(yearly_train_input, cnn_model, 3000)
+                Validation_Prediction = predict(inputarray=yearly_test_input, model=cnn_model, batchsize=3000, initial_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_stream_nchannel_names)
+                Training_Prediction   = predict(inputarray=yearly_train_input,  model=cnn_model, batchsize=3000, initial_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_stream_nchannel_names)
                 final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_test_Yindex)
                 train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_train_Yindex)
                 
@@ -109,7 +110,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording)
         
-    txtfile_outdir = txt_outdir + '{}/{}/Results/results-SpatialCV/'.format(species, version)
+    txtfile_outdir = txt_outdir + '{}/{}/Results/results-SpatialCV/statistical_indicators/'.format(species, version)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
     
@@ -133,7 +134,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     return
 
 
-def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_train_site,width, height, sitesnumber,start_YYYY, TrainingDatasets):
+def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_train_site,width, height, sitesnumber,start_YYYY, TrainingDatasets,total_channel_names,main_stream_channel_names, side_stream_nchannel_names):
     # *------------------------------------------------------------------------------*#
     ##   Initialize the array, variables and constants.
     # *------------------------------------------------------------------------------*#
@@ -146,7 +147,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
     Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
     population_data = load_coMonitor_Population()
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    nchannel   = len(channel_names)
+    nchannel   = len(total_channel_names)
     seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
@@ -174,7 +175,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
-            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch)
+            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
             save_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height)
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
@@ -184,8 +185,8 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
                 yearly_test_input  = Normalized_TrainingData[yearly_test_index,:,:,:]
                 yearly_train_input = Normalized_TrainingData[yearly_train_index,:,:,:]
 
-                Validation_Prediction = predict(yearly_test_input, cnn_model, 3000)
-                Training_Prediction   = predict(yearly_train_input, cnn_model, 3000)
+                Validation_Prediction = predict(yearly_test_input, cnn_model, 3000, initial_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_stream_nchannel_names)
+                Training_Prediction   = predict(yearly_train_input, cnn_model, 3000, initial_channel_names=total_channel_names, mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_stream_nchannel_names)
                 final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_test_Yindex)
                 train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_train_Yindex)
                 
@@ -222,7 +223,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording)
         
-    txtfile_outdir = txt_outdir + '{}/{}/Results/results-SpatialCV/'.format(species, version)
+    txtfile_outdir = txt_outdir + '{}/{}/Results/results-FixNumberCV/statistical_indicators/'.format(species, version)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
     
