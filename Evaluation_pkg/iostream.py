@@ -14,6 +14,13 @@ def save_trained_model(cnn_model, model_outdir, typeName, version, species, ncha
     model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}.pt'.format(typeName, species, width,height, nchannel,special_name, count)
     torch.save(cnn_model, model_outfile)
 
+def save_sensitivity_test_trained_model(cnn_model, model_outdir, typeName, version, species, nchannel, special_name, count, width, height, exclude_names_suffix):
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, nchannel,special_name, count,exclude_names_suffix)
+    torch.save(cnn_model, model_outfile)
+
 def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height):
 
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
@@ -29,6 +36,22 @@ def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy,
     np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
+def save_sensitivity_test_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height, exclude_names_suffix):
+
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    loss_outfile = outdir + 'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    np.save(loss_outfile, loss)
+    np.save(accuracy_outfile, accuracy)
+    np.save(valid_loss_outfile, valid_loss)
+    np.save(valid_accuracy_outfile, valid_accuracy)
+    return
+
+
 def save_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
@@ -37,6 +60,19 @@ def save_data_recording(obs_data, final_data,species, version, typeName, beginye
                                                                                             ,width, height, nchannel,special_name)
     final_data_outfile = outdir + '{}-{}-Final-DataRecording_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, MONTH
                                                                                             ,width, height, nchannel,special_name)
+    
+    np.save(obs_data_outfile, obs_data)
+    np.save(final_data_outfile, final_data)
+    return
+
+def save_sensitivity_test_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,exclude_names_suffix):
+    outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir) 
+    obs_data_outfile   = outdir + '{}-{}-Obs-DataRecording_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
+    final_data_outfile = outdir + '{}-{}-Final-DataRecording_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
     
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
@@ -89,6 +125,19 @@ def load_data_recording(species, version, typeName, beginyear, MONTH, nchannel, 
 
     return obs_data, final_data
 
+def load_sensitivity_test_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,exclude_names_suffix):
+    indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
+    obs_data_infile   = indir + '{}-{}-Obs-DataRecording_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
+    final_data_infile = indir + '{}-{}-Final-DataRecording_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
+    
+    obs_data = np.load(obs_data_infile)
+    final_data = np.load(final_data_infile)
+
+    return obs_data, final_data
+
+
 def load_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height):
 
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
@@ -104,6 +153,20 @@ def load_loss_accuracy(model_outdir, typeName, version, species, nchannel, speci
     valid_accuracy = np.load(valid_accuracy_outfile )
     return loss, accuracy, valid_loss, valid_accuracy
 
+def load_sensitivity_test_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height,exclude_names_suffix):
+
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    loss_outfile = outdir +'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    loss = np.load(loss_outfile)
+    accuracy = np.load(accuracy_outfile)
+    valid_loss = np.load(valid_loss_outfile )
+    valid_accuracy = np.load(valid_accuracy_outfile )
+    return loss, accuracy, valid_loss, valid_accuracy
 
 def load_BLOO_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
     indir = txt_outdir + '{}/{}/Results/results-BLOO_DataRecording/'.format(species, version)
@@ -199,6 +262,58 @@ def AVD_output_text(outfile:str,status:str,
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['Area: {} ; Time Period: {} - {}'.format('NA', test_beginyear, test_endyear)])
+        
+        for imonth in MONTH:
+            writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
+                            '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)),
+
+                             '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)),
+
+                             '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)),
+
+                             '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)),
+                             
+                             '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                             str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
+                             'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)),
+
+                             '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),
+
+                             '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)),
+                             
+                             '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)),
+
+                             '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                             str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)),
+                             ])
+                
+
+    return 
+
+
+def SensitivityTests_output_text(outfile:str,status:str,
+                test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors,exclude_channels_names):
+    
+    MONTH = ['Annual','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyear,test_endyear,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
+    Exclude_Variables = ''
+    for iname in exclude_channels_names:
+         Exclude_Variables += ' '+iname
+
+    with open(outfile,status) as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {} '.format('NA', test_beginyear, test_endyear, Exclude_Variables)])
         
         for imonth in MONTH:
             writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 

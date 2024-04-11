@@ -63,6 +63,20 @@ BLOO_endyears   = BLOO_TrainingSettings['endyears']
 BLOO_test_beginyear = BLOO_TrainingSettings['test_beginyear']
 BLOO_test_endyear   = BLOO_TrainingSettings['test_endyear']
 
+################################## Sensitivity Test Cross-Validation ################################
+
+Sensitivity_Test_Settings = cfg['Sensitivity_Test-Settings']
+Sensitivity_Test_Switch = Sensitivity_Test_Settings['Sensitivity_Test_Switch']
+Sensitivity_plot_Switch = Sensitivity_Test_Settings['Sensitivity_plot_Switch']
+
+Sensitivity_Test_Training_Settings = Sensitivity_Test_Settings['Training_Settings']
+Sensitivity_Test_kfold             = Sensitivity_Test_Training_Settings['kfold']
+Sensitivity_Test_repeats           = Sensitivity_Test_Training_Settings['repeats']
+Sensitivity_Test_beginyears        = Sensitivity_Test_Training_Settings['beginyears']
+Sensitivity_Test_endyears          = Sensitivity_Test_Training_Settings['endyears']
+Sensitivity_Test_test_beginyear    = Sensitivity_Test_Training_Settings['test_beginyear']
+Sensitivity_Test_test_endyear      = Sensitivity_Test_Training_Settings['test_endyear']
+Sensitivity_Test_Sensitivity_Test_Variables = Sensitivity_Test_Training_Settings['Sensitivity_Test_Variables']
 
 
 def Get_typeName(bias, normalize_bias, normalize_species, absolute_species, log_species, species):

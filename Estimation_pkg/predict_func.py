@@ -8,7 +8,7 @@ from Training_pkg.Model_Func import predict
 
 
 def map_predict(inputmap:np.array, model, train_mean:np.array,train_std:np.array, extent:list,width:int, nchannel:int,
- YYYY:str, MM:str):
+ YYYY:str, MM:str, total_channel_names, main_stream_channel_names,side_channel_names):
     ''''''
     lat_index, lon_index = get_extent_index(extent)
     landtype = get_landtype(YYYY,extent)
@@ -36,7 +36,7 @@ def map_predict(inputmap:np.array, model, train_mean:np.array,train_std:np.array
             print('Get Input Time is ', GET_INPUT_TIME, 's, the number of datasets is ', len(land_index[0]))
 
             GET_PREDICT_TIME_START = time.time()
-            temp_output = predict(inputarray=temp_input, model=model, batchsize=batchsize)
+            temp_output = predict(inputarray=temp_input, model=model, batchsize=batchsize,initial_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_channel_names)
             GET_PREDICT_TIME_END = time.time()
             GET_PREDICT_TIME = GET_PREDICT_TIME_END - GET_PREDICT_TIME_START
             print('Predict time is ', GET_PREDICT_TIME, 's, the number of datasets is ', len(land_index[0]),'batchsize: ', batchsize)

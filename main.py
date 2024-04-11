@@ -5,6 +5,7 @@ from Training_pkg.iostream import load_TrainingVariables
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure, plot_save_estimation_map_figure
 from visualization_pkg.Evaluation_plot import regression_plot
 from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
+from Evaluation_pkg.Sensitivity_Spatial_CrossValidation import Sensitivity_Test_AVD_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
 from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording
 from Evaluation_pkg.utils import *
@@ -17,15 +18,17 @@ cfg = toml.load('./config.toml')
 
 if __name__ == '__main__':
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
-    nchannel   = len(channel_names)
+    total_channel_names, main_stream_channel_names, side_channel_names = Get_channel_names(channels_to_exclude=[])
+    nchannel   = len(total_channel_names)
 
     if Spatial_CrossValidation_Switch:
-        cfg_outdir = Config_outdir + '{}/{}/Results/results-SpatialCV/'.format(species, version)
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-SpatialCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
         cfg_outfile = cfg_outdir + 'config_SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
-        AVD_Spatial_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+        AVD_Spatial_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                    total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_nchannel_names=side_channel_names)
         f = open(cfg_outfile,'w')
         toml.dump(cfg, f)
         f.close()
@@ -50,32 +53,34 @@ if __name__ == '__main__':
                         MONTH=MONTH[imonth], nchannel=nchannel,special_name=special_name,width=width,height=height)
 
     if BLOO_CrossValidation_Switch:
-        cfg_outdir = Config_outdir + '{}/{}/Results/results-BLOOCV/'.format(species, version)
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-BLOOCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         for buffer_radius in Buffer_size:
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_BLOO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
-            BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+            BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                             total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
             #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
 
     if FixNumber_Spatial_CrossValidation_Switch:
-        cfg_outdir = Config_outdir + '{}/{}/Results/results-FixNumberCV/'.format(species, version)
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-FixNumberCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         for i in range(len(Fixednumber_test_sites)):
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_FixNumber_SpatialCV_{}-test-sites_{}-train-sites_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(Fixednumber_test_sites[i],Fixednumber_train_sites[i],typeName,species,version,nchannel,width,height,special_name)
-            FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_train_site=Fixednumber_train_sites[i],Fixednumber_test_site=Fixednumber_test_sites[i],width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+            FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_train_site=Fixednumber_train_sites[i],Fixednumber_test_site=Fixednumber_test_sites[i],width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                                    total_channel_names=total_channel_names, main_stream_channel_names=main_stream_channel_names, side_stream_nchannel_names=side_channel_names)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
             
     if Estimation_Switch:
-        Estimation_Func()
+        Estimation_Func(total_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,side_channel_names=side_channel_names)
 
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         if Estimation_visualization_Switch:
@@ -101,4 +106,18 @@ if __name__ == '__main__':
         toml.dump(cfg, f)
         f.close()
 
+    if Sensitivity_Test_Switch:
+        for igroup in range(len(Sensitivity_Test_Sensitivity_Test_Variables)):
+            total_channel_names, main_stream_channel_names, side_channel_names = Get_channel_names(channels_to_exclude=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
+            width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
+            Sensitivity_Test_AVD_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                                 total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names,
+                                                 exclude_channel_names=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
+        cfg_outdir = Config_outdir + '{}/{}/results-Sensitivity_Tests/configuration-files/'.format(species, version)
+        if not os.path.isdir(cfg_outdir):
+            os.makedirs(cfg_outdir)
+        cfg_outfile = cfg_outdir + 'config_Sensitivity-Tests_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
+        f = open(cfg_outfile,'w')
+        toml.dump(cfg, f)
+        f.close()
 

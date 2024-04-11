@@ -155,14 +155,14 @@ def lr_strategy_lookup_table(optimizer):
 
 
 
-def find_latfusion_index(initial_channels,late_fusion_channels):
+def find_latfusion_index(total_channel_names,initial_channels,late_fusion_channels):
     initial_channel_index = []
     for i in range(len(initial_channels)):
-        initial_channel_index.append(channel_names.index(initial_channels[i]))
+        initial_channel_index.append(total_channel_names.index(initial_channels[i]))
     
     latefusion_channel_index = []
     for i in range(len(late_fusion_channels)):
-        latefusion_channel_index.append(channel_names.index(late_fusion_channels[i]))
+        latefusion_channel_index.append(total_channel_names.index(late_fusion_channels[i]))
     
     return initial_channel_index, latefusion_channel_index
     
@@ -170,3 +170,63 @@ def find_latfusion_index(initial_channels,late_fusion_channels):
 def optimizer_lookup(model_parameters,learning_rate):
     if Adam_settings:
         return torch.optim.Adam(params=model_parameters,betas=(Adam_beta0, Adam_beta1),eps=Adam_eps, lr=learning_rate)
+    
+def Get_channel_names(channels_to_exclude:list):
+    if ResNet_setting:
+        if len(channels_to_exclude) == 0:
+            total_channel_names = channel_names
+            main_stream_channel_names = channel_names
+            side_channel_names = []
+        else:
+            total_channel_names = channel_names
+            for ichannel in range(len(channels_to_exclude)):
+                if channels_to_exclude[ichannel] in total_channel_names:
+                    total_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the total channel list.'.format(channels_to_exclude[ichannel]))
+    elif LateFusion_setting:
+        if len(channels_to_exclude) == 0:
+            total_channel_names = channel_names
+            main_stream_channel_names = LateFusion_initial_channels
+            side_channel_names = LateFusion_latefusion_channels
+        else:
+            total_channel_names = channel_names
+            main_stream_channel_names = LateFusion_initial_channels
+            side_channel_names = LateFusion_latefusion_channels
+            for ichannel in range(len(channels_to_exclude)):
+                if channels_to_exclude[ichannel] in total_channel_names:
+                    total_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the total channel list.'.format(channels_to_exclude[ichannel]))
+                if channels_to_exclude[ichannel] in main_stream_channel_names:
+                    main_stream_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the main channel list.'.format(channels_to_exclude[ichannel]))
+                if channels_to_exclude[ichannel] in side_channel_names:
+                    side_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the side channel list.'.format(channels_to_exclude[ichannel]))
+    elif MultiHeadLateFusion_settings:
+        if len(channels_to_exclude) == 0:
+            total_channel_names = channel_names
+            main_stream_channel_names = MultiHeadLateFusion_initial_channels
+            side_channel_names = MultiHeadLateFusion_LateFusion_channels
+        else:
+            total_channel_names = channel_names
+            main_stream_channel_names = MultiHeadLateFusion_initial_channels
+            side_channel_names = MultiHeadLateFusion_LateFusion_channels
+            for ichannel in range(len(channels_to_exclude)):
+                if channels_to_exclude[ichannel] in total_channel_names:
+                    total_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the total channel list.'.format(channels_to_exclude[ichannel]))
+                if channels_to_exclude[ichannel] in main_stream_channel_names:
+                    main_stream_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the main channel list.'.format(channels_to_exclude[ichannel]))
+                if channels_to_exclude[ichannel] in side_channel_names:
+                    side_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the side channel list.'.format(channels_to_exclude[ichannel]))
+
+    return total_channel_names, main_stream_channel_names, side_channel_names

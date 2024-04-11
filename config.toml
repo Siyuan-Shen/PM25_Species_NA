@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = '{}_monthly_biases_conce
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_56channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -38,21 +38,21 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 
 [Spatial-CrossValidation]
 
-Spatial_CrossValidation_Switch                        = true
+Spatial_CrossValidation_Switch                        = false
 Spatial_CV_LossAccuracy_plot_Switch                   = false
 
 [Spatial-CrossValidation.Training_Settings]
 
 kfold                                                 = 10
 repeats                                               = 1
-beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-test_beginyear                                        = 2001
-test_endyear                                          = 2019
+beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
+endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
+test_beginyear                                        = 2000
+test_endyear                                          = 2016
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = true
+regression_plot_switch                                = false
 
 [Spatial-CrossValidation.Forced-Slope-Unity]
 
@@ -155,15 +155,41 @@ Uncertainty_Plot_MONTHS                               = ['01','02','03','04','05
 Uncertainty_Plot_Area                                 = 'NA'
 
 
+#########################################################################################################################################################
 
+[Sensitivity_Test-Settings]
+
+Sensitivity_Test_Switch                               = true
+Sensitivity_plot_Switch                               = false
+
+[Sensitivity_Test-Settings.Training_Settings]
+
+kfold                                                 = 10
+repeats                                               = 1
+beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
+endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
+test_beginyear                                        = 2000
+test_endyear                                          = 2016
+Sensitivity_Test_Variables                            = [['EtaAOD_Bias'], ['EtaCoastal'], ['EtaMixing'], ['EtaSGAOD_Bias'], ['EtaSGTOPO_Bias'], ['AOD'], ['ETA'], ['GeoPM25'],
+                                                       ['GeoNH4'],['GeoNIT'],['GeoSO4'],['GeoBC'],['GeoOM'],['GeoDUST'],['GeoSS'],
+                                                       ['NA_CNN_PM25'],#'GL_CNN_PM25'
+                                                       ['GC_PM25'], ['GC_NH4'], ['GC_SO4'], ['GC_NIT'], ['GC_SOA'], ['GC_OC'], ['GC_OM'], ['GC_BC'], ['GC_DST'],['GC_SSLT'],
+                                                       ['NH3_anthro_emi'],['SO2_anthro_emi'], ['NO_anthro_emi'], ['OC_anthro_emi'], ['BC_anthro_emi'],  ['N2O_anthro_emi'],['NMVOC_anthro_emi'],
+                                                       ['DST_offline_emi'], ['SSLT_offline_emi'],
+                                                       ['PBLH'], ['RH'], ['T2M'], ['U10M'], ['V10M'],['PRECTOT'],
+                                                       ['Urban_Builtup_Lands'],# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       ['Month_of_Year'],
+                                                       ['Lat'], ['Lon'],['elevation'] #'S1','S2','S3',#'S1','S2','S3','  'Lat', 'Lon',
+                                                        #'Population'
+                                                        ]
 
 #########################################################################################################################################################
 [Training-Settings]
 
 [Training-Settings.identity]
 
-version                                               = 'v1.2.1'
-special_name                                          = '_TestCEDS_Emissions'
+version                                               = 'v1.4.0'
+special_name                                          = '_Sensitivity_Tests'
 
 [Training-Settings.learning-objective]
 
@@ -182,24 +208,24 @@ log_species                                           = false
 ResNet.Settings                                       = false
 ResNet.Blocks                                         = 'BasicBlock'
 ResNet.blocks_num                                     = [1,1,1,1]
+
 #############
 LateFusion.Settings                                   = true
 LateFusion.Blocks                                     = 'BasicBlock'
 LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                        'GeoNH4','GeoNIT','GeoSO4',#'GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
-                                                        'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', #'OC_anthro_emi', 'BC_anthro_emi',  #'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                        'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',# 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M',#'PRECTOT',
                                                        'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
                                                        #,#'S1','S2','S3',' 
                                                         #'Population'
-                                                       ] 
-LateFusion.LateFusion_channels                         = [
-                                                         'Lat', 'Lon','elevation','Month_of_Year',
-                                                        ]
+                                                       ]
+LateFusion.LateFusion_channels                         = ['Lat', 'Lon','elevation','Month_of_Year',]
+
 #############
 MultiHeadLateFusion.Settings                           = false
 MultiHeadLateFusion.Blocks                             = 'BasicBlock'
@@ -215,9 +241,7 @@ MultiHeadLateFusion.initial_channels                   = ['EtaAOD_Bias', 'EtaCoa
                                                        #,#'S1','S2','S3',' 
                                                         #'Population'
                                                        ] 
-MultiHeadLateFusion.LateFusion_channels                = [
-                                                          'Lat', 'Lon','elevation','Month_of_Year',
-                                                        ]
+MultiHeadLateFusion.LateFusion_channels                = [ 'Lat', 'Lon','elevation','Month_of_Year', ]
 MultiHeadLateFusion.left_bin                           = -10.0
 MultiHeadLateFusion.right_bin                          = 10.0
 MultiHeadLateFusion.bins_number                        = 201
@@ -263,10 +287,10 @@ epoch                                                 = 30
 batchsize                                             = 128
 
 channel_names                                         = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                       'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                       'GeoNH4','GeoNIT','GeoSO4',#'GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
-                                                       'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', # 'OC_anthro_emi', 'BC_anthro_emi',  #'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                       'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',# 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                        'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
