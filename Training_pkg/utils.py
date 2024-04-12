@@ -174,25 +174,31 @@ def optimizer_lookup(model_parameters,learning_rate):
 def Get_channel_names(channels_to_exclude:list):
     if ResNet_setting:
         if len(channels_to_exclude) == 0:
-            total_channel_names = channel_names
-            main_stream_channel_names = channel_names
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = channel_names.copy()
             side_channel_names = []
         else:
-            total_channel_names = channel_names
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = channel_names.copy()
+            side_channel_names = []
             for ichannel in range(len(channels_to_exclude)):
                 if channels_to_exclude[ichannel] in total_channel_names:
                     total_channel_names.remove(channels_to_exclude[ichannel])
                 else:
                     print('{} is not in the total channel list.'.format(channels_to_exclude[ichannel]))
+                if channels_to_exclude[ichannel] in main_stream_channel_names:
+                    main_stream_channel_names.remove(channels_to_exclude[ichannel])
+                else:
+                    print('{} is not in the main channel list.'.format(channels_to_exclude[ichannel]))
     elif LateFusion_setting:
         if len(channels_to_exclude) == 0:
-            total_channel_names = channel_names
-            main_stream_channel_names = LateFusion_initial_channels
-            side_channel_names = LateFusion_latefusion_channels
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = LateFusion_initial_channels.copy()
+            side_channel_names = LateFusion_latefusion_channels.copy()
         else:
-            total_channel_names = channel_names
-            main_stream_channel_names = LateFusion_initial_channels
-            side_channel_names = LateFusion_latefusion_channels
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = LateFusion_initial_channels.copy()
+            side_channel_names = LateFusion_latefusion_channels.copy()
             for ichannel in range(len(channels_to_exclude)):
                 if channels_to_exclude[ichannel] in total_channel_names:
                     total_channel_names.remove(channels_to_exclude[ichannel])
@@ -208,13 +214,13 @@ def Get_channel_names(channels_to_exclude:list):
                     print('{} is not in the side channel list.'.format(channels_to_exclude[ichannel]))
     elif MultiHeadLateFusion_settings:
         if len(channels_to_exclude) == 0:
-            total_channel_names = channel_names
-            main_stream_channel_names = MultiHeadLateFusion_initial_channels
-            side_channel_names = MultiHeadLateFusion_LateFusion_channels
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = MultiHeadLateFusion_initial_channels.copy()
+            side_channel_names = MultiHeadLateFusion_LateFusion_channels.copy()
         else:
-            total_channel_names = channel_names
-            main_stream_channel_names = MultiHeadLateFusion_initial_channels
-            side_channel_names = MultiHeadLateFusion_LateFusion_channels
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = MultiHeadLateFusion_initial_channels.copy()
+            side_channel_names = MultiHeadLateFusion_LateFusion_channels.copy()
             for ichannel in range(len(channels_to_exclude)):
                 if channels_to_exclude[ichannel] in total_channel_names:
                     total_channel_names.remove(channels_to_exclude[ichannel])
