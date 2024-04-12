@@ -62,7 +62,7 @@ def BLOO_AVD_Spatial_CrossValidation(buffer_radius,width, height, sitesnumber,st
             ## Training Process.
             # *------------------------------------------------------------------------------*#
 
-            cnn_model = initial_network(width=width)
+            cnn_model = initial_network(width=width,main_stream_nchannel=len(main_stream_channel_names),side_stream_nchannel=len(side_stream_nchannel_names))
  
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)

@@ -56,7 +56,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
             ## Training Process.
             # *------------------------------------------------------------------------------*#
 
-            cnn_model = initial_network(width=width)
+            cnn_model = initial_network(width=width,main_stream_nchannel=len(main_stream_channel_names),side_stream_nchannel=len(side_stream_nchannel_names))
 
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
@@ -170,8 +170,8 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
             ## Training Process.
             # *------------------------------------------------------------------------------*#
 
-            cnn_model = initial_network(width=width)
-
+            cnn_model = initial_network(width=width,main_stream_nchannel=len(main_stream_channel_names),side_stream_nchannel=len(side_stream_nchannel_names))
+                                        
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)

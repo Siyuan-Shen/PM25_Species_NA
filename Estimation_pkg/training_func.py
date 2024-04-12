@@ -31,7 +31,7 @@ def Train_Model_forEstimation(train_beginyears, train_endyears, width, height, s
         learning_objective_index   = GetYIndex(index=site_index,beginyear=train_beginyears[imodel],endyear=train_endyears[imodel],sitenumber=sitesnumber)
         testing_array_index        = GetXIndex(index=np.array(range(100)),beginyear=train_beginyears[imodel],endyear=train_endyears[imodel],sitenumber=sitesnumber) # These two testing arrrays are meaningless here
         teating_objective_index    = GetYIndex(index=np.array(range(100)),beginyear=train_beginyears[imodel],endyear=train_endyears[imodel],sitenumber=sitesnumber) #
-        cnn_model = initial_network(width=width)
+        cnn_model = initial_network(width=width,main_stream_nchannel=len(main_stream_channel_names),side_stream_nchannel=len(side_stream_nchannel_names))
         X_train = Normalized_TrainingData[training_array_index,:,:,:]
         y_train = true_input[learning_objective_index]
         X_test  = Normalized_TrainingData[testing_array_index,:,:,:] 
