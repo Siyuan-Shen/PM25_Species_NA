@@ -22,7 +22,8 @@ def Estimation_Func(total_channel_names,mainstream_channel_names,side_channel_na
     if Train_model_Switch:
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
         Train_Model_forEstimation(train_beginyears=Training_beginyears,train_endyears=Training_endyears,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
-                                )
+                                  total_channel_names=total_channel_names,main_stream_channel_names=mainstream_channel_names,side_stream_nchannel_names=side_channel_names)
+        
         del width, height, sitesnumber,start_YYYY, TrainingDatasets 
         gc.collect()
     
