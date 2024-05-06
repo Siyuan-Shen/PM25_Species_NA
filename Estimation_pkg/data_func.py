@@ -56,29 +56,31 @@ def get_GL_extent_index(extent)->np.array:
 def get_landtype(YYYY,extent)->np.array:
     #landtype_infile = '/my-projects/Projects/MLCNN_PM25_2021/data/inputdata/Other_Variables_MAP_INPUT/{}/MCD12C1_LandCoverMap_{}.npy'.format(YYYY,YYYY)
     #landtype = np.load(landtype_infile)
-    #Mask_indir = '/my-projects/mask/NA_Masks/Cropped_NA_Masks/'
+    Mask_indir = '/my-projects/mask/NA_Masks/Cropped_NA_Masks/'
 
-    #Contiguous_US_data = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Contiguous United States.nc')
-    #Canada_data        = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Canada.nc')
-    #Alaska_data        = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Alaska.nc')
-    #Contiguous_US_mask = np.array(Contiguous_US_data['regionmask'][:])
-    #Canada_mask        = np.array(Canada_data['regionmask'][:])
-    #Alaska_mask        = np.array(Alaska_data['regionmask'][:])
-    #landtype = Contiguous_US_mask + Canada_mask + Alaska_mask
-    #lat_index,lon_index = get_extent_index(extent=extent)
-    landtype_infile = '/my-projects/mask/Land_Ocean_Mask/NewLandMask-0.01.mat'
-    LandMask = mat.loadmat(landtype_infile)
-    MASKp1 = LandMask['MASKp1']
-    MASKp2 = LandMask['MASKp2']
-    MASKp3 = LandMask['MASKp3']
-    MASKp4 = LandMask['MASKp4']
-    MASKp5 = LandMask['MASKp5']
-    MASKp6 = LandMask['MASKp6']
-    MASKp7 = LandMask['MASKp7']
-    MASKp_land = MASKp1 +MASKp2 + MASKp3 + MASKp4 + MASKp5 + MASKp6 + MASKp7 
-    landtype = np.zeros((13000,36000),dtype=np.float32)
-    landtype = MASKp_land
+    Contiguous_US_data = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Contiguous United States.nc')
+    Canada_data        = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Canada.nc')
+    Alaska_data        = nc.Dataset(Mask_indir+'Cropped_REGIONMASK-Alaska.nc')
+    Contiguous_US_mask = np.array(Contiguous_US_data['regionmask'][:])
+    Canada_mask        = np.array(Canada_data['regionmask'][:])
+    Alaska_mask        = np.array(Alaska_data['regionmask'][:])
+    landtype = Contiguous_US_mask + Canada_mask + Alaska_mask
     lat_index,lon_index = get_extent_index(extent=extent)
+    '''
+    #landtype_infile = '/my-projects/mask/Land_Ocean_Mask/NewLandMask-0.01.mat'
+    #LandMask = mat.loadmat(landtype_infile)
+    #MASKp1 = LandMask['MASKp1']
+    #MASKp2 = LandMask['MASKp2']
+    #MASKp3 = LandMask['MASKp3']
+    #MASKp4 = LandMask['MASKp4']
+    #MASKp5 = LandMask['MASKp5']
+    #MASKp6 = LandMask['MASKp6']
+    #MASKp7 = LandMask['MASKp7']
+    #MASKp_land = MASKp1 +MASKp2 + MASKp3 + MASKp4 + MASKp5 + MASKp6 + MASKp7 
+    #landtype = np.zeros((13000,36000),dtype=np.float32)
+    #landtype = MASKp_land
+    #lat_index,lon_index = get_extent_index(extent=extent)
+    '''
     output = np.zeros((len(lat_index),len(lon_index)), dtype=int)
 
     for ix in range(len(lat_index)):
