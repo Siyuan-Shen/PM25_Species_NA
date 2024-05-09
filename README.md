@@ -49,6 +49,8 @@ Siyuan Shen, Jan. 9th, 2024 @ Washington University in St. Louis, MO. USA
 
 Version 1.5.0
 
+Siyuan Shen, May. 9th, 2024 @ Washington University in St. Louis, MO. USA
+
 Buffer Leave-Cluster-Out (BLCO) CV is a compromise solution for pursuing a Buffer Leave-One-Out(BLOO) CV. Since implementing the real BLOO CV for the whole datasets is computationally difficult, and buffered CV faces the problem of having too less training datasets, the BLCO CV aims to select testing datasets near several seed sites and set buffers around them to achieve reducing the spatial autocorrelation in the training datasets. 
 
 How we implement the BLCO CV is a. Select seeds sites based upon the distribution density of sites; b. calculate the distances from each sites to cluster seeds and find the shortest distances of each sites to a certain seed site; c. determine the criterial radius based upon the number of test sites you want to with held; d. set buffers around selected test sites and exclude all sites within the buffers from training datasets.
