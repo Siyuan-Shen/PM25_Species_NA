@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = '{}_monthly_biases_conce
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/{}-cnn_TrainingData_55channels_11x11_200001-201912_NA-PM-v1.4.0.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -75,7 +75,26 @@ endyears                                              = [2001,2002,2003,2004,200
 test_beginyear                                        = 2001
 test_endyear                                          = 2019
 
+#########################################################################################################################################################
 
+[BLCO-CrossValidation]
+
+BLCO_CrossValidation_Switch                           = true
+Buffer_size                                           = [200]#,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
+
+[BLCO-CrossValidation.TrainingSettings]
+
+seeds_number                                          = 10
+kfold                                                 = 20
+repeats                                               = 1
+beginyears                                            = [2001,2002,]#2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+endyears                                              = [2001,2002,]#2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+test_beginyear                                        = 2001
+test_endyear                                          = 2002
+
+[BLCO-CrossValidation.visualization_Settings]
+
+Test_Train_Buffers_Distributions_plot                 = true
 #########################################################################################################################################################
 
 [FixNumber-SpatialCrossValidation]
@@ -159,7 +178,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 
 [Sensitivity_Test-Settings]
 
-Sensitivity_Test_Switch                               = true
+Sensitivity_Test_Switch                               = false
 Sensitivity_plot_Switch                               = false
 
 [Sensitivity_Test-Settings.Training_Settings]
@@ -188,8 +207,8 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias'], ['EtaC
 
 [Training-Settings.identity]
 
-version                                               = 'v1.4.0'
-special_name                                          = '_Sensitivity_Tests'
+version                                               = 'v1.5.0-beta'
+special_name                                          = '_BLCO_Test'
 
 [Training-Settings.learning-objective]
 

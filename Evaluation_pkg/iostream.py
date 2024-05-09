@@ -106,6 +106,35 @@ def save_BLOO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accu
     np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
+def save_BLCO_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
+    outdir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir) 
+    obs_data_outfile   = outdir + '{}-{}-Obs-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number,beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    final_data_outfile = outdir + '{}-{}-Final-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number,beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    
+    np.save(obs_data_outfile, obs_data)
+    np.save(final_data_outfile, final_data)
+    return
+
+def save_BLCO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height, buffer_radius):
+
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    loss_outfile = outdir + 'BLCOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    accuracy_outfile = outdir + 'BLCOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    valid_loss_outfile = outdir + 'BLCOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    valid_accuracy_outfile = outdir + 'BLCOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    np.save(loss_outfile, loss)
+    np.save(accuracy_outfile, accuracy)
+    np.save(valid_loss_outfile, valid_loss)
+    np.save(valid_accuracy_outfile, valid_accuracy)
+    return
+
+
 def load_coMonitor_Population():
     data = nc.Dataset(training_infile,'r')
     width = np.array(data.variables['width'][:])[0]
@@ -195,6 +224,33 @@ def load_BLOO_loss_accuracy(model_outdir, typeName, version, species, nchannel, 
     valid_accuracy = np.load(valid_accuracy_outfile )
     return loss, accuracy, valid_loss, valid_accuracy
 
+def load_BLCO_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
+    indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
+    obs_data_infile   = indir + '{}-{}-Obs-BLOODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number,beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    final_data_infile = indir + '{}-{}-Final-BLOODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name)
+    
+    obs_data = np.load(obs_data_infile)
+    final_data = np.load(final_data_infile)
+
+    return obs_data, final_data
+
+def load_BLCO_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height, buffer_radius):
+
+    outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    loss_outfile = outdir +'BLOOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+    accuracy_outfile = outdir + 'BLOOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+    valid_loss_outfile = outdir + 'BLOOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    valid_accuracy_outfile = outdir + 'BLOOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+    loss = np.load(loss_outfile)
+    accuracy = np.load(accuracy_outfile)
+    valid_loss = np.load(valid_loss_outfile )
+    valid_accuracy = np.load(valid_accuracy_outfile )
+    return loss, accuracy, valid_loss, valid_accuracy
+
 def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_annual_CV_R2,training_month_CV_R2,
                 geo_annual_CV_R2, geo_month_CV_R2,
                 CV_slope,annual_CV_slope,month_CV_slope,
@@ -253,15 +309,15 @@ def output_text(outfile:str,status:str,CV_R2,annual_CV_R2,month_CV_R2,training_a
     return
 
 
-def AVD_output_text(outfile:str,status:str,
+def AVD_output_text(outfile:str,status:str,test_beginyears,test_endyears,
                 test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors):
     
     MONTH = ['Annual','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyear,test_endyear,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
+    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyears,test_endyears,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
 
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Area: {} ; Time Period: {} - {}'.format('NA', test_beginyear, test_endyear)])
+        writer.writerow(['Area: {} ; Time Period: {} - {}'.format('NA', test_beginyears, test_endyears)])
         
         for imonth in MONTH:
             writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
@@ -302,18 +358,18 @@ def AVD_output_text(outfile:str,status:str,
     return 
 
 
-def SensitivityTests_output_text(outfile:str,status:str,
+def SensitivityTests_output_text(outfile:str,status:str,test_beginyears,test_endyears,
                 test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors,exclude_channels_names):
     
     MONTH = ['Annual','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyear,test_endyear,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
+    test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyears,test_endyears,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
     Exclude_Variables = ''
     for iname in exclude_channels_names:
          Exclude_Variables += ' '+iname
 
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {} '.format('NA', test_beginyear, test_endyear, Exclude_Variables)])
+        writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {} '.format('NA', test_beginyears, test_endyears, Exclude_Variables)])
         
         for imonth in MONTH:
             writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
