@@ -107,7 +107,7 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
                     testing_population_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]] = np.append(testing_population_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], population_test_data[imonth*len(test_index):(imonth+1)*len(test_index)])
         count += 1
 
-    test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
+    test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=Sensitivity_Test_test_beginyear, test_endyear=Sensitivity_Test_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording)
@@ -118,16 +118,16 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
     
 
     txt_outfile =  txtfile_outdir + 'Sensitivity_Tests_{}_{}_{}_{}Channel_{}x{}{}_Exclude{}.csv'.format(typeName,species,version,nchannel,width,height,special_name,exclude_names_suffix)
-    SensitivityTests_output_text(outfile=txt_outfile,status='w', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
+    SensitivityTests_output_text(outfile=txt_outfile,status='w', test_beginyears=Sensitivity_Test_test_beginyear,test_endyears=Sensitivity_Test_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,exclude_channels_names=exclude_channel_names)
     save_sensitivity_test_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height, exclude_names_suffix=exclude_names_suffix)
-    final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=test_beginyear, endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
+    final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=Sensitivity_Test_test_beginyear, endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,exclude_names_suffix=exclude_names_suffix)
            
     for imonth in range(len(MONTH)):
-        final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=test_beginyear, imonth=imonth,endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
+        final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=Sensitivity_Test_test_beginyear, imonth=imonth,endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
         save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,exclude_names_suffix=exclude_names_suffix)
       

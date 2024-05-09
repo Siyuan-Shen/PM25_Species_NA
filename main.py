@@ -7,6 +7,7 @@ from visualization_pkg.Evaluation_plot import regression_plot
 from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
 from Evaluation_pkg.Sensitivity_Spatial_CrossValidation import Sensitivity_Test_AVD_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
+from Evaluation_pkg.BLCO_CrossValidation import BLCO_AVD_Spatial_CrossValidation
 from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording
 from Evaluation_pkg.utils import *
 from Estimation_pkg.Estimation import Estimation_Func
@@ -55,11 +56,24 @@ if __name__ == '__main__':
     if BLOO_CrossValidation_Switch:
         cfg_outdir = Config_outdir + '{}/{}/Results/results-BLOOCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
-        for buffer_radius in Buffer_size:
+        for buffer_radius in BLOO_Buffer_size:
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_BLOO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
             BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                             total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
+            #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
+            f = open(cfg_outfile,'w')
+            toml.dump(cfg, f)
+            f.close()
+    if BLCO_CrossValidation_Switch:
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-BLCOCV/configuration-files/'.format(species, version)
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        for buffer_radius in BLCO_Buffer_size:
+            if not os.path.isdir(cfg_outdir):
+                os.makedirs(cfg_outdir)
+            cfg_outfile = cfg_outdir + 'config_BLCO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
+            BLCO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
                                              total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
             #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
             f = open(cfg_outfile,'w')

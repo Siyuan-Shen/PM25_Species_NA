@@ -50,7 +50,7 @@ Fixednumber_train_sites  = FixNumber_Spatial_Settings['fixednumber_train_sites']
 ################################## BLOO Cross-Validation ################################
 
 BLOO_CrossValidation_Switch = cfg['BLOO-CrossValidation']['BLOO_CrossValidation_Switch']
-Buffer_size = cfg['BLOO-CrossValidation']['Buffer_size']
+BLOO_Buffer_size = cfg['BLOO-CrossValidation']['Buffer_size']
 
 #######################################################################################
 # BLOO Training Settings
@@ -63,6 +63,28 @@ BLOO_endyears   = BLOO_TrainingSettings['endyears']
 BLOO_test_beginyear = BLOO_TrainingSettings['test_beginyear']
 BLOO_test_endyear   = BLOO_TrainingSettings['test_endyear']
 
+
+################################## BLCO Cross-Validation ################################
+
+BLCO_CrossValidation_Switch = cfg['BLCO-CrossValidation']['BLCO_CrossValidation_Switch']
+BLCO_Buffer_size = cfg['BLCO-CrossValidation']['Buffer_size']
+
+#######################################################################################
+# BLCO Training Settings
+
+BLCO_TrainingSettings = cfg['BLCO-CrossValidation']['TrainingSettings']
+BLCO_seeds_number   =   BLCO_TrainingSettings['seeds_number']
+BLCO_kfold   = BLCO_TrainingSettings['kfold']
+BLCO_repeats = BLCO_TrainingSettings['repeats']
+BLCO_beginyears = BLCO_TrainingSettings['beginyears']
+BLCO_endyears   = BLCO_TrainingSettings['endyears']
+BLCO_test_beginyear = BLCO_TrainingSettings['test_beginyear']
+BLCO_test_endyear   = BLCO_TrainingSettings['test_endyear']
+
+#######################################################################################
+# BLCO Visualiztion Settings
+BLCO_Visualization_Settings = cfg['BLCO-CrossValidation']['visualization_Settings']
+Test_Train_Buffers_Distributions_plot = BLCO_Visualization_Settings['Test_Train_Buffers_Distributions_plot']
 ################################## Sensitivity Test Cross-Validation ################################
 
 Sensitivity_Test_Settings = cfg['Sensitivity_Test-Settings']
@@ -403,7 +425,7 @@ def find_sites_nearby(test_lat: np.float32, test_lon: np.float32,train_index:np.
             sites_within_radius_index = np.append(sites_within_radius_index,sites_nearby_index[isite])
     sites_within_index,X_index,Y_index = np.intersect1d(train_index,sites_within_radius_index,return_indices=True)
     train_index = np.delete(train_index,X_index)
-    return train_index 
+    return train_index
 
 def calculate_distance(pixel_lat:np.float32,pixel_lon:np.float32,site_lat:np.float32,site_lon:np.float32,r=6371.01):
     site_pos1 = pixel_lat * np.pi / 180.0

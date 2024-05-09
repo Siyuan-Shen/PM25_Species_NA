@@ -115,7 +115,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
         os.makedirs(txtfile_outdir)
     
     txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(typeName,species,version,nchannel,width,height,special_name)
-    AVD_output_text(outfile=txt_outfile,status='w', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
+    AVD_output_text(outfile=txt_outfile,status='w', test_beginyears=test_beginyear,test_endyears=test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
     save_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
@@ -228,7 +228,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
         os.makedirs(txtfile_outdir)
     
     txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(typeName,species,version,nchannel,width,height,special_name)
-    AVD_output_text(outfile=txt_outfile,status='w', test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
+    AVD_output_text(outfile=txt_outfile,status='w', test_beginyears=Fixnumber_test_beginyear,test_endyears=Fixnumber_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
     save_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
