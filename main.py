@@ -28,11 +28,11 @@ if __name__ == '__main__':
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
         cfg_outfile = cfg_outdir + 'config_SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
-        AVD_Spatial_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
-                                    total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_nchannel_names=side_channel_names)
         f = open(cfg_outfile,'w')
         toml.dump(cfg, f)
         f.close()
+        AVD_Spatial_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                    total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_nchannel_names=side_channel_names)
 
     if Spatial_CV_LossAccuracy_plot_Switch:
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
@@ -60,12 +60,12 @@ if __name__ == '__main__':
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_BLOO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
-            BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
-                                             total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
-            #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
+            BLOO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                             total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
+            #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
     if BLCO_CrossValidation_Switch:
         cfg_outdir = Config_outdir + '{}/{}/Results/results-BLCOCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
@@ -73,12 +73,12 @@ if __name__ == '__main__':
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_BLCO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
-            BLCO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
-                                             total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
-            #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
+            BLCO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                             total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
+            #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
 
     if FixNumber_Spatial_CrossValidation_Switch:
         cfg_outdir = Config_outdir + '{}/{}/Results/results-FixNumberCV/configuration-files/'.format(species, version)
@@ -87,19 +87,13 @@ if __name__ == '__main__':
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
             cfg_outfile = cfg_outdir + 'config_FixNumber_SpatialCV_{}-test-sites_{}-train-sites_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(Fixednumber_test_sites[i],Fixednumber_train_sites[i],typeName,species,version,nchannel,width,height,special_name)
-            FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_train_site=Fixednumber_train_sites[i],Fixednumber_test_site=Fixednumber_test_sites[i],width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
-                                                    total_channel_names=total_channel_names, main_stream_channel_names=main_stream_channel_names, side_stream_nchannel_names=side_channel_names)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
+            FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_train_site=Fixednumber_train_sites[i],Fixednumber_test_site=Fixednumber_test_sites[i],width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                                    total_channel_names=total_channel_names, main_stream_channel_names=main_stream_channel_names, side_stream_nchannel_names=side_channel_names)
             
     if Estimation_Switch:
-        Estimation_Func(total_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,side_channel_names=side_channel_names)
-
-        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
-        if Estimation_visualization_Switch:
-            plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,typeName=typeName,width=
-                                            width,height=height,species=species,version=version,Area=Map_Plot_Area,PLOT_YEARS=Map_Plot_YEARS, PLOT_MONTHS=Map_Plot_MONTHS)
         cfg_outdir = Config_outdir + '{}/{}/Estimation/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
@@ -107,11 +101,16 @@ if __name__ == '__main__':
         f = open(cfg_outfile,'w')
         toml.dump(cfg, f)
         f.close()
+        Estimation_Func(total_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,side_channel_names=side_channel_names)
+
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        if Estimation_visualization_Switch:
+            plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,typeName=typeName,width=
+                                            width,height=height,species=species,version=version,Area=Map_Plot_Area,PLOT_YEARS=Map_Plot_YEARS, PLOT_MONTHS=Map_Plot_MONTHS)
+        
 
 
     if Uncertainty_Switch:
-        Derive_Estimation_Uncertainty()
-        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         cfg_outdir = Config_outdir + '{}/{}/Uncertainty_Results/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
@@ -119,15 +118,11 @@ if __name__ == '__main__':
         f = open(cfg_outfile,'w')
         toml.dump(cfg, f)
         f.close()
+        Derive_Estimation_Uncertainty()
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        
 
     if Sensitivity_Test_Switch:
-        for igroup in range(len(Sensitivity_Test_Sensitivity_Test_Variables)):
-            total_channel_names, main_stream_channel_names, side_channel_names = Get_channel_names(channels_to_exclude=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
-            print('Exclude Variables: {} \nTotal Channel Names: {}'.format(Sensitivity_Test_Sensitivity_Test_Variables[igroup],total_channel_names))
-            width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
-            Sensitivity_Test_AVD_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
-                                                 total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names,
-                                                 exclude_channel_names=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
         cfg_outdir = Config_outdir + '{}/{}/Results/results-Sensitivity_Tests/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
@@ -136,3 +131,11 @@ if __name__ == '__main__':
         toml.dump(cfg, f)
         f.close()
 
+        for igroup in range(len(Sensitivity_Test_Sensitivity_Test_Variables)):
+            total_channel_names, main_stream_channel_names, side_channel_names = Get_channel_names(channels_to_exclude=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
+            print('Exclude Variables: {} \nTotal Channel Names: {}'.format(Sensitivity_Test_Sensitivity_Test_Variables[igroup],total_channel_names))
+            width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
+            Sensitivity_Test_AVD_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                                 total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names,
+                                                 exclude_channel_names=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
+        
