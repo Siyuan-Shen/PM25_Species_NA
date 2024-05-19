@@ -94,6 +94,7 @@ if __name__ == '__main__':
                                                     total_channel_names=total_channel_names, main_stream_channel_names=main_stream_channel_names, side_stream_nchannel_names=side_channel_names)
             
     if Estimation_Switch:
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         cfg_outdir = Config_outdir + '{}/{}/Estimation/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
@@ -103,7 +104,7 @@ if __name__ == '__main__':
         f.close()
         Estimation_Func(total_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,side_channel_names=side_channel_names)
 
-        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        
         if Estimation_visualization_Switch:
             plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,typeName=typeName,width=
                                             width,height=height,species=species,version=version,Area=Map_Plot_Area,PLOT_YEARS=Map_Plot_YEARS, PLOT_MONTHS=Map_Plot_MONTHS)
@@ -111,6 +112,7 @@ if __name__ == '__main__':
 
 
     if Uncertainty_Switch:
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         cfg_outdir = Config_outdir + '{}/{}/Uncertainty_Results/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
             os.makedirs(cfg_outdir)
@@ -119,18 +121,10 @@ if __name__ == '__main__':
         toml.dump(cfg, f)
         f.close()
         Derive_Estimation_Uncertainty()
-        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        
         
 
     if Sensitivity_Test_Switch:
-        cfg_outdir = Config_outdir + '{}/{}/Results/results-Sensitivity_Tests/configuration-files/'.format(species, version)
-        if not os.path.isdir(cfg_outdir):
-            os.makedirs(cfg_outdir)
-        cfg_outfile = cfg_outdir + 'config_Sensitivity-Tests_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
-        f = open(cfg_outfile,'w')
-        toml.dump(cfg, f)
-        f.close()
-
         for igroup in range(len(Sensitivity_Test_Sensitivity_Test_Variables)):
             total_channel_names, main_stream_channel_names, side_channel_names = Get_channel_names(channels_to_exclude=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
             print('Exclude Variables: {} \nTotal Channel Names: {}'.format(Sensitivity_Test_Sensitivity_Test_Variables[igroup],total_channel_names))
@@ -139,3 +133,10 @@ if __name__ == '__main__':
                                                  total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names,
                                                  exclude_channel_names=Sensitivity_Test_Sensitivity_Test_Variables[igroup])
         
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-Sensitivity_Tests/configuration-files/'.format(species, version)
+        if not os.path.isdir(cfg_outdir):
+            os.makedirs(cfg_outdir)
+        cfg_outfile = cfg_outdir + 'config_Sensitivity-Tests_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
+        f = open(cfg_outfile,'w')
+        toml.dump(cfg, f)
+        f.close()
