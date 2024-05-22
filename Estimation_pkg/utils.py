@@ -15,6 +15,7 @@ Estimation_Switch = cfg['Estimation-Settings']['Estimation_Switch']
 Train_model_Switch = cfg['Estimation-Settings']['Train_model_Switch']
 Map_estimation_Switch = cfg['Estimation-Settings']['Map_estimation_Switch']
 Estimation_visualization_Switch = cfg['Estimation-Settings']['Estimation_visualization_Switch']
+Estimation_PWMPM_Cal_Switch = cfg['Estimation-Settings']['Estimation_PWMPM_Cal_Switch']
 Derive_combinedGeo_MapData_Switch = cfg['Estimation-Settings']['Derive_combinedGeo_MapData_Switch']
 
 #######################################################################################
@@ -47,6 +48,17 @@ Map_Plot_Extent                                       = Visualization_Settings['
 #######################################################################################
 # Combine With Geophysical Settings
 Coefficient_start_distance  = cfg['Estimation-Settings']['CombineWithGeophysical_Settings']['Coefficient_start_distance']
+
+#######################################################################################
+# Population-Weighted Mean PM Analysis
+PWM_PM_Calculation_Settings = cfg['Estimation-Settings']['PWM-PM_Calculation_Settings']
+Monthly_Analysis_Switch                               = PWM_PM_Calculation_Settings['Monthly_Analysis_Switch']
+Annual_Analysis_Switch                                = PWM_PM_Calculation_Settings['Annual_Analysis_Switch']
+NorthAmerica_Analysis_Switch                          = PWM_PM_Calculation_Settings['NorthAmerica_Analysis_Switch']
+UnitedStates_Analysis_Switch                          = PWM_PM_Calculation_Settings['UnitedStates_Analysis_Switch']
+Canada_Analysis_Switch                                = PWM_PM_Calculation_Settings['Canada_Analysis_Switch']
+Analysis_YEARS                                        = PWM_PM_Calculation_Settings['Analysis_YEARS']
+Analysis_MONTH                                        = PWM_PM_Calculation_Settings['Analysis_MONTH']
 
 
 #######################################################################################################################

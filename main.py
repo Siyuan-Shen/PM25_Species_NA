@@ -11,6 +11,7 @@ from Evaluation_pkg.BLCO_CrossValidation import BLCO_AVD_Spatial_CrossValidation
 from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording
 from Evaluation_pkg.utils import *
 from Estimation_pkg.Estimation import Estimation_Func
+from Estimation_pkg.Quality_Control import Calculate_Regional_PWM_PM_Components
 from Estimation_pkg.utils import *
 from Uncertainty_pkg.uncertainty_estimation import Derive_Estimation_Uncertainty
 from Uncertainty_pkg.utils import Uncertainty_Switch
@@ -104,6 +105,8 @@ if __name__ == '__main__':
         f.close()
         Estimation_Func(total_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,side_channel_names=side_channel_names)
 
+        if Estimation_PWMPM_Cal_Switch:
+            Calculate_Regional_PWM_PM_Components()
         
         if Estimation_visualization_Switch:
             plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,typeName=typeName,width=

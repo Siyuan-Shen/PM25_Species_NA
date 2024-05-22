@@ -49,7 +49,7 @@ Siyuan Shen, Jan. 9th, 2024 @ Washington University in St. Louis, MO. USA
 
 Version 1.5.0
 
-Siyuan Shen, May. 9th, 2024 @ Washington University in St. Louis, MO. USA
+Siyuan Shen, May 9th, 2024 @ Washington University in St. Louis, MO. USA
 
 Buffer Leave-Cluster-Out (BLCO) CV is a compromise solution for pursuing a Buffer Leave-One-Out(BLOO) CV. Since implementing the real BLOO CV for the whole datasets is computationally difficult, and buffered CV faces the problem of having too less training datasets, the BLCO CV aims to select testing datasets near several seed sites and set buffers around them to achieve reducing the spatial autocorrelation in the training datasets. 
 
@@ -59,3 +59,7 @@ Updates:
 1. The option for implementing BLCO CV is added.
 2. The option for plotting the BLCO testing sites, training sites, and buffers distributions is added.
 3. Update the Training_Evaluation_Estimation/NH4/v1.5.0-beta/Evaluation_pkg/iostream.py/AVD_output_text() to have test_beginyears, endbeginyears as input variables.
+
+    Version 1.5.1
+    Siyuan Shen, May 21st, 2024 @ Home, St. Louis, MO. USA
+    A quality control is added in the Estimation Module. Monthly and annual PWM Species concentrations of different regions, states in USA, and provinces in Canada can be calculated in this module.
