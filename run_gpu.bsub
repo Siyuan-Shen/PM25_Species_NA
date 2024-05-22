@@ -1,12 +1,10 @@
 #!/bin/bash
 #BSUB -q general
-#BSUB -R 'gpuhost rusage[mem=200GB] span[hosts=1]'
+#BSUB -R 'gpuhost rusage[mem=150GB] span[hosts=1]'
 #BSUB -G compute-rvmartin
-#BSUB -gpu "num=1:gmodel=NVIDIAA100_SXM4_80GB"
+#BSUB -gpu "num=1:gmodel=NVIDIAA40"
 #BSUB -a 'docker(syword/python3-pytorch:2023.12)'
-#BSUB -J "NH4 1.4.0 SensitivityTests"
-#BSUB -m 'compute1-exec-393.ris.wustl.edu compute1-exec-395.ris.wustl.edu compute1-exec-396.ris.wustl.edu compute1-exec-399.ris.wustl.edu compute1-exec-400.ris.wustl.edu compute1-exec-401.ris.wustl.edu'
-
+#BSUB -J "1.5.0 PM25 BLCO CV 1998-2022"
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu
@@ -14,6 +12,10 @@
 
 /bin/true
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/NH4/v1.4.0
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.5.0
 python3 main.py
 
+# NVIDIAA100_SXM4_80GB
+# NVIDIAA40
+# NVIDIAA100_SXM4_40GB
+# TeslaV100_SXM2_32GB
