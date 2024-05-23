@@ -176,7 +176,7 @@ def Monthly_PWM_PM_output_text(PWM_PM_dic,species,YYYY,MM,outfile,areas_list):
         for iarea in areas_list:
             for iyear in range(len(YYYY)):
                 for imonth in range(len(MM)):
-                    writer.writerow([iarea,'{}{}'.format(YYYY[iyear],MM[imonth]),str(np.round(PWM_PM_dic[iarea][iyear*12+imonth],4))])
+                    writer.writerow([iarea,'{}-{}'.format(YYYY[iyear],MM[imonth]),str(np.round(PWM_PM_dic[iarea][iyear*12+imonth],4))])
         
     return
 
