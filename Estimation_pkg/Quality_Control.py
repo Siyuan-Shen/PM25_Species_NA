@@ -84,13 +84,13 @@ def Calculate_Regional_PWM_PM_Components():
                             Canada_Monthly_PWM_Dic[iprov][iyear*12+imonth] = Calculate_PWA_PM25(Population_array=Population_Map,PM25_array=Masked_SPECIES)
         if NorthAmerica_Analysis_Switch:
             outfile = outdir + 'Monthly_NorthAmerica_Analysis_{}-{}{}.csv'.format(species,version,special_name)
-            Monthly_PWM_PM_output_text(PWM_PM_dic=NorthAmerica_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH[imonth]],outfile=outfile,areas_list=REGIONMASK_lists)
+            Monthly_PWM_PM_output_text(PWM_PM_dic=NorthAmerica_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH],outfile=outfile,areas_list=REGIONMASK_lists)
         if UnitedStates_Analysis_Switch:
             outfile = outdir + 'Monthly_UnitedStates_Analysis_{}-{}{}.csv'.format(species,version,special_name)
-            Monthly_PWM_PM_output_text(PWM_PM_dic=UnitedStates_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH[imonth]],outfile=outfile,areas_list=STATEMASK_lists)
+            Monthly_PWM_PM_output_text(PWM_PM_dic=UnitedStates_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH],outfile=outfile,areas_list=STATEMASK_lists)
         if Canada_Analysis_Switch:
             outfile = outdir + 'Monthly_Canada_Analysis_{}-{}{}.csv'.format(species,version,special_name)
-            Monthly_PWM_PM_output_text(PWM_PM_dic=Canada_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH[imonth]],outfile=outfile,areas_list=PROVMASK_lists)
+            Monthly_PWM_PM_output_text(PWM_PM_dic=Canada_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH],outfile=outfile,areas_list=PROVMASK_lists)
 
 
     if Annual_Analysis_Switch:
@@ -119,7 +119,9 @@ def Calculate_Regional_PWM_PM_Components():
             else:
                 temp_annual_map = np.zeros((6000,13000),dtype=np.float32)
                 for imonth in range(12):
-                    SPECIES_Map, lat, lon = load_estimation_map_data(YYYY=Analysis_YEARS[iyear],MM=MM[imonth],SPECIES=species,version=version,special_name=special_name)
+                    SPECIES_Map = np.zeros((6000,13000),dtype=np.float32)
+                    init_SPECIES_Map, lat, lon = load_estimation_map_data(YYYY=Analysis_YEARS[iyear],MM=MM[imonth],SPECIES=species,version=version,special_name=special_name)
+                    SPECIES_Map[5:5995,5:12995] = init_SPECIES_Map
                     temp_annual_map += SPECIES_Map
                 temp_annual_map = temp_annual_map/12.0
                 save_annual_final_map_data(final_data=temp_annual_map,YYYY=Analysis_YEARS[iyear],extent=Extent,SPECIES=species,version=version,special_name=special_name)
