@@ -51,6 +51,8 @@ def map_predict(inputmap:np.array, model, train_mean:np.array,train_std:np.array
 def map_final_output(output,extent,YYYY,MM, SPECIES, bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std):
     lat_index, lon_index = get_extent_index(extent)
     infiles = inputfiles_table(YYYY=YYYY,MM=MM)
+    if SPECIES == 'NO3':
+        SPECIES = 'NIT'
     GeoSpecies = np.load(infiles['Geo{}'.format(SPECIES)])
     
     if bias == True:
