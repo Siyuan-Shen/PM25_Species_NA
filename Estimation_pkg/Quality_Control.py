@@ -84,13 +84,13 @@ def Calculate_Regional_PWM_PM_Components():
                             Canada_Monthly_PWM_Dic[iprov][iyear*12+imonth] = Calculate_PWA_PM25(Population_array=Population_Map,PM25_array=Masked_SPECIES)
         if NorthAmerica_Analysis_Switch:
             outfile = outdir + 'Monthly_NorthAmerica_Analysis_{}-{}{}.csv'.format(species,version,special_name)
-            Monthly_PWM_PM_output_text(PWM_PM_dic=NorthAmerica_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH],outfile=outfile,areas_list=REGIONMASK_lists)
+            Monthly_PWM_PM_output_text(PWM_PM_dic=NorthAmerica_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=[MM[i] for i in Analysis_MONTH],outfile=outfile,areas_list=REGIONMASK_lists)
         if UnitedStates_Analysis_Switch:
             outfile = outdir + 'Monthly_UnitedStates_Analysis_{}-{}{}.csv'.format(species,version,special_name)
-            Monthly_PWM_PM_output_text(PWM_PM_dic=UnitedStates_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH],outfile=outfile,areas_list=STATEMASK_lists)
+            Monthly_PWM_PM_output_text(PWM_PM_dic=UnitedStates_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=[MM[i] for i in Analysis_MONTH],outfile=outfile,areas_list=STATEMASK_lists)
         if Canada_Analysis_Switch:
             outfile = outdir + 'Monthly_Canada_Analysis_{}-{}{}.csv'.format(species,version,special_name)
-            Monthly_PWM_PM_output_text(PWM_PM_dic=Canada_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=MM[Analysis_MONTH],outfile=outfile,areas_list=PROVMASK_lists)
+            Monthly_PWM_PM_output_text(PWM_PM_dic=Canada_Monthly_PWM_Dic,species=species,YYYY=Analysis_YEARS,MM=[MM[i] for i in Analysis_MONTH],outfile=outfile,areas_list=PROVMASK_lists)
 
 
     if Annual_Analysis_Switch:
