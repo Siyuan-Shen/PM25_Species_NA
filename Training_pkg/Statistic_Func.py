@@ -48,6 +48,7 @@ def Cal_PWM_rRMSE(x,y,population):
     PWA_rRMSE = PWA_RMSE/PWA_PM
     PWA_rRMSE = round(PWA_rRMSE, 3)
     return PWA_rRMSE
+
 def Calculate_PWA_PM25(Population_array:np.array, PM25_array:np.array):
     """Calculate the Population Weighted PM2.5
     Args:
@@ -59,8 +60,9 @@ def Calculate_PWA_PM25(Population_array:np.array, PM25_array:np.array):
     """
     
     if Population_array.shape == PM25_array.shape:
-        Total_Population = np.sum(Population_array)
-        Weighted_PM25 = np.sum(Population_array*PM25_array) 
+        index = np.where(PM25_array>=0)
+        Total_Population = np.sum(Population_array[index])
+        Weighted_PM25 = np.sum(Population_array[index]*PM25_array[index]) 
         PWA_PM25 = Weighted_PM25/Total_Population 
     else:
         print('PM25_Map Dim: ', PM25_array.shape,'Population Map Dim: ',Population_array.shape)
