@@ -138,7 +138,7 @@ def save_combinedGeo_map_data(final_data:np.array, YYYY:str, MM:str, extent:list
     
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    outfile = outdir + 'Combined-Geo{}_{}_{}_{}{}{}.nc'.format(SPECIES,SPECIES,version,YYYY,MM,special_name)
+    outfile = outdir + 'Combined-{}km-Geo{}_{}_{}_{}{}{}.nc'.format(Coefficient_start_distance,SPECIES,SPECIES,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
     lat_delta = (extent[1]-extent[0])/lat_size
