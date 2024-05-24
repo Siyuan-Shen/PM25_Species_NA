@@ -77,7 +77,7 @@ def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECI
     MapData.CONTACT = 'SIYUAN SHEN <s.siyuan@wustl.edu>'
     MapData.LAT_DELTA = lat_delta
     MapData.LON_DELTA = lon_delta
-    MapData.TIMECOVERAGE    = '{}/{}'.format(MM,YYYY)
+    MapData.TIMECOVERAGE    = '{}'.format(YYYY)
 
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
