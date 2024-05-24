@@ -202,7 +202,7 @@ def derive_Test_Training_index_4Each_BLCO_fold(kfolds, number_of_SeedClusters, s
         
         # calculate radius within which enough stations are located to fulfill this fold's quota.
         
-        BLCO_criteria_radius[ifold] = Minimal_Distance2clusters_Sorted[int(np.floor((frac_testing * len(site_lat))))]
+        BLCO_criteria_radius[ifold] = Minimal_Distance2clusters_Sorted[int(np.floor((frac_testing * len(site_lat))))-1]
         # store testing stations for this fold, find all sites with distances smaller than the criterial radius
         ispot[sites_unwithheld4testing[np.where(Minimal_Distance2clusters < BLCO_criteria_radius[ifold] )]] = ifold + 1
 
