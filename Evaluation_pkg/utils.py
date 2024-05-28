@@ -220,6 +220,14 @@ def initialize_AVD_CV_Alltime_dict():
             PWAMonitors_Alltime['Alltime'][imonth] = np.zeros((3),dtype=np.float64)
     return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime, PWAModel_Alltime, PWAMonitors_Alltime
 
+def initialize_Loss_Accuracy_Recordings(kfolds,n_models,epoch,batchsize):
+    Training_losses_recording = np.zeros((kfolds,n_models,epoch*batchsize))
+    Training_acc_recording    = np.zeros((kfolds,n_models,epoch))
+    valid_losses_recording    = np.zeros((kfolds,n_models,epoch*batchsize))
+    valid_acc_recording       = np.zeros((kfolds,n_models,epoch))
+    print('Training_losses_recording.shape: '.format(Training_losses_recording.shape) + '----------------------')
+    return Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording
+
 def get_annual_longterm_array(beginyear, endyear, final_data_recording,obs_data_recording):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     final_longterm_data = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)

@@ -15,8 +15,8 @@ from Training_pkg.utils import *
 
 def plot_save_loss_accuracy_figure(loss, accuracy, valid_loss, valid_accuracy, typeName, species, version, nchannel, width, height, special_name):
     training_fig_outfile, valid_fig_outfile = save_loss_accuracy_figure(typeName=typeName,species=species,version=version,nchannel=nchannel,width=width,height=height,special_name=special_name)
-    plot_loss_accuracy_with_epoch(loss=loss,accuracy=accuracy,outfile=training_fig_outfile)
-    plot_loss_accuracy_with_epoch(loss=valid_loss, accuracy=valid_accuracy, outfile=valid_fig_outfile)
+    plot_loss_accuracy_with_epoch(loss_recording=loss,accuracy_recording=accuracy,outfile=training_fig_outfile)
+    plot_loss_accuracy_with_epoch(loss_recording=valid_loss, accuracy_recording=valid_accuracy, outfile=valid_fig_outfile)
     return
 
 def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,typeName:str,width:int,height:int,species:str,version:str,Area:str,PLOT_YEARS:list,PLOT_MONTHS:list):

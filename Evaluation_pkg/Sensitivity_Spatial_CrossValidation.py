@@ -26,6 +26,7 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
     ##   Initialize the array, variables and constants.
     # *------------------------------------------------------------------------------*#
     ### Get training data, label data, initial observation data and geophysical species
+    beginyears = Sensitivity_Test_beginyears
     exclude_names_suffix = ''
     for iname in exclude_channel_names:
         exclude_names_suffix += '-'+iname
@@ -41,11 +42,12 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     site_index = np.array(range(sitesnumber))
     
-    rkf = RepeatedKFold(n_splits=kfold, n_repeats=repeats, random_state=seed)
+    rkf = RepeatedKFold(n_splits=Sensitivity_Test_kfold, n_repeats=repeats, random_state=seed)
     # *------------------------------------------------------------------------------*#
     ## Begining the Cross-Validation.
     ## Multiple Models will be trained in each fold.
     # *------------------------------------------------------------------------------*#
+    Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording = initialize_Loss_Accuracy_Recordings(kfolds=Sensitivity_Test_kfold,n_models=len(beginyears),epoch=epoch,batchsize=batchsize)
     final_data_recording, obs_data_recording, geo_data_recording, testing_population_data_recording, training_final_data_recording, training_obs_data_recording, training_dataForSlope_recording = initialize_AVD_DataRecording(beginyear=beginyears[0],endyear=endyears[-1])
     count = 0
     for train_index, test_index in rkf.split(site_index):
@@ -65,6 +67,11 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
             torch.manual_seed(21)
             train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
                                                                    initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_channel_names)
+            Training_losses_recording[count,imodel,0:len(train_loss)] = train_loss
+            Training_acc_recording[count,imodel,:]    = train_acc
+            valid_losses_recording[count,imodel,0:len(valid_losses)]  = valid_losses
+            valid_acc_recording[count,imodel,:]       = test_acc
+
             save_sensitivity_test_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height,exclude_names_suffix=exclude_names_suffix)
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
@@ -120,8 +127,8 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
     txt_outfile =  txtfile_outdir + 'Sensitivity_Tests_{}_{}_{}_{}Channel_{}x{}{}_Exclude{}.csv'.format(typeName,species,version,nchannel,width,height,special_name,exclude_names_suffix)
     SensitivityTests_output_text(outfile=txt_outfile,status='w', test_beginyears=Sensitivity_Test_test_beginyear,test_endyears=Sensitivity_Test_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,exclude_channels_names=exclude_channel_names)
-    save_sensitivity_test_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
-                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height, exclude_names_suffix=exclude_names_suffix)
+    save_sensitivity_test_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
+                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=Sensitivity_Test_test_beginyear, endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,exclude_names_suffix=exclude_names_suffix)

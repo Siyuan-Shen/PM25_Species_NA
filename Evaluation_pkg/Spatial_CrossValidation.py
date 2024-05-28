@@ -45,6 +45,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     ## Multiple Models will be trained in each fold.
     # *------------------------------------------------------------------------------*#
     final_data_recording, obs_data_recording, geo_data_recording, testing_population_data_recording, training_final_data_recording, training_obs_data_recording, training_dataForSlope_recording = initialize_AVD_DataRecording(beginyear=beginyears[0],endyear=endyears[-1])
+    Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording = initialize_Loss_Accuracy_Recordings(kfolds=kfold,n_models=len(beginyears),epoch=epoch,batchsize=batchsize)
     count = 0
     for train_index, test_index in rkf.split(site_index):
         for imodel in range(len(beginyears)):
@@ -63,6 +64,11 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
             torch.manual_seed(21)
             train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
                                                                    initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
+            Training_losses_recording[count,imodel,0:len(train_loss)] = train_loss
+            Training_acc_recording[count,imodel,:]    = train_acc
+            valid_losses_recording[count,imodel,0:len(valid_losses)]  = valid_losses
+            valid_acc_recording[count,imodel,:]       = test_acc
+
             save_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height)
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
@@ -103,6 +109,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                     training_final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]     = np.append(training_final_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], train_final_data[imonth*len(train_index):(imonth+1)*len(train_index)])
                     training_obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]]       = np.append(training_obs_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], Training_obs_data[imonth*len(train_index):(imonth+1)*len(train_index)])
                     testing_population_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]] = np.append(testing_population_data_recording[str(beginyears[imodel]+iyear)][MONTH[imonth]], population_test_data[imonth*len(test_index):(imonth+1)*len(test_index)])
+            
+
         count += 1
 
     test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
@@ -117,7 +125,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(typeName,species,version,nchannel,width,height,special_name)
     AVD_output_text(outfile=txt_outfile,status='w', test_beginyears=test_beginyear,test_endyears=test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
-    save_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
+    save_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=test_beginyear, endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
@@ -158,6 +166,8 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
     ## Multiple Models will be trained in each fold.
     # *------------------------------------------------------------------------------*#
     final_data_recording, obs_data_recording, geo_data_recording, testing_population_data_recording, training_final_data_recording, training_obs_data_recording, training_dataForSlope_recording = initialize_AVD_DataRecording(beginyear=beginyears[0],endyear=endyears[-1])
+    Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording = initialize_Loss_Accuracy_Recordings(kfolds=Fixnumber_kfold,n_models=len(beginyears),epoch=epoch,batchsize=batchsize)
+    
     count = 0
     for init_train_index, init_test_index in rkf.split(site_index):
         train_index, test_index = GetFixedNumber_TrainingIndex(test_index=init_test_index,train_index=init_train_index,fixed_test_number=Fixednumber_test_site,fixed_train_number=Fixednumber_train_site)
@@ -176,6 +186,11 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
             cnn_model.to(device)
             torch.manual_seed(21)
             train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
+            Training_losses_recording[count,imodel,0:len(train_loss)] = train_loss
+            Training_acc_recording[count,imodel,:]    = train_acc
+            valid_losses_recording[count,imodel,0:len(valid_losses)]  = valid_losses
+            valid_acc_recording[count,imodel,:]       = test_acc
+
             save_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height)
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
@@ -230,7 +245,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
     txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(typeName,species,version,nchannel,width,height,special_name)
     AVD_output_text(outfile=txt_outfile,status='w', test_beginyears=Fixnumber_test_beginyear,test_endyears=Fixnumber_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
-    save_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
+    save_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=Fixnumber_test_beginyear, endyear=Fixnumber_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,

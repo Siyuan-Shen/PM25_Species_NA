@@ -44,6 +44,7 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
     ## Multiple Models will be trained in each fold.
     # *------------------------------------------------------------------------------*#
     final_data_recording, obs_data_recording, geo_data_recording, testing_population_data_recording, training_final_data_recording, training_obs_data_recording, training_dataForSlope_recording = initialize_AVD_DataRecording(beginyear=beginyears[0],endyear=endyears[-1])
+    Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording = initialize_Loss_Accuracy_Recordings(kfolds=BLCO_kfold,n_models=len(beginyears),epoch=epoch,batchsize=batchsize)
     
     index_for_BLCO = derive_Test_Training_index_4Each_BLCO_fold(kfolds=BLCO_kfold,number_of_SeedClusters=BLCO_seeds_number,site_lat=lat,site_lon=lon,
                                                                 BLCO_Buffer_Size=buffer_radius)
@@ -73,6 +74,11 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
             torch.manual_seed(21)
             train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
                                                                    initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_channel_names)
+            Training_losses_recording[count,imodel,0:len(train_loss)] = train_loss
+            Training_acc_recording[count,imodel,:]    = train_acc
+            valid_losses_recording[count,imodel,0:len(valid_losses)]  = valid_losses
+            valid_acc_recording[count,imodel,:]       = test_acc
+
             save_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height)
             for iyear in range((endyears[imodel]-beginyears[imodel]+1)):
                 yearly_test_index   = GetXIndex(index=test_index, beginyear=(beginyears[imodel]+iyear),endyear=(beginyears[imodel]+iyear), sitenumber=sitesnumber)
@@ -135,8 +141,8 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
     Output_Text_Sites_Number(outfile=txt_outfile, status='w', train_index_number=train_index_number, test_index_number=test_index_number, buffer=buffer_radius)
     AVD_output_text(outfile=txt_outfile,status='a',test_beginyears=BLCO_test_beginyear,test_endyears=BLCO_test_endyear, test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
-    save_BLCO_loss_accuracy(model_outdir=model_outdir,loss=train_loss, accuracy=train_acc,valid_loss=valid_losses, valid_accuracy=test_acc,typeName=typeName,
-                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,buffer_radius=buffer_radius)
+    save_BLCO_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
+                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=BLCO_test_beginyear, endyear=BLCO_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_BLCO_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
