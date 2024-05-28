@@ -7,7 +7,11 @@ from sklearn.metrics import mean_squared_error,r2_score
 from Training_pkg.Statistic_Func import regress2, linear_regression
 
 
-def plot_loss_accuracy_with_epoch(loss, accuracy, outfile):
+def plot_loss_accuracy_with_epoch(loss_recording, accuracy_recording, outfile):
+
+    loss = np.mean(loss_recording,axis = (0,1))
+    loss = loss[np.where(loss>0.0)]
+    accuracy = np.mean(accuracy_recording, axis=(0,1))
     COLOR_ACCURACY = "#69b3a2"
     COLOR_LOSS = "#3399e6"
     
@@ -24,6 +28,7 @@ def plot_loss_accuracy_with_epoch(loss, accuracy, outfile):
     ax2 = ax1.twinx()
 
     ax1.plot(loss_x, loss, color=COLOR_LOSS, lw=1)
+    ax1.set_yscale('log')
     ax2.plot(accuracy_x, accuracy, color=COLOR_ACCURACY, lw=3)
 
     x_labels = [str(i) for i in epoch_x]
