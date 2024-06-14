@@ -13,11 +13,12 @@ regression_plot_switch   = cfg['Spatial-CrossValidation']['Visualization_Setting
 #######################################################################################
 # training Settings
 Spatial_Trainning_Settings = cfg['Spatial-CrossValidation']['Training_Settings']
-
+Spatial_CV_test_only_Switch = Spatial_Trainning_Settings['Spatial_CV_test_only_Switch']
 kfold = Spatial_Trainning_Settings['kfold']
 repeats = Spatial_Trainning_Settings['repeats']
 beginyears = Spatial_Trainning_Settings['beginyears']
 endyears = Spatial_Trainning_Settings['endyears']
+training_months = Spatial_Trainning_Settings['training_months']
 test_beginyear = Spatial_Trainning_Settings['test_beginyear']
 test_endyear = Spatial_Trainning_Settings['test_endyear']
 #######################################################################################
@@ -38,10 +39,12 @@ txt_outdir = results_dir['txt_outdir']
 FixNumber_Spatial_CrossValidation_Switch = cfg['FixNumber-SpatialCrossValidation']['FixNumber_CrossValidation_Switch']
 
 FixNumber_Spatial_Settings = cfg['FixNumber-SpatialCrossValidation']['TrainingSettings']
+Fixnumber_Spatial_CV_test_only_Switch = FixNumber_Spatial_Settings['Spatial_CV_test_only_Switch']
 Fixnumber_kfold  = FixNumber_Spatial_Settings['kfold']
 Fixnumber_repeats = FixNumber_Spatial_Settings['repeats']
 Fixnumber_beginyears = FixNumber_Spatial_Settings['beginyears']
 Fixnumber_endyears   = FixNumber_Spatial_Settings['endyears']
+Fixnumber_training_months = FixNumber_Spatial_Settings['training_months']
 Fixnumber_test_beginyear = FixNumber_Spatial_Settings['test_beginyear'] 
 Fixnumber_test_endyear   = FixNumber_Spatial_Settings['test_endyear'] 
 Fixednumber_test_sites   = FixNumber_Spatial_Settings['fixednumber_test_sites']
@@ -56,10 +59,12 @@ BLOO_Buffer_size = cfg['BLOO-CrossValidation']['Buffer_size']
 # BLOO Training Settings
 
 BLOO_TrainingSettings = cfg['BLOO-CrossValidation']['TrainingSettings']
+BLOO_Spatial_CV_test_only_Switch = BLOO_TrainingSettings['Spatial_CV_test_only_Switch']
 BLOO_kfold   = BLOO_TrainingSettings['kfold']
 BLOO_repeats = BLOO_TrainingSettings['repeats']
 BLOO_beginyears = BLOO_TrainingSettings['beginyears']
 BLOO_endyears   = BLOO_TrainingSettings['endyears']
+BLOO_training_months = BLOO_TrainingSettings['training_months']
 BLOO_test_beginyear = BLOO_TrainingSettings['test_beginyear']
 BLOO_test_endyear   = BLOO_TrainingSettings['test_endyear']
 
@@ -73,11 +78,13 @@ BLCO_Buffer_size = cfg['BLCO-CrossValidation']['Buffer_size']
 # BLCO Training Settings
 
 BLCO_TrainingSettings = cfg['BLCO-CrossValidation']['TrainingSettings']
+BLCO_Spatial_CV_test_only_Switch = BLCO_TrainingSettings['Spatial_CV_test_only_Switch']
 BLCO_seeds_number   =   BLCO_TrainingSettings['seeds_number']
 BLCO_kfold   = BLCO_TrainingSettings['kfold']
 BLCO_repeats = BLCO_TrainingSettings['repeats']
 BLCO_beginyears = BLCO_TrainingSettings['beginyears']
 BLCO_endyears   = BLCO_TrainingSettings['endyears']
+BLCO_training_months = BLCO_TrainingSettings['training_months']
 BLCO_test_beginyear = BLCO_TrainingSettings['test_beginyear']
 BLCO_test_endyear   = BLCO_TrainingSettings['test_endyear']
 
@@ -92,10 +99,12 @@ Sensitivity_Test_Switch = Sensitivity_Test_Settings['Sensitivity_Test_Switch']
 Sensitivity_plot_Switch = Sensitivity_Test_Settings['Sensitivity_plot_Switch']
 
 Sensitivity_Test_Training_Settings = Sensitivity_Test_Settings['Training_Settings']
+Sensitivity_Test_Spatial_CV_test_only_Switch = Sensitivity_Test_Training_Settings['Spatial_CV_test_only_Switch']
 Sensitivity_Test_kfold             = Sensitivity_Test_Training_Settings['kfold']
 Sensitivity_Test_repeats           = Sensitivity_Test_Training_Settings['repeats']
 Sensitivity_Test_beginyears        = Sensitivity_Test_Training_Settings['beginyears']
 Sensitivity_Test_endyears          = Sensitivity_Test_Training_Settings['endyears']
+Sensitivity_Test_training_months   = Sensitivity_Test_Training_Settings['training_months']         
 Sensitivity_Test_test_beginyear    = Sensitivity_Test_Training_Settings['test_beginyear']
 Sensitivity_Test_test_endyear      = Sensitivity_Test_Training_Settings['test_endyear']
 Sensitivity_Test_Sensitivity_Test_Variables = Sensitivity_Test_Training_Settings['Sensitivity_Test_Variables']
@@ -221,9 +230,9 @@ def initialize_AVD_CV_Alltime_dict():
     return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime, PWAModel_Alltime, PWAMonitors_Alltime
 
 def initialize_Loss_Accuracy_Recordings(kfolds,n_models,epoch,batchsize):
-    Training_losses_recording = np.zeros((kfolds,n_models,epoch*batchsize))
+    Training_losses_recording = np.zeros((kfolds,n_models,epoch*2000))
     Training_acc_recording    = np.zeros((kfolds,n_models,epoch))
-    valid_losses_recording    = np.zeros((kfolds,n_models,epoch*batchsize))
+    valid_losses_recording    = np.zeros((kfolds,n_models,epoch*2000))
     valid_acc_recording       = np.zeros((kfolds,n_models,epoch))
     print('Training_losses_recording.shape: '.format(Training_losses_recording.shape) + '----------------------')
     return Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording

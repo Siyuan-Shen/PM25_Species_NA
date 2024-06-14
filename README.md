@@ -63,3 +63,15 @@ Updates:
     Version 1.5.1
     Siyuan Shen, May 21st, 2024 @ Home, St. Louis, MO. USA
     A quality control is added in the Estimation Module. Monthly and annual PWM Species concentrations of different regions, states in USA, and provinces in Canada can be calculated in this module.
+
+
+Version 1.6.0
+
+Siyuan Shen, Jun 14th, 2024 @ Washington University in St. Louis, MO. USA
+
+Updates:
+1. The option for monthly-based training model.
+2. Latitude, longitude recording is added.
+3. Read previous testing datasets is available now.
+
+

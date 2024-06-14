@@ -25,6 +25,9 @@ def load_monthly_obs_data(species:str):
 
     lat = data.variables["latitude"][:]
     lon = data.variables["longitude"][:]
+    lat = np.array(lat)
+    lon = np.array(lon)
+
     return SPECIES_OBS, lat, lon 
 
 def load_geophysical_species_data(species:str):
@@ -36,6 +39,9 @@ def load_geophysical_species_data(species:str):
 
     latitudes = species_monthly_data.variables["latitude"][:]
     longitudes = species_monthly_data.variables["longitude"][:]
+    latitudes = np.array(latitudes)
+    longitudes = np.array(longitudes)
+
     return geophysical_species, latitudes, longitudes
 
 def load_geophysical_biases_data(species:str):

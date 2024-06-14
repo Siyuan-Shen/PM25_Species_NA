@@ -48,6 +48,10 @@ ResNet_setting      = net_structure_settings['ResNet']['Settings']
 ResNet_Blocks       = net_structure_settings['ResNet']['Blocks']
 ResNet_blocks_num   = net_structure_settings['ResNet']['blocks_num']
 
+ResNet_MLP_setting      = net_structure_settings['ResNet_MLP']['Settings']
+ResNet_MLP_Blocks       = net_structure_settings['ResNet_MLP']['Blocks']
+ResNet_MLP_blocks_num   = net_structure_settings['ResNet_MLP']['blocks_num']
+
 LateFusion_setting      = net_structure_settings['LateFusion']['Settings']
 LateFusion_Blocks       = net_structure_settings['LateFusion']['Blocks']
 LateFusion_blocks_num   = net_structure_settings['LateFusion']['blocks_num']
@@ -172,7 +176,7 @@ def optimizer_lookup(model_parameters,learning_rate):
         return torch.optim.Adam(params=model_parameters,betas=(Adam_beta0, Adam_beta1),eps=Adam_eps, lr=learning_rate)
     
 def Get_channel_names(channels_to_exclude:list):
-    if ResNet_setting:
+    if ResNet_setting or ResNet_MLP_setting:
         if len(channels_to_exclude) == 0:
             total_channel_names = channel_names.copy()
             main_stream_channel_names = channel_names.copy()

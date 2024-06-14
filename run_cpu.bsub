@@ -1,10 +1,10 @@
 #!/bin/bash
 #BSUB -q rvmartin
-#BSUB -n 72
+#BSUB -n 8
 #BSUB -W 168:00
-#BSUB -R "rusage[mem=300GB] span[ptile=12] "
+#BSUB -R "rusage[mem=100GB] span[ptile=2] "
 #BSUB -a 'docker(syword/python3-pytorch:2023.12)'
-#BSUB -J "1.5.0 PM25 PWM Cal"
+#BSUB -J "1.6.0-beta NH4"
 #BSUB -N
 #BSUB -G compute-rvmartin
 #BSUB -g /s.siyuan/Map
@@ -16,6 +16,6 @@
 . /opt/conda/bin/activate
 /bin/true
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.5.0
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/NH4/v1.6.0-beta
 python3 main.py
 

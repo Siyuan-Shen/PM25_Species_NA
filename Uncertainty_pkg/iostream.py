@@ -106,8 +106,8 @@ def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
     outfile = outdir + 'rRMSE_Map_{}_{}_{}{}.nc'.format(species,version,MM,special_name)
     lat_size = Map_rRMSE.shape[0]
     lon_size = Map_rRMSE.shape[1]
-    lat_delta = (Extent[1]-Extent[0])/lat_size
-    lon_delta = (Extent[3]-Extent[2])/lon_size
+    lat_delta = (Extent[1]-Extent[0])/(lat_size-1)
+    lon_delta = (Extent[3]-Extent[2])/(lon_size-1)
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Monthly {} rRMSE Map over North America Area.'.format(species)
@@ -121,8 +121,8 @@ def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
     rRMSE = MapData.createVariable(species,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(Extent[0],Extent[1],lat_delta)
-    longitudes[:] = np.arange(Extent[2],Extent[3],lon_delta) 
+    latitudes[:] = np.arange(Extent[0],Extent[1+lat_delta],lat_delta)
+    longitudes[:] = np.arange(Extent[2],Extent[3]+lon_delta,lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -142,8 +142,8 @@ def save_absolute_uncertainty_data(final_data:np.array, YYYY:str, MM:str):
     outfile = outdir + 'AbsoluteUncertainty_{}_{}_{}{}{}.nc'.format(species,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
-    lat_delta = (Extent[1]-Extent[0])/lat_size
-    lon_delta = (Extent[3]-Extent[2])/lon_size
+    lat_delta = (Extent[1]-Extent[0])/(lat_size-1)
+    lon_delta = (Extent[3]-Extent[2])/(lon_size-1)
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Monthly {} Absolute Uncertainty Estimation over North America Area.'.format(species)
@@ -157,8 +157,8 @@ def save_absolute_uncertainty_data(final_data:np.array, YYYY:str, MM:str):
     PM25 = MapData.createVariable(species,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(Extent[0],Extent[1],lat_delta)
-    longitudes[:] = np.arange(Extent[2],Extent[3],lon_delta) 
+    latitudes[:] = np.arange(Extent[0],Extent[1]+lat_delta,lat_delta)
+    longitudes[:] = np.arange(Extent[2],Extent[3]+lon_delta,lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'

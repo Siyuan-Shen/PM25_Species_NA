@@ -3,6 +3,8 @@ from Training_pkg.Statistic_Func import linear_regression,regress2, Cal_RMSE, Ca
 from Evaluation_pkg.utils import *
     
 
+#######################################################################################################################
+# This part is for year-based training models. (For example, Datasets of 1998 Jan-Dec are used for training a model)
 def GetXIndex(index,beginyear:int, endyear:int, sitenumber:int):
     X_index = np.zeros((12 * (endyear - beginyear + 1) * len(index)), dtype=int)
     for i in range(12 * (endyear - beginyear + 1)):
@@ -21,17 +23,41 @@ def Get_XY_indices(train_index,test_index, beginyear, endyear, sitesnumber ):
     X_Testing_index  = GetXIndex(index=test_index ,beginyear=beginyear,endyear=endyear,sitenumber=sitesnumber)
     Y_Training_index = GetYIndex(index=train_index,beginyear=beginyear,endyear=endyear,sitenumber=sitesnumber)
     Y_Testing_index  = GetYIndex(index=test_index ,beginyear=beginyear,endyear=endyear,sitenumber=sitesnumber)
-    
+    return X_Training_index, X_Testing_index, Y_Training_index, Y_Testing_index
+
+# This part is for month-based training models. (For example, Datasets of 1998-2003 Jan-Mar are used for training a model.)
+
+def Get_month_based_XIndex(index,beginyear:int, endyear:int, month_index:np.array, sitenumber:int):
+    X_index = np.zeros((len(month_index) * (endyear - beginyear + 1) * len(index)), dtype=int)
+    for iyear in range(endyear - beginyear + 1):
+        for imonth in range(len(month_index)):
+            X_index[(iyear*len(month_index)+imonth) * len(index):(iyear*len(month_index)+imonth + 1) * len(index)] = (iyear*12+month_index[imonth]) * sitenumber + index
+    return X_index
+
+def Get_month_based_YIndex(index,beginyear:int, endyear:int,month_index:np.array, sitenumber:int):
+    # Y is for observations
+    Y_index = np.zeros((len(month_index) * (endyear - beginyear + 1) * len(index)), dtype=int)
+    for iyear in range(endyear - beginyear + 1):
+        for imonth in range(len(month_index)):
+            Y_index[(iyear*len(month_index)+imonth) * len(index):((iyear*len(month_index)+imonth) + 1) * len(index)] = ((beginyear - 1998 + iyear)*12 + month_index[imonth]) * sitenumber + index
+    return Y_index
+
+def Get_month_based_XY_indices(train_index,test_index, beginyear, endyear, month_index, sitesnumber ):
+    X_Training_index = Get_month_based_XIndex(index=train_index,beginyear=beginyear,endyear=endyear,month_index=month_index,sitenumber=sitesnumber)
+    X_Testing_index  = Get_month_based_XIndex(index=test_index ,beginyear=beginyear,endyear=endyear,month_index=month_index,sitenumber=sitesnumber)
+    Y_Training_index = Get_month_based_YIndex(index=train_index,beginyear=beginyear,endyear=endyear,month_index=month_index,sitenumber=sitesnumber)
+    Y_Testing_index  = Get_month_based_YIndex(index=test_index ,beginyear=beginyear,endyear=endyear,month_index=month_index,sitenumber=sitesnumber)
     return X_Training_index, X_Testing_index, Y_Training_index, Y_Testing_index
 
 def Get_XY_arraies(Normalized_TrainingData, true_input, X_Training_index, X_Testing_index, Y_Training_index, Y_Testing_index):
     print('length of Normalized_TrainingData: {}, length of true_input : {}, \nlength of X_Training_index: {}, length of Y_Training_index: {},\
           \n length of X_Testing_index: {}, length of Y_Testing_index: {}'.format(len(Normalized_TrainingData), len(true_input),\
                                                                                    len(X_Training_index), len(Y_Training_index),\
-                                                                                    len(X_Testing_index), len(true_input)))
+                                                                                    len(X_Testing_index), len(Y_Testing_index)))
     X_train, y_train  = Normalized_TrainingData[X_Training_index, :, :, :], true_input[Y_Training_index]
     X_test,  y_test   = Normalized_TrainingData[X_Testing_index, :, :, :], true_input[Y_Testing_index]
     return X_train, X_test, y_train, y_test
+    
 
 def Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,Y_Testing_index  ):
     """This function is used to convert the model estimation to absolute PM species concentration and to compare with the 

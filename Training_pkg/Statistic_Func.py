@@ -60,9 +60,9 @@ def Calculate_PWA_PM25(Population_array:np.array, PM25_array:np.array):
     """
     
     if Population_array.shape == PM25_array.shape:
-        index = np.where(PM25_array>=0)
+        index = np.where(PM25_array>0)
         Total_Population = np.sum(Population_array[index])
-        Weighted_PM25 = np.sum(Population_array[index]*PM25_array[index]) 
+        Weighted_PM25 = np.sum(Population_array[index]*PM25_array[index])
         PWA_PM25 = Weighted_PM25/Total_Population 
     else:
         print('PM25_Map Dim: ', PM25_array.shape,'Population Map Dim: ',Population_array.shape)
