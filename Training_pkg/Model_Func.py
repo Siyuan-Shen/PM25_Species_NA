@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTAL_EPOCHS,initial_channel_names,main_stream_channels,side_stream_channels):
     train_loader = DataLoader(Dataset(X_train, y_train), BATCH_SIZE, shuffle=True)
-    validation_loader = DataLoader(Dataset(X_test, y_test), BATCH_SIZE, shuffle=True)
+    validation_loader = DataLoader(Dataset(X_test, y_test), 2000, shuffle=True)
     print('*' * 25, type(train_loader), '*' * 25)
     losses = []
     valid_losses = []
@@ -23,7 +23,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
     #optimizer = torch.optim.Adam(params=model.parameters(),betas=(), lr=learning_rate)
     optimizer = optimizer_lookup(model_parameters=model.parameters(),learning_rate=learning_rate)
     scheduler = lr_strategy_lookup_table(optimizer=optimizer)
-    if ResNet_setting:
+    if ResNet_setting or ResNet_MLP_setting:
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
             counts = 0
@@ -46,7 +46,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
 
                
                 #torch.cuda.empty_cache()
-                print('Epoch: ', epoch, ' i th: ', i)
+                print('Epoch: ', epoch, ' i th: ', i, 'y_hat size: ',y_hat.shape)
                 #print('y_hat:', y_hat)
                 R2 = linear_regression(y_hat,y_true)
                 R2 = np.round(R2, 4)
@@ -65,14 +65,16 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
                 model.eval()
                 valid_images = valid_images.to(device)
                 valid_labels = valid_labels.to(device)
+                print('valid_images size: {}'.format(valid_images.shape),'valid_labels size: {}'.format(valid_labels.shape))
                 valid_output = model(valid_images)
                 valid_output = torch.squeeze(valid_output)
                 valid_loss   = criterion(valid_output, valid_labels)
                 valid_losses.append(valid_loss.item())
                 test_y_hat   = valid_output.cpu().detach().numpy()
                 test_y_true  = valid_labels.cpu().detach().numpy()
+                #print('test_y_hat size: {}'.format(test_y_hat.shape),'test_y_true size: {}'.format(test_y_true.shape))
                 Valid_R2 = linear_regression(test_y_hat,test_y_true)
-                Valid_R2 = np.round( Valid_R2, 4)
+                Valid_R2 = np.round(Valid_R2, 4)
                 valid_correct += Valid_R2
                 valid_counts  += 1    
                 print('Epoch : %d/%d, Iter : %d/%d,  Validate Loss: %.4f, Validate R2: %.4f' % (epoch + 1, TOTAL_EPOCHS,
@@ -85,10 +87,8 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
             train_acc.append(accuracy)
             test_acc.append(test_accuracy)
             print('Epoch: ',epoch,'\nLearning Rate:',optimizer.param_groups[0]['lr'])
-            
-       
-            # Each epoch calculate test data accuracy
-    if LateFusion_setting:
+
+    elif LateFusion_setting:
         initial_channel_index, latefusion_channel_index = find_latfusion_index(total_channel_names=initial_channel_names,initial_channels=main_stream_channels,late_fusion_channels=side_stream_channels)
         
         for epoch in range(TOTAL_EPOCHS):
@@ -155,7 +155,7 @@ def train(model, X_train, y_train,X_test,y_test, BATCH_SIZE, learning_rate, TOTA
             
        
             # Each epoch calculate test data accuracy
-    if MultiHeadLateFusion_settings:
+    elif MultiHeadLateFusion_settings:
         initial_channel_index, latefusion_channel_index = find_latfusion_index(total_channel_names=initial_channel_names,initial_channels=main_stream_channels,late_fusion_channels=side_stream_channels)
         criterion_MH = SelfDesigned_LossFunction(losstype=Classification_loss_type)
         for epoch in range(TOTAL_EPOCHS):
@@ -252,7 +252,7 @@ def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channe
     predictinput = DataLoader(Dataset_Val(inputarray), batch_size= batchsize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    if ResNet_setting:
+    if ResNet_setting or ResNet_MLP_setting:
         with torch.no_grad():
             for i, image in enumerate(predictinput):
                 image = image.to(device)

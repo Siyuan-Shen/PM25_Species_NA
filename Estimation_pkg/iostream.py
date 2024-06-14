@@ -7,6 +7,18 @@ import time
 from Estimation_pkg.utils import *
 
 
+def load_trained_month_based_model_forEstimation(model_outdir, typeName, version, species, nchannel, special_name,beginyear, endyear,month_index, width, height):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    Selected_MONTHS_list = [MONTH[i] for i in month_index]
+    Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
+    outdir = model_outdir + '{}/{}/Results/Estimation-Trained_Models/'.format(species, version)
+    PATH = outdir +  'Estimation_{}_{}_{}x{}_{}-{}_{}_{}Channel{}.pt'.format(typeName, species, width,height, beginyear, endyear,Selected_MONTHS_str, nchannel,special_name)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model  = torch.load(PATH, map_location=torch.device(device)).eval()
+    model.to(device)
+    return model
+
+
 def load_trained_model_forEstimation(model_outdir, typeName, version, species, nchannel, special_name,beginyear, endyear, width, height):
     outdir = model_outdir + '{}/{}/Results/Estimation-Trained_Models/'.format(species, version)
     PATH = outdir +  'Estimation_{}_{}_{}x{}_{}-{}_{}Channel{}.pt'.format(typeName, species, width,height, beginyear, endyear, nchannel,special_name)
@@ -61,6 +73,19 @@ def save_trained_model_forEstimation(cnn_model, model_outdir, typeName, version,
     torch.save(cnn_model, model_outfile)
     return 
 
+def save_trained_month_based_model_forEstimation(cnn_model, model_outdir, typeName, version, species, nchannel, special_name,beginyear, endyear, month_index,width, height):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    Selected_MONTHS_list = [MONTH[i] for i in month_index]
+    Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
+
+    outdir = model_outdir + '{}/{}/Results/Estimation-Trained_Models/'.format(species, version)
+    if not os.path.isdir(outdir):
+                os.makedirs(outdir)
+    model_outfile = outdir +  'Estimation_{}_{}_{}x{}_{}-{}_{}_{}Channel{}.pt'.format(typeName, species, width,height, beginyear, endyear,Selected_MONTHS_str, nchannel,special_name)
+    torch.save(cnn_model, model_outfile)
+    return 
+
+
 def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECIES:str, version:str, special_name):
     outdir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     
@@ -69,8 +94,8 @@ def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECI
     outfile = outdir + 'Annual_{}_{}_{}{}.nc'.format(SPECIES,version,YYYY,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
-    lat_delta = (extent[1]-extent[0])/lat_size
-    lon_delta = (extent[3]-extent[2])/lon_size
+    lat_delta = 0.01 #(extent[1]-extent[0])/(lat_size-1)
+    lon_delta = 0.01 #(extent[3]-extent[2])/(lon_size-1)
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Annual {} Estimation over North America Area.'.format(SPECIES)
@@ -84,8 +109,8 @@ def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECI
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1],lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3],lon_delta) 
+    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
+    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -101,12 +126,12 @@ def save_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPEC
     outdir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     
     if not os.path.isdir(outdir):
-                os.makedirs(outdir)
+        os.makedirs(outdir)
     outfile = outdir + '{}_{}_{}{}{}.nc'.format(SPECIES,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
-    lat_delta = (extent[1]-extent[0])/lat_size
-    lon_delta = (extent[3]-extent[2])/lon_size
+    lat_delta = 0.01
+    lon_delta = 0.01
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Monthly {} Estimation over North America Area.'.format(SPECIES)
@@ -120,8 +145,8 @@ def save_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPEC
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1],lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3],lon_delta) 
+    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
+    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -141,8 +166,8 @@ def save_combinedGeo_map_data(final_data:np.array, YYYY:str, MM:str, extent:list
     outfile = outdir + 'Combined-{}km-Geo{}_{}_{}_{}{}{}.nc'.format(Coefficient_start_distance,SPECIES,SPECIES,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
-    lat_delta = (extent[1]-extent[0])/lat_size
-    lon_delta = (extent[3]-extent[2])/lon_size
+    lat_delta = 0.01
+    lon_delta = 0.01
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Monthly {} Estimation combined with Geophysical data over North America Area.'.format(SPECIES)
@@ -156,8 +181,8 @@ def save_combinedGeo_map_data(final_data:np.array, YYYY:str, MM:str, extent:list
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1],lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3],lon_delta) 
+    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
+    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'

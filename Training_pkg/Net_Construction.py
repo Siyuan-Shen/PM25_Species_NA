@@ -23,6 +23,9 @@ def initial_network(width,main_stream_nchannel,side_stream_nchannel):
     if ResNet_setting:
         block = resnet_block_lookup_table(ResNet_Blocks)
         cnn_model = ResNet(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
+    elif ResNet_MLP_setting:
+        block = resnet_block_lookup_table(ResNet_MLP_Blocks)
+        cnn_model = ResNet_MLP(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
     elif LateFusion_setting:
         block = resnet_block_lookup_table(LateFusion_Blocks)
         cnn_model = LateFusion_ResNet(nchannel=main_stream_nchannel,nchannel_lf=side_stream_nchannel,block=block,blocks_num=LateFusion_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)
@@ -109,6 +112,103 @@ class Bottleneck(nn.Module):
 
         return out
 
+class ResNet_MLP(nn.Module):
+    
+    def __init__(self,
+                 nchannel, # initial input channel
+                 block,  # block types
+                 blocks_num,  
+                 num_classes=1,  
+                 include_top=True, 
+                 groups=1,
+                 width_per_group=64):
+
+        super(ResNet_MLP, self).__init__()
+        self.include_top = include_top
+        self.in_channel = 64  
+
+        self.groups = groups
+        self.width_per_group = width_per_group
+        self.actfunc = activation_func
+        
+        #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
+        #self.bn1 = nn.BatchNorm2d(self.in_channel)
+
+        #self.tanh = nn.Tanh()
+        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
+        ,nn.BatchNorm2d(self.in_channel)
+        ,activation_func
+        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+
+        
+        self.layer1 = self._make_layer(block, 64, blocks_num[0])
+        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
+        self.layer3 = self._make_layer(block, 256, blocks_num[2], stride=1)
+        self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
+
+        if self.include_top: 
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  
+            
+            self.fc = nn.Linear(512 * block.expansion, num_classes)
+
+        for m in self.modules(): 
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
+
+        self.mlp_outlayer = nn.Sequential(nn.Linear(512 * block.expansion,512),
+                                          activation_func,
+                                          nn.BatchNorm1d(512),
+                                          nn.Linear(512,128),
+                                          activation_func,
+                                          nn.Linear(128,num_classes))
+   
+    def _make_layer(self, block, channel, block_num, stride=1):
+        downsample = None
+        if stride != 1 or self.in_channel != channel * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(channel * block.expansion))
+        layers = []
+        
+        layers.append(block(self.in_channel,
+                            channel,
+                            downsample=downsample,
+                            stride=stride,
+                            groups=self.groups,
+                            width_per_group=self.width_per_group))
+
+        self.in_channel = channel * block.expansion # The input channel changed here!``
+        
+        for _ in range(1, block_num):
+            layers.append(block(self.in_channel,
+                                channel,
+                                groups=self.groups,
+                                width_per_group=self.width_per_group))
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        #x = self.conv1(x)
+        #x = self.bn1(x)
+        #x = self.tanh(x)
+        #x = self.maxpool(x)
+
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        if self.include_top:  
+            x = self.avgpool(x)
+            x = torch.flatten(x, 1)
+            #x = self.actfunc(x)
+            #x = self.fc(x)
+            x = self.mlp_outlayer(x)
+
+        return x
 class ResNet(nn.Module):
 
     def __init__(self,
