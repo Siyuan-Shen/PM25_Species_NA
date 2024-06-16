@@ -29,6 +29,11 @@ ForcedSlopeUnity = ForcedSlopeUnityTable['ForcedSlopeUnity']
 EachMonthForcedSlopeUnity = ForcedSlopeUnityTable['EachMonthForcedSlopeUnity']
 
 #######################################################################################
+# Visualization Settings
+
+every_point_begin_years = cfg['Spatial-CrossValidation']['Visualization_Settings']['every_point_begin_years']
+every_point_end_years = cfg['Spatial-CrossValidation']['Visualization_Settings']['every_point_end_years']
+#######################################################################################
 # Training file Path
 results_dir = cfg['Pathway']['Results-dir'] 
 
