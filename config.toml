@@ -56,6 +56,8 @@ test_endyear                                          = 2016
 [Spatial-CrossValidation.Visualization_Settings]
 
 regression_plot_switch                                = false
+every_point_begin_years                               = 2000
+every_point_end_years                                 = 2016
 
 [Spatial-CrossValidation.Forced-Slope-Unity]
 
