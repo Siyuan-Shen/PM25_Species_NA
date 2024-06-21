@@ -2,9 +2,9 @@
 #BSUB -q rvmartin
 #BSUB -n 8
 #BSUB -W 168:00
-#BSUB -R "rusage[mem=100GB] span[ptile=2] "
-#BSUB -a 'docker(syword/python3-pytorch:2023.12)'
-#BSUB -J "1.6.0-beta NH4"
+#BSUB -R "rusage[mem=100GB] span[ptile=2] select[port8543=1]"
+#BSUB -a 'docker(syword/python3-pytorch:2024.05)'
+#BSUB -J "1.6.0 SO4"
 #BSUB -N
 #BSUB -G compute-rvmartin
 #BSUB -g /s.siyuan/Map
@@ -16,6 +16,6 @@
 . /opt/conda/bin/activate
 /bin/true
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/NH4/v1.6.0-beta
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/SO4/v1.6.0
 python3 main.py
 

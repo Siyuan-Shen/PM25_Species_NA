@@ -27,8 +27,8 @@ def plot_valid_training_loss_accuracy_with_epoch_together(training_loss_recordin
 
     train_accuracy_x = train_epoch_x * train_batchsize
     train_loss_x = np.array(range(len(train_loss))) 
-    valid_accuracy_x = valid_epoch_x * valid_batchsize
-    valid_loss_x = np.array(range(len(valid_loss))) 
+    valid_accuracy_x = valid_epoch_x * train_batchsize
+    valid_loss_x = np.array(range(len(valid_loss)))*np.round(len(train_loss)/len(valid_loss))
 
     fig = plt.figure(figsize=(24, 8))
     
@@ -50,12 +50,14 @@ def plot_valid_training_loss_accuracy_with_epoch_together(training_loss_recordin
     ax1.set_ylabel("Loss", fontsize=24)
     ax2.set_ylabel("R2", fontsize=24)
     
-    ax1.set_xticks(train_accuracy, x_labels, fontsize=20)
+    ax1.set_xticks(train_accuracy_x, x_labels, fontsize=20)
     
-    ax1.legend(loc='best', bbox_to_anchor=(1.1, 0.5),fontsize=25, frameon=False)
-    ax2.legend(loc='best', bbox_to_anchor=(1.1, 0.35),fontsize=25, frameon=False)
+    ax1.legend(loc='best', bbox_to_anchor=(1.2, 0.5),fontsize=25, frameon=False)
+    ax2.legend(loc='best', bbox_to_anchor=(1.2, 0.35),fontsize=25, frameon=False)
 
-    return
+    fig.savefig(outfile, dpi=1000,transparent = True,bbox_inches='tight' )
+    plt.close()
+    return             
 
 def plot_loss_accuracy_with_epoch(loss_recording, accuracy_recording, outfile):
 
