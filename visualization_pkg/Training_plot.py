@@ -27,8 +27,8 @@ def plot_valid_training_loss_accuracy_with_epoch_together(training_loss_recordin
 
     train_accuracy_x = train_epoch_x * train_batchsize
     train_loss_x = np.array(range(len(train_loss))) 
-    valid_accuracy_x = valid_epoch_x * valid_batchsize
-    valid_loss_x = np.array(range(len(valid_loss))) 
+    valid_accuracy_x = valid_epoch_x * train_batchsize
+    valid_loss_x = np.array(range(len(valid_loss)))*np.round(len(train_loss)/len(valid_loss))
 
     fig = plt.figure(figsize=(24, 8))
     
@@ -36,11 +36,11 @@ def plot_valid_training_loss_accuracy_with_epoch_together(training_loss_recordin
     #fig, ax1 = plt.subplots(figsize=(24, 8))
     ax2 = ax1.twinx()
 
-    ax1.plot(train_loss_x, train_loss, color=Train_COLOR_LOSS, lw=1, lable='Train_Loss')
+    ax1.plot(train_loss_x, train_loss, color=Train_COLOR_LOSS, lw=1, label='Train_Loss')
     ax1.set_yscale('log')
     ax2.plot(train_accuracy_x, train_accuracy, color=Train_COLOR_ACCURACY, lw=3, label = 'Train_Accu')
 
-    ax1.plot(valid_loss_x, valid_loss, color=Valid_COLOR_LOSS, lw=1, lable='Valid_Loss')
+    ax1.plot(valid_loss_x, valid_loss, color=Valid_COLOR_LOSS, lw=1, label='Valid_Loss')
     ax1.set_yscale('log')
     ax2.plot(valid_accuracy_x, valid_accuracy, color=Valid_COLOR_ACCURACY, lw=3, label = 'Valid_Accu')
 
@@ -50,12 +50,14 @@ def plot_valid_training_loss_accuracy_with_epoch_together(training_loss_recordin
     ax1.set_ylabel("Loss", fontsize=24)
     ax2.set_ylabel("R2", fontsize=24)
     
-    ax1.set_xticks(train_accuracy, x_labels, fontsize=20)
+    ax1.set_xticks(train_accuracy_x, x_labels, fontsize=20)
     
-    ax1.legend(loc='best', bbox_to_anchor=(1.1, 0.5),fontsize=25, frameon=False)
-    ax2.legend(loc='best', bbox_to_anchor=(1.1, 0.35),fontsize=25, frameon=False)
+    ax1.legend(loc='best', bbox_to_anchor=(1.2, 0.5),fontsize=25, frameon=False)
+    ax2.legend(loc='best', bbox_to_anchor=(1.2, 0.35),fontsize=25, frameon=False)
 
-    return
+    fig.savefig(outfile, dpi=1000,transparent = True,bbox_inches='tight' )
+    plt.close()
+    return             
 
 def plot_loss_accuracy_with_epoch(loss_recording, accuracy_recording, outfile):
 

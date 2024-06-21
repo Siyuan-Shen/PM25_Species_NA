@@ -21,6 +21,7 @@ endyears = Spatial_Trainning_Settings['endyears']
 training_months = Spatial_Trainning_Settings['training_months']
 test_beginyear = Spatial_Trainning_Settings['test_beginyear']
 test_endyear = Spatial_Trainning_Settings['test_endyear']
+
 #######################################################################################
 # Forced Slope Unity Settings
 ForcedSlopeUnityTable = cfg['Spatial-CrossValidation']['Forced-Slope-Unity']
@@ -33,6 +34,13 @@ EachMonthForcedSlopeUnity = ForcedSlopeUnityTable['EachMonthForcedSlopeUnity']
 
 every_point_begin_years = cfg['Spatial-CrossValidation']['Visualization_Settings']['every_point_begin_years']
 every_point_end_years = cfg['Spatial-CrossValidation']['Visualization_Settings']['every_point_end_years']
+
+#######################################################################################
+# SHAP Values Analysis Settings
+
+SHAP_Analysis_Settings = cfg['Spatial-CrossValidation']['SHAP_Analysis_Settings']
+
+
 #######################################################################################
 # Training file Path
 results_dir = cfg['Pathway']['Results-dir'] 

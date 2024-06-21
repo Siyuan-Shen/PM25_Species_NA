@@ -27,14 +27,22 @@ cbar_width_2 = 0.08 * (width + height*2)
 figwidth = width + height + hmargin*2 + cbar_width_2
 figheight = height*2 + vmargin*2
 
+
+def shap_value_plot():
+    return
 def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
                     species, version, typeName, plot_beginyear, plot_endyear, MONTH, nchannel, special_name, width, height):
-    
+    MM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     every_point_plot_obs_pm25 = np.zeros([],dtype=np.float32)
     every_point_plot_pre_pm25 = np.zeros([],dtype=np.float32)
     for iyear in range(plot_endyear-plot_beginyear+1):
-            every_point_plot_obs_pm25 = np.append(every_point_plot_obs_pm25,plot_obs_pm25[str(plot_beginyear+iyear)]['Annual'])
-            every_point_plot_pre_pm25 = np.append(every_point_plot_pre_pm25,plot_pre_pm25[str(plot_beginyear+iyear)]['Annual'])
+        if MONTH == 'Annual':
+            for imonth in MM:
+                every_point_plot_obs_pm25 = np.append(every_point_plot_obs_pm25,plot_obs_pm25[str(plot_beginyear+iyear)][imonth])
+                every_point_plot_pre_pm25 = np.append(every_point_plot_pre_pm25,plot_pre_pm25[str(plot_beginyear+iyear)][imonth])
+        else:
+            every_point_plot_obs_pm25 = np.append(every_point_plot_obs_pm25,plot_obs_pm25[str(plot_beginyear+iyear)][MONTH])
+            every_point_plot_pre_pm25 = np.append(every_point_plot_pre_pm25,plot_pre_pm25[str(plot_beginyear+iyear)][MONTH])
     
 
     fig_output_dir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-Regression/'.format(species, version)
@@ -46,34 +54,33 @@ def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
                                                                                             ,width, height, nchannel,special_name)
     
 
-    H, xedges, yedges = np.histogram2d(plot_obs_pm25, plot_pre_pm25, bins=100)
+    H, xedges, yedges = np.histogram2d(every_point_plot_obs_pm25, every_point_plot_pre_pm25, bins=100)
     fig = plt.figure(figsize=(10, 10))
     #fig = plt.figure(figsize=(figwidth, figheight))
     extent = [0, max(xedges), 0, max(xedges)]
-    RMSE = np.sqrt(mean_squared_error(plot_obs_pm25, plot_pre_pm25))
+    RMSE = np.sqrt(mean_squared_error(every_point_plot_obs_pm25, every_point_plot_pre_pm25))
     RMSE = round(RMSE, 1)
 
-    R2 = linear_regression(plot_obs_pm25, plot_pre_pm25)
+    R2 = linear_regression(every_point_plot_obs_pm25, every_point_plot_pre_pm25)
     R2 = np.round(R2, 2)
 
     ax = plt.axes([0.1,0.1,0.8,0.8])  # [left, bottom, width, height]
     cbar_ax = plt.axes([0.91,0.2,0.03,0.6])
-    regression_Dic = regress2(_x=plot_obs_pm25,_y=plot_pre_pm25,_method_type_1='ordinary least square',_method_type_2='reduced major axis',
-    )
+    regression_Dic = regress2(_x=every_point_plot_obs_pm25,_y=every_point_plot_pre_pm25,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
     b0,b1 = regression_Dic['intercept'], regression_Dic['slope']
     #b0, b1 = linear_slope(plot_obs_pm25,
     #                      plot_pre_pm25)
     b0 = round(b0, 2)
     b1 = round(b1, 2)
 
-    extentlim = 2*np.mean(plot_obs_pm25)
+    extentlim = 2*np.mean(every_point_plot_obs_pm25)
     # im = ax.imshow(
     #    H, extent=extent,
     #    cmap= 'gist_rainbow',
     #   origin='lower',
     #  norm=colors.LogNorm(vmin=1, vmax=1e3))
-    im = ax.hexbin(plot_obs_pm25, plot_pre_pm25,
-                   cmap='autumn_r', norm=colors.LogNorm(vmin=1, vmax=100), extent=(0, extentlim, 0, extentlim),
+    im = ax.hexbin(every_point_plot_obs_pm25, every_point_plot_pre_pm25,
+                   cmap='autumn_r', norm=colors.LogNorm(vmin=1, vmax=1000), extent=(0, extentlim, 0, extentlim),
                    mincnt=1)
     ax.plot([0, extentlim], [0, extentlim], color='black', linestyle='--')
     ax.plot([0, extentlim], [b0, b0 + b1 * extentlim], color='blue', linestyle='-')
@@ -94,10 +101,10 @@ def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
         ax.text(0, extentlim - (0.05 + 0.064 * 2) * extentlim, 'y=-{}x {} {}'.format(abs(b1),return_sign(b0),abs(b0)) , style='italic',
             fontsize=32)
 
-    ax.text(0, extentlim - (0.05 + 0.064 * 3) * extentlim, 'N = ' + str(len(plot_pre_pm25)), style='italic',
+    ax.text(0, extentlim - (0.05 + 0.064 * 3) * extentlim, 'N = ' + str(len(every_point_plot_obs_pm25)), style='italic',
             fontsize=32)
-    cbar = plt.colorbar(im, cax=cbar_ax, orientation='vertical', shrink=1.0, ticks=[1, 10, 100])
-    cbar.ax.set_yticklabels(['1', '10', r'$10^2$',], fontsize=24)
+    cbar = plt.colorbar(im, cax=cbar_ax, orientation='vertical', shrink=1.0, ticks=[1, 10, 100,1000])
+    cbar.ax.set_yticklabels(['1', '10', r'$10^2$',r'$10^3$'], fontsize=24)
     cbar.set_label('Number of points', fontsize=28)
 
     fig.savefig(fig_outfile, dpi=1000,transparent = True,bbox_inches='tight' )

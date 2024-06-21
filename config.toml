@@ -39,12 +39,12 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 [Spatial-CrossValidation]
 
 Spatial_CrossValidation_Switch                        = false
-Spatial_CV_LossAccuracy_plot_Switch                   = false
+Spatial_CV_LossAccuracy_plot_Switch                   = true
 
 
 [Spatial-CrossValidation.Training_Settings]
 
-Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
+Spatial_CV_test_only_Switch                           = true  #This Switch is for only run specific test time coverage. Have to train first.
 kfold                                                 = 10
 repeats                                               = 1
 beginyears                                            = [2000,2002,2004,2006,2008,2010,2012,2014]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
@@ -55,7 +55,7 @@ test_endyear                                          = 2016
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = false
+regression_plot_switch                                = true
 every_point_begin_years                               = 2000
 every_point_end_years                                 = 2016
 
@@ -64,11 +64,15 @@ every_point_end_years                                 = 2016
 ForcedSlopeUnity                                      = false # True: force the slope to unity and offset to zero with Training datasets
 EachMonthForcedSlopeUnity                             = true # True: force the slope to unity and offset to zero by each year, each month; False: by each month, but all-year average 
 
+[Spatial-CrossValidation.SHAP_Analysis_Settings]
+
+SHAP_Analysis_switch                                  = true
+SHAP_Analysis_number                                  = 1000 # Typical 100-1000, do not feed all data in it.
 #########################################################################################################################################################
 
 [BLOO-CrossValidation]
 
-BLOO_CrossValidation_Switch                           = true
+BLOO_CrossValidation_Switch                           = false
 Buffer_size                                           = [200]# ,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
 
 [BLOO-CrossValidation.TrainingSettings]
@@ -86,7 +90,7 @@ test_endyear                                          = 2001
 
 [BLCO-CrossValidation]
 
-BLCO_CrossValidation_Switch                           = true
+BLCO_CrossValidation_Switch                           = false
 Buffer_size                                           = [200]#,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]#200]
 
 [BLCO-CrossValidation.TrainingSettings]
@@ -129,10 +133,10 @@ fixednumber_train_sites                               = []
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = true
-Train_model_Switch                                    = true
-Map_estimation_Switch                                 = true
-Estimation_visualization_Switch                       = true
+Estimation_Switch                                     = false
+Train_model_Switch                                    = false
+Map_estimation_Switch                                 = false
+Estimation_visualization_Switch                       = false
 Estimation_PWMPM_Cal_Switch                           = false
 Derive_combinedGeo_MapData_Switch                     = false
 
@@ -202,7 +206,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 
 [Sensitivity_Test-Settings]
 
-Sensitivity_Test_Switch                               = true
+Sensitivity_Test_Switch                               = false
 Sensitivity_plot_Switch                               = false
 
 [Sensitivity_Test-Settings.Training_Settings]
@@ -233,12 +237,12 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 
 [Training-Settings.identity]
 
-version                                               = 'v1.6.0-beta'
+version                                               = 'v1.6.0'
 special_name                                          = '_ResNet_BottleNeck_month_based_models_2years-byHalfYear_Obsv1118_NA-PM_v1.5.0'
 
 [Training-Settings.learning-objective]
 
-species                                               = 'NH4' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
+species                                               = 'SO4' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
 
 # Only one of these can be true. Default is bias.
 bias                                                  = true   # learning objectives: bias = ground-based species observation - geophysical species concentration estimation
@@ -261,15 +265,15 @@ ResNet_MLP.blocks_num                                 = [1,1,1,1]
 
 #############
 LateFusion.Settings                                   = false
-LateFusion.Blocks                                     = 'BasicBlock'
+LateFusion.Blocks                                     = 'Bottleneck'
 LateFusion.blocks_num                                 = [1,1,1,1]
 LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                        'GeoNH4','GeoNIT','GeoSO4',#'GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25'
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
                                                         'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',# 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
-                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M',#'PRECTOT',
+                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                        'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
                                                        #,#'S1','S2','S3',' 
                                                         #'Population'
@@ -286,7 +290,7 @@ MultiHeadLateFusion.initial_channels                   = ['EtaAOD_Bias', 'EtaCoa
                                                         'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
                                                         'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi',#'OC_anthro_emi', 'BC_anthro_emi',  # 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                         'DST_offline_emi', 'SSLT_offline_emi',
-                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M',#'PRECTOT',
+                                                        'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
                                                         'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
                                                        #,#'S1','S2','S3',' 
                                                         #'Population'
@@ -336,19 +340,18 @@ Sigmoid.Settings                                      = false
 epoch                                                 = 30
 batchsize                                             = 128
 
-channel_names                                         =['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD',  'GeoPM25',#'ETA',
+channel_names                                         =['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD',  'GeoPM25','ETA',
                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25',#
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
                                                        'NH3_anthro_emi','NO_anthro_emi','SO2_anthro_emi', #'OC_anthro_emi', 'BC_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
                                                        'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 
-                                                       'Urban_Builtup_Lands','Croplands','Crop_Nat_Vege_Mos', #'Permanent_Wetlands', 
+                                                       'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos', #'Permanent_Wetlands', 
                                                        'Month_of_Year',
                                                         'Lat', 'Lon','elevation'#'S1','S2','S3',#'S1','S2','S3','  'Lon',
                                                         #'Population'
                                                        ] 
-
 
 [Training-Settings.Loss-Functions]
 

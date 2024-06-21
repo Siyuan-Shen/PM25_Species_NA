@@ -7,6 +7,7 @@ import gc
 from sklearn.model_selection import RepeatedKFold
 import random
 import csv
+import shap
 
 from Training_pkg.iostream import load_TrainingVariables, load_geophysical_biases_data, load_geophysical_species_data, load_monthly_obs_data, Learning_Object_Datasets
 from Training_pkg.utils import *
