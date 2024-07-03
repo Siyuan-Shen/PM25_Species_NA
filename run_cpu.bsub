@@ -4,7 +4,7 @@
 #BSUB -W 168:00
 #BSUB -R "rusage[mem=100GB] span[ptile=2] select[port8543=1]"
 #BSUB -a 'docker(syword/python3-pytorch:2024.05)'
-#BSUB -J "1.6.0 SO4"
+#BSUB -J "1.6.0 SO4 ResNET MLP 4years"
 #BSUB -N
 #BSUB -G compute-rvmartin
 #BSUB -g /s.siyuan/Map

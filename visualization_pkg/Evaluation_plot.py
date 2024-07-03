@@ -1,4 +1,5 @@
 import os
+import shap
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
@@ -28,7 +29,10 @@ figwidth = width + height + hmargin*2 + cbar_width_2
 figheight = height*2 + vmargin*2
 
 
-def shap_value_plot():
+def shap_value_plot(shap_values_with_feature_names:shap._explanation.Explanation,plot_type:str,outfile:str):
+    if plot_type == 'beeswarm':
+        shap.plots.beeswarm(shap_values_with_feature_names, show=False)
+        plt.savefig(outfile,format='png',dpi=1000, bbox_inches='tight')
     return
 def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
                     species, version, typeName, plot_beginyear, plot_endyear, MONTH, nchannel, special_name, width, height):

@@ -39,7 +39,7 @@ def Train_Model_forEstimation(train_beginyears, train_endyears, training_months,
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
-            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names,initial_channel_names=total_channel_names)
+            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, input_std=input_std,input_mean=input_mean,width=width,height=height,BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names,initial_channel_names=total_channel_names)
             save_trained_month_based_model_forEstimation(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name,beginyear=train_beginyears[imodel_year], endyear=train_endyears[imodel_year], month_index=training_months[imodel_month], width=width, height=height)
             del X_train, y_train
             gc.collect()
@@ -70,7 +70,7 @@ def Original_Train_Model_forEstimation(train_beginyears, train_endyears, width, 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         cnn_model.to(device)
         torch.manual_seed(21)
-        train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names,initial_channel_names=total_channel_names)
+        train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, input_std=input_std,input_mean=input_mean,width=width,height=height,BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names,initial_channel_names=total_channel_names)
         save_trained_model_forEstimation(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name,beginyear=train_beginyears[imodel], endyear=train_endyears[imodel], width=width, height=height)
         del X_train, y_train
         gc.collect()

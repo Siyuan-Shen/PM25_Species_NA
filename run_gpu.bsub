@@ -2,9 +2,9 @@
 #BSUB -q general
 #BSUB -R "rusage[mem=80GB] span[hosts=1] select[gpuhost && port8543=1]"
 #BSUB -G compute-rvmartin
-#BSUB -gpu "num=1:gmodel=TeslaV100_SXM2_32GB"
+#BSUB -gpu "num=1:j_exclusive=no"
 #BSUB -a 'docker(syword/python3-pytorch:2024.05)'
-#BSUB -J "1.6.0-beta NH4 Spatial CV 2000-2016 '_month_based_models_2years-byHalfYear_Obsv0131_NA-PM_v1.0.0 bottleneck SO4' "
+#BSUB -J "1.6.0 '_GeoMSE_lambda1-10_Epoch31_ResNet_1101_BasicBlock_month_based_models_1year-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU_shap_values' SO4 "
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu
@@ -18,5 +18,5 @@ python3 main.py
 # NVIDIAA100_SXM4_80GB
 # NVIDIAA40
 # NVIDIAA100_SXM4_40GB
-# TeslaV100_SXM2_32GB
+# TeslaV100_SXM2_32G
 

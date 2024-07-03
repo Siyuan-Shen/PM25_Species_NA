@@ -52,6 +52,22 @@ ResNet_MLP_setting      = net_structure_settings['ResNet_MLP']['Settings']
 ResNet_MLP_Blocks       = net_structure_settings['ResNet_MLP']['Blocks']
 ResNet_MLP_blocks_num   = net_structure_settings['ResNet_MLP']['blocks_num']
 
+ResNet_Classification_Settings                        = net_structure_settings['ResNet_Classification']['Settings']
+ResNet_Classification_Blocks                          = net_structure_settings['ResNet_Classification']['Blocks']
+ResNet_Classification_blocks_num                      = net_structure_settings['ResNet_Classification']['blocks_num']
+ResNet_Classification_left_bin                        = net_structure_settings['ResNet_Classification']['left_bin']
+ResNet_Classification_right_bin                       = net_structure_settings['ResNet_Classification']['right_bin']
+ResNet_Classification_bins_number                     = net_structure_settings['ResNet_Classification']['bins_number']
+
+ResNet_MultiHeadNet_Settings                          = net_structure_settings['ResNet_MultiHeadNet']['Settings']
+ResNet_MultiHeadNet_Blocks                            = net_structure_settings['ResNet_MultiHeadNet']['Blocks']
+ResNet_MultiHeadNet_blocks_num                        = net_structure_settings['ResNet_MultiHeadNet']['blocks_num']
+ResNet_MultiHeadNet_left_bin                          = net_structure_settings['ResNet_MultiHeadNet']['left_bin']
+ResNet_MultiHeadNet_right_bin                         = net_structure_settings['ResNet_MultiHeadNet']['right_bin']
+ResNet_MultiHeadNet_bins_number                       = net_structure_settings['ResNet_MultiHeadNet']['bins_number']
+ResNet_MultiHeadNet_regression_portion                = net_structure_settings['ResNet_MultiHeadNet']['regression_portion']
+ResNet_MultiHeadNet_classifcation_portion             = net_structure_settings['ResNet_MultiHeadNet']['classifcation_portion']
+
 LateFusion_setting      = net_structure_settings['LateFusion']['Settings']
 LateFusion_Blocks       = net_structure_settings['LateFusion']['Blocks']
 LateFusion_blocks_num   = net_structure_settings['LateFusion']['blocks_num']
@@ -124,6 +140,9 @@ Loss_Func = cfg['Training-Settings']['Loss-Functions']
 
 Loss_type = Loss_Func['Loss_type']
 Classification_loss_type = Loss_Func['Classification_loss_type']
+GeoMSE_Lamba1_Penalty1 = Loss_Func['GeoMSE_Lamba1_Penalty1']
+ResNet_MultiHeadNet_regression_loss_coefficient = Loss_Func['ResNet_MultiHeadNet_regression_loss_coefficient']
+ResNet_MultiHeadNet_classfication_loss_coefficient = Loss_Func['ResNet_MultiHeadNet_classfication_loss_coefficient']
 #######################################################################################
 # CombineWithGeophysical Settings
 CombineWithGeophysical = cfg['Training-Settings']['CombineWithGeophysical']
@@ -176,7 +195,7 @@ def optimizer_lookup(model_parameters,learning_rate):
         return torch.optim.Adam(params=model_parameters,betas=(Adam_beta0, Adam_beta1),eps=Adam_eps, lr=learning_rate)
     
 def Get_channel_names(channels_to_exclude:list):
-    if ResNet_setting or ResNet_MLP_setting:
+    if ResNet_setting or ResNet_MLP_setting or ResNet_Classification_Settings or ResNet_MultiHeadNet_Settings:
         if len(channels_to_exclude) == 0:
             total_channel_names = channel_names.copy()
             main_stream_channel_names = channel_names.copy()

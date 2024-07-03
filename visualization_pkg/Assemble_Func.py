@@ -1,17 +1,22 @@
-
+import shap
 from Estimation_pkg.iostream import load_estimation_map_data
 from Uncertainty_pkg.iostream import load_absolute_uncertainty_map_data
-from visualization_pkg.iostream import save_loss_accuracy_figure, save_estimation_map_figure,load_Population_MapData,save_uncertainty_map_figure
+from visualization_pkg.iostream import save_shap_analysis_figures,save_loss_accuracy_figure, save_estimation_map_figure,load_Population_MapData,save_uncertainty_map_figure
 from visualization_pkg.Training_plot import plot_loss_accuracy_with_epoch, plot_valid_training_loss_accuracy_with_epoch_together
 from visualization_pkg.Estimation_plot import Plot_Species_Map_Figures
 from visualization_pkg.Uncertainty_plot import Plot_Species_Uncertainty_Map_Figures
+from visualization_pkg.Evaluation_plot import shap_value_plot
 from Estimation_pkg.utils import Map_Plot_Extent
 from Uncertainty_pkg.utils import *
 from visualization_pkg.utils import *
 from Training_pkg.utils import *
 
 
-
+def SHAPvalues_Analysis_figure(shap_values_with_feature_names:shap._explanation.Explanation,plot_type,typeName, species,version,beginyear,endyear,nchannel,width,height,special_name ):
+    outfile = save_shap_analysis_figures(plot_type=plot_type,typeName=typeName,species=species,version=version,
+                                         beginyear=beginyear,endyear=endyear,nchannel=nchannel,width=width,height=height,special_name=special_name)
+    shap_value_plot(shap_values_with_feature_names=shap_values_with_feature_names,plot_type=plot_type,outfile=outfile)
+    return
 
 def plot_save_loss_accuracy_figure(loss, accuracy, valid_loss, valid_accuracy, typeName, species, version, nchannel, width, height, special_name):
     training_fig_outfile, valid_fig_outfile, Combine_fig_outfile = save_loss_accuracy_figure(typeName=typeName,species=species,version=version,nchannel=nchannel,width=width,height=height,special_name=special_name)

@@ -280,6 +280,32 @@ def save_BLCO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accu
     np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
+def save_SHAPValues_data_recording(shap_values_values:np.array, shap_values_data:np.array,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height):
+    outdir = txt_outdir + '{}/{}/Results/results-SHAPValues_data_recording/'.format(species, version)
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
+    shap_values_values_outfile = outdir + '{}-{}-SHAP_values_values-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+                                                                                       
+    shap_values_data_outfile   = outdir + '{}-{}-SHAP_values_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    np.save(shap_values_values_outfile, shap_values_values)
+    
+    np.save(shap_values_data_outfile,   shap_values_data)
+    return
+
+
+def load_SHAPValues_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height):
+    indir = txt_outdir + '{}/{}/Results/results-SHAPValues_data_recording/'.format(species, version)
+    shap_values_values_infile = indir + '{}-{}-SHAP_values_values-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    shap_values_data_infile   = indir + '{}-{}-SHAP_values_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    shap_values_values = np.load(shap_values_values_infile)#,allow_pickle=True).item()
+    
+    shap_values_data   = np.load(shap_values_data_infile)#,  allow_pickle=True).item()
+    return shap_values_values, shap_values_data
+
 def load_month_based_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height):
     indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
 

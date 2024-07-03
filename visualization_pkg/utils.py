@@ -5,7 +5,7 @@ cfg = toml.load('./config.toml')
 Loss_Accuracy_outdir = cfg['Pathway']['Figures-dir']['Loss_Accuracy_outdir']
 Estimation_Map_outdir = cfg['Pathway']['Figures-dir']['Estimation_Map_outdir']
 Uncertainty_Map_outdir = cfg['Pathway']['Figures-dir']['Uncertainty_Map_outdir']
-
+SHAP_Analysis_outdir =  cfg['Pathway']['Figures-dir']['SHAP_Analysis_outdir']
 def crop_map_data(MapData, lat, lon, Extent):
     bottom_lat = Extent[0]
     top_lat    = Extent[1]

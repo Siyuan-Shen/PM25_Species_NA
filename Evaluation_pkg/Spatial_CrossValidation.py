@@ -1,4 +1,3 @@
-import torch
 import numpy as np
 import torch
 import torch.nn as nn
@@ -70,7 +69,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
                     cnn_model.to(device)
                     torch.manual_seed(21)
-                    train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
+                    train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, input_std=input_std,input_mean=input_mean,width=width,height=height,BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
                                                                     initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
                     Training_losses_recording[count,imodel_year*len(training_months)+imodel_month,0:len(train_loss)] = train_loss
                     Training_acc_recording[count,imodel_year*len(training_months)+imodel_month,:]    = train_acc
@@ -200,7 +199,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
                     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
                     cnn_model.to(device)
                     torch.manual_seed(21)
-                    train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
+                    train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, input_std=input_std,input_mean=input_mean,width=width,height=height,BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
                                                                     initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
                     Training_losses_recording[count,imodel_year*len(training_months)+imodel_month,0:len(train_loss)] = train_loss
                     Training_acc_recording[count,imodel_year*len(training_months)+imodel_month,:]    = train_acc
@@ -325,7 +324,7 @@ def Original_AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, 
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
-            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
+            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test,input_std=input_std,input_mean=input_mean,width=width,height=height, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,
                                                                    initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
             Training_losses_recording[count,imodel,0:len(train_loss)] = train_loss
             Training_acc_recording[count,imodel,:]    = train_acc
@@ -448,7 +447,7 @@ def Original_FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixed
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
-            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
+            train_loss, train_acc, valid_losses, test_acc  = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test,input_std=input_std,input_mean=input_mean,width=width,height=height, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch,initial_channel_names=total_channel_names,main_stream_channels=main_stream_channel_names,side_stream_channels=side_stream_nchannel_names)
             Training_losses_recording[count,imodel,0:len(train_loss)] = train_loss
             Training_acc_recording[count,imodel,:]    = train_acc
             valid_losses_recording[count,imodel,0:len(valid_losses)]  = valid_losses
@@ -575,7 +574,7 @@ def Normal_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             cnn_model.to(device)
             torch.manual_seed(21)
-            train_loss, train_acc, valid_losses, test_acc = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch)
+            train_loss, train_acc, valid_losses, test_acc = train(model=cnn_model, X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test,input_std=input_std,input_mean=input_mean,width=width,height=height, BATCH_SIZE=batchsize, learning_rate=lr0, TOTAL_EPOCHS=epoch)
             save_trained_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height)
 
             # *------------------------------------------------------------------------------*#
