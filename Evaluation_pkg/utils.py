@@ -39,8 +39,12 @@ every_point_end_years = cfg['Spatial-CrossValidation']['Visualization_Settings']
 # SHAP Values Analysis Settings
 
 SHAP_Analysis_Settings = cfg['Spatial-CrossValidation']['SHAP_Analysis_Settings']
-
-
+SHAP_Analysis_switch   = SHAP_Analysis_Settings['SHAP_Analysis_switch']
+SHAP_Analysis_Calculation_Switch = SHAP_Analysis_Settings['SHAP_Analysis_Calculation_Switch']
+SHAP_Analysis_visualization_Switch = SHAP_Analysis_Settings['SHAP_Analysis_visualization_Switch']
+SHAP_Analysis_background_number = SHAP_Analysis_Settings['SHAP_Analysis_background_number']
+SHAP_Analysis_test_number = SHAP_Analysis_Settings['SHAP_Analysis_test_number']
+SHAP_Analysis_plot_type = SHAP_Analysis_Settings['SHAP_Analysis_plot_type']
 #######################################################################################
 # Training file Path
 results_dir = cfg['Pathway']['Results-dir'] 
@@ -136,12 +140,25 @@ def Get_typeName(bias, normalize_bias, normalize_species, absolute_species, log_
         typeName = 'Log-{}'.format(species)
     return  typeName
 
+def initialize_AVD_SHAPValues_DataRecording(beginyear:int,endyear:int):
+   # MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    shap_values_values = {}
+    shap_values_base   = {}
+    shap_values_data   = {}
+    for iyear in range(endyear-beginyear+1): 
+        shap_values_values[str(beginyear+iyear)] = {}
+        shap_values_base[str(beginyear+iyear)] = {}
+        shap_values_data[str(beginyear+iyear)] = {}
+        #for imonth in MONTH:
+        #    shap_values_values[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+        #    shap_values_base[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+        #    shap_values_data[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+    return shap_values_values,shap_values_base,shap_values_data
 
 def initialize_AVD_DataRecording(beginyear:int,endyear:int):
-    """This is used to return data recording dict. dict = { area: {Year : {Month : np.array() }}}
+    """This is used to return data recording dict. dict = {  {Year : {Month : np.array() }}}
 
     Args:
-        Areas (list): _description_
         Area_beginyears (dict): _description_
         endyear (int): _description_
 

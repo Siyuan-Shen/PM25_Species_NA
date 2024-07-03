@@ -29,7 +29,7 @@ Config_outdir                                         = '/my-projects/Projects/P
 Loss_Accuracy_outdir                                  = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 Estimation_Map_outdir                                 = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 Uncertainty_Map_outdir                                = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
-
+SHAP_Analysis_outdir                                  = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 [Pathway.Estimation-dir]
 
 Estimation_outdir                                     = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
@@ -38,17 +38,16 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 
 [Spatial-CrossValidation]
 
-Spatial_CrossValidation_Switch                        = false
+Spatial_CrossValidation_Switch                        = true
 Spatial_CV_LossAccuracy_plot_Switch                   = true
-
 
 [Spatial-CrossValidation.Training_Settings]
 
-Spatial_CV_test_only_Switch                           = true  #This Switch is for only run specific test time coverage. Have to train first.
+Spatial_CV_test_only_Switch                           = false  #False ==> Default. This Switch is for only run specific test time coverage. Have to train first.
 kfold                                                 = 10
 repeats                                               = 1
-beginyears                                            = [2000,2002,2004,2006,2008,2010,2012,2014]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
-endyears                                              = [2001,2003,2005,2007,2009,2011,2013,2016]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
+beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#[2000,2002,2004,2006,2008,2010,2012,2014]#,2017,2018,2019,2020,2021,2022]
+endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#[2001,2003,2005,2007,2009,2011,2013,2016]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
 training_months                                       = [[9,10,11,0,1,2],[3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] 
 test_beginyear                                        = 2000
 test_endyear                                          = 2016
@@ -67,7 +66,12 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 [Spatial-CrossValidation.SHAP_Analysis_Settings]
 
 SHAP_Analysis_switch                                  = true
-SHAP_Analysis_number                                  = 1000 # Typical 100-1000, do not feed all data in it.
+SHAP_Analysis_Calculation_Switch                      = true
+SHAP_Analysis_visualization_Switch                    = true
+SHAP_Analysis_background_number                       = 1000 # Typical 100-1000, do not feed all data in it.
+SHAP_Analysis_test_number                             = 200
+SHAP_Analysis_plot_type                               = 'beeswarm' # 'beeswarm'; 
+
 #########################################################################################################################################################
 
 [BLOO-CrossValidation]
@@ -238,7 +242,7 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 [Training-Settings.identity]
 
 version                                               = 'v1.6.0'
-special_name                                          = '_ResNet_BottleNeck_month_based_models_2years-byHalfYear_Obsv1118_NA-PM_v1.5.0'
+special_name                                          = '_GeoMSE_lambda1-10_Epoch31_ResNet_1101_BasicBlock_month_based_models_1year-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU_shap_values'#'_SHAP_Analysis_Tanh_Test'#'_ResNet-MLP_BottleNeck_month_based_models_4years-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU'
 
 [Training-Settings.learning-objective]
 
@@ -251,33 +255,54 @@ normalize_species                                     = false
 absolute_species                                      = false 
 log_species                                           = false
 
+##########################################################
+# Net Structure Settings. Set one of them ture.
+
 [Training-Settings.net_structure_settings]
 
 ResNet.Settings                                       = true
-ResNet.Blocks                                         = 'Bottleneck'
-ResNet.blocks_num                                     = [1,1,1,1]
+ResNet.Blocks                                         = 'BasicBlock'
+ResNet.blocks_num                                     = [1,1,0,1]
 
 #############
 
 ResNet_MLP.Settings                                   = false
-ResNet_MLP.Blocks                                     = 'BasicBlock'
+ResNet_MLP.Blocks                                     = 'Bottleneck'
 ResNet_MLP.blocks_num                                 = [1,1,1,1]
+
+#############
+
+ResNet_Classification.Settings                        = false
+ResNet_Classification.Blocks                          = 'BasicBlock'
+ResNet_Classification.blocks_num                      = [1,1,0,1]
+ResNet_Classification.left_bin                        = -5.0
+ResNet_Classification.right_bin                       = 5.0
+ResNet_Classification.bins_number                     = 101
+
+#############
+ResNet_MultiHeadNet.Settings                          = false
+ResNet_MultiHeadNet.Blocks                            = 'BasicBlock'
+ResNet_MultiHeadNet.blocks_num                        = [1,1,0,1]
+ResNet_MultiHeadNet.left_bin                          = -5.0
+ResNet_MultiHeadNet.right_bin                         = 5.0
+ResNet_MultiHeadNet.bins_number                       = 101
+ResNet_MultiHeadNet.regression_portion                = 0.5
+ResNet_MultiHeadNet.classifcation_portion             = 0.5
 
 #############
 LateFusion.Settings                                   = false
 LateFusion.Blocks                                     = 'Bottleneck'
 LateFusion.blocks_num                                 = [1,1,1,1]
-LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD', 'ETA', 'GeoPM25',
-                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
-                                                       'NA_CNN_PM25',#'GL_CNN_PM25'
+LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD',  'GeoPM25','ETA',
+                                                       'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                       'NA_CNN_PM25',#'GL_CNN_PM25',#
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
-                                                        'NH3_anthro_emi','SO2_anthro_emi', 'NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',# 'N2O_anthro_emi','NMVOC_anthro_emi',
+                                                       'NH3_anthro_emi','NO_anthro_emi','SO2_anthro_emi', #'OC_anthro_emi', 'BC_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
                                                        'DST_offline_emi', 'SSLT_offline_emi',
-                                                       'PBLH', 'RH', 'T2M', 'U10M', 'V10M','PRECTOT',
-                                                       'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
-                                                       #,#'S1','S2','S3',' 
-                                                        #'Population'
-                                                       ]
+                                                       'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 
+                                                       'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos', #'Permanent_Wetlands', 
+                                                    
+                                                       ] 
 LateFusion.LateFusion_channels                         = ['Lat', 'Lon','elevation','Month_of_Year',]
 
 #############
@@ -294,13 +319,14 @@ MultiHeadLateFusion.initial_channels                   = ['EtaAOD_Bias', 'EtaCoa
                                                         'Urban_Builtup_Lands',# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
                                                        #,#'S1','S2','S3',' 
                                                         #'Population'
-                                                       ] 
+                                                       ]               
 MultiHeadLateFusion.LateFusion_channels                = [ 'Lat', 'Lon','elevation','Month_of_Year', ]
 MultiHeadLateFusion.left_bin                           = -10.0
 MultiHeadLateFusion.right_bin                          = 10.0
 MultiHeadLateFusion.bins_number                        = 201
 MultiHeadLateFusion.regression_portion                 = 0.5
 MultiHeadLateFusion.classifcation_portion              = 0.5
+
 
 [Training-Settings.optimizer]
 
@@ -330,14 +356,14 @@ CosineAnnealingRestartsLR.eta_min                     = 0
 
 activation_func_name                                  = 'relu'
 ReLU.Settings                                         = false
-Tanh.Settings                                         = false
-GeLU.Settings                                         = true
+Tanh.Settings                                         = true
+GeLU.Settings                                         = false
 Sigmoid.Settings                                      = false
 
 
 [Training-Settings.hyper-parameters]
 
-epoch                                                 = 30
+epoch                                                 = 31
 batchsize                                             = 128
 
 channel_names                                         =['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD',  'GeoPM25','ETA',
@@ -355,8 +381,12 @@ channel_names                                         =['EtaAOD_Bias', 'EtaCoast
 
 [Training-Settings.Loss-Functions]
 
-Loss_type                                             = 'MSE'
-Classification_loss_type                              = 'CrossEntropyLoss'
+Loss_type                                             = 'GeoMSE'           # MSE; GeoMSE; CrossEntropyLoss; MultiHead_Loss; <-- Regression Type for all other models
+Classification_loss_type                              = 'CrossEntropyLoss' # Only for MultiHeadLateFusion, ResNet_classification and ResNet_MultiHeadNet. 
+
+ResNet_MultiHeadNet_regression_loss_coefficient       = 1 # This is used to decide the coefficient of regression loss in ResNet_MultiHeadNet 
+ResNet_MultiHeadNet_classfication_loss_coefficient    = 1 # This is used to decide the coefficient of classfication loss in ResNet_MultiHeadNet 
+GeoMSE_Lamba1_Penalty1                                = 10.0  # This is for GeoMSE Penalty1 - Constrain form negative side.
 
 [Training-Settings.CombineWithGeophysical]
 

@@ -25,7 +25,13 @@ def initial_network(width,main_stream_nchannel,side_stream_nchannel):
         cnn_model = ResNet(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
     elif ResNet_MLP_setting:
         block = resnet_block_lookup_table(ResNet_MLP_Blocks)
-        cnn_model = ResNet_MLP(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
+        cnn_model = ResNet_MLP(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_MLP_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)#cnn_model = Net(nchannel=nchannel)
+    elif ResNet_Classification_Settings:
+        block = resnet_block_lookup_table(ResNet_Classification_Blocks)
+        cnn_model = ResNet_Classfication(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_Classification_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)
+    elif ResNet_MultiHeadNet_Settings:
+        block = resnet_block_lookup_table(ResNet_MultiHeadNet_Blocks)
+        cnn_model = MultiHead_ResNet(nchannel=main_stream_nchannel,block=block,blocks_num=ResNet_MultiHeadNet_blocks_num,include_top=True,groups=1,width_per_group=width)
     elif LateFusion_setting:
         block = resnet_block_lookup_table(LateFusion_Blocks)
         cnn_model = LateFusion_ResNet(nchannel=main_stream_nchannel,nchannel_lf=side_stream_nchannel,block=block,blocks_num=LateFusion_blocks_num,num_classes=1,include_top=True,groups=1,width_per_group=width)
@@ -43,7 +49,14 @@ class BasicBlock(nn.Module):
         self.bn1 = nn.BatchNorm2d(out_channel)  
         self.conv2 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel,kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channel)
-        self.tanh = activation_func
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
         self.downsample = downsample
         
     def forward(self, x):
@@ -53,13 +66,13 @@ class BasicBlock(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.tanh(out)
+        out = self.actfunc(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
 
-        out += identity # out=F(X)+X
-        out = self.tanh(out)
+        out = out + identity # out=F(X)+X
+        out = self.actfunc(out)
 
         return out
     
@@ -86,10 +99,18 @@ class Bottleneck(nn.Module):
         self.conv3 = nn.Conv2d(in_channels=width, out_channels=out_channel * self.expansion,kernel_size=1, stride=1, bias=False)  # unsqueeze channels
         self.bn3 = nn.BatchNorm2d(out_channel * self.expansion)
 
-        self.Tanh = activation_func
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
         self.downsample = downsample
 
     def forward(self, x):
+        in_size = x.size(0)
         identity = x
        
         if self.downsample is not None:
@@ -97,18 +118,17 @@ class Bottleneck(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.Tanh(out)
+        out = self.actfunc(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
-        out = self.Tanh(out)
+        out = self.actfunc(out)
 
         out = self.conv3(out)
         out = self.bn3(out)
-
         # out=F(X)+X
-        out += identity
-        out = self.Tanh(out)
+        out = out + identity
+        out = self.actfunc(out)
 
         return out
 
@@ -129,7 +149,14 @@ class ResNet_MLP(nn.Module):
 
         self.groups = groups
         self.width_per_group = width_per_group
-        self.actfunc = activation_func
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
         
         #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
         #self.bn1 = nn.BatchNorm2d(self.in_channel)
@@ -140,7 +167,7 @@ class ResNet_MLP(nn.Module):
         self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
         
@@ -156,13 +183,13 @@ class ResNet_MLP(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
 
         self.mlp_outlayer = nn.Sequential(nn.Linear(512 * block.expansion,512),
-                                          activation_func,
+                                          self.actfunc,
                                           nn.BatchNorm1d(512),
                                           nn.Linear(512,128),
-                                          activation_func,
+                                          self.actfunc,
                                           nn.Linear(128,num_classes))
    
     def _make_layer(self, block, channel, block_num, stride=1):
@@ -172,21 +199,23 @@ class ResNet_MLP(nn.Module):
                 nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -209,6 +238,7 @@ class ResNet_MLP(nn.Module):
             x = self.mlp_outlayer(x)
 
         return x
+    
 class ResNet(nn.Module):
 
     def __init__(self,
@@ -225,8 +255,14 @@ class ResNet(nn.Module):
         self.in_channel = 64  
 
         self.groups = groups
-        self.width_per_group = width_per_group
-        self.actfunc = activation_func
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
         
         #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
         #self.bn1 = nn.BatchNorm2d(self.in_channel)
@@ -237,7 +273,7 @@ class ResNet(nn.Module):
         self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
         
@@ -253,7 +289,7 @@ class ResNet(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
 
    
     def _make_layer(self, block, channel, block_num, stride=1):
@@ -263,23 +299,24 @@ class ResNet(nn.Module):
                 nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
-        return nn.Sequential(*layers)
 
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
+        return nn.Sequential(*layers)
     def forward(self, x):
         #x = self.conv1(x)
         #x = self.bn1(x)
@@ -299,7 +336,213 @@ class ResNet(nn.Module):
             x = self.fc(x)
 
         return x
+
+class ResNet_Classfication(nn.Module):
+
+    def __init__(self,
+                 nchannel, # initial input channel
+                 block,  # block types
+                 blocks_num,  
+                 num_classes=1,  
+                 include_top=True, 
+                 groups=1,
+                 width_per_group=64):
+
+        super(ResNet_Classfication, self).__init__()
+        self.include_top = include_top
+        self.in_channel = 64  
+
+        self.groups = groups
+        self.width_per_group = width_per_group
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
+        self.left_bin    = ResNet_Classification_left_bin
+        self.right_bin   = ResNet_Classification_right_bin
+        self.bins_number = ResNet_Classification_bins_number
+        #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
+        #self.bn1 = nn.BatchNorm2d(self.in_channel)
+
+        #self.tanh = nn.Tanh()
+        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
+        ,nn.BatchNorm2d(self.in_channel)
+        ,self.actfunc
+        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+
         
+        self.layer1 = self._make_layer(block, 64, blocks_num[0])
+        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
+        self.layer3 = self._make_layer(block, 256, blocks_num[2], stride=1)
+        self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
+
+        if self.include_top: 
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  
+            
+            self.fc = nn.Linear(512 * block.expansion, num_classes)
+            self.bins_fc = nn.Linear(512 * block.expansion, self.bins_number)
+        self.softmax = nn.Softmax()
+        for m in self.modules(): 
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+
+   
+    def _make_layer(self, block, channel, block_num, stride=1):
+        downsample = None
+        if stride != 1 or self.in_channel != channel * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(channel * block.expansion))
+        layers = []
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
+            layers.append(block(self.in_channel,
+                                channel,
+                                downsample=downsample,
+                                stride=stride,
+                                groups=self.groups,
+                                width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        #x = self.conv1(x)
+        #x = self.bn1(x)
+        #x = self.tanh(x)
+        #x = self.maxpool(x)
+
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        if self.include_top:  
+            x = self.avgpool(x)
+            x = torch.flatten(x, 1)
+            classification_output = self.bins_fc(x)
+            classification_output = self.softmax(classification_output)
+        #final_output = 0.5*regression_output + 0.5*torch.matmul(classification_output,self.bins)
+        return classification_output
+
+
+class MultiHead_ResNet(nn.Module):
+    
+    def __init__(self,
+                 nchannel, # initial input channel
+                 block,  # block types
+                 blocks_num,   
+                 include_top=True, 
+                 groups=1,
+                 width_per_group=64):
+
+        super(MultiHead_ResNet, self).__init__()
+        
+        self.include_top = include_top
+        self.in_channel = 64  
+        self.in_channel_cls = 64  
+
+
+        self.groups = groups
+        self.width_per_group = width_per_group
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
+        self.left_bin    = ResNet_MultiHeadNet_left_bin
+        self.right_bin   = ResNet_MultiHeadNet_right_bin
+        self.bins_number = ResNet_MultiHeadNet_bins_number
+        self.bins        = torch.tensor(np.linspace(self.left_bin,self.right_bin,self.bins_number))
+
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        ,nn.BatchNorm2d(self.in_channel)
+        ,self.actfunc
+        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        
+        self.layer1 = self._make_layer(block, 64, blocks_num[0])
+        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
+        self.layer3 = self._make_layer(block, 256, blocks_num[2], stride=1)
+        self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
+
+
+        if self.include_top: 
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1)) 
+            self.fc = nn.Linear(512 * block.expansion, 1)
+            self.bins_fc = nn.Linear(512 * block.expansion, self.bins_number)
+        
+        self.softmax = nn.Softmax()
+
+        for m in self.modules(): 
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+
+    def _make_layer(self, block, channel, block_num, stride=1):
+        downsample = None
+        if stride != 1 or self.in_channel != channel * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(channel * block.expansion))
+        layers = []
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
+            layers.append(block(self.in_channel,
+                                channel,
+                                downsample=downsample,
+                                stride=stride,
+                                groups=self.groups,
+                                width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
+        return nn.Sequential(*layers)
+    
+    def forward(self, x):
+        #x = self.conv1(x)
+        #x = self.bn1(x)
+        #x = self.tanh(x)
+        #x = self.maxpool(x)
+
+        
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        if self.include_top:  
+            x = self.avgpool(x)
+            x = torch.flatten(x, 1)
+            regression_output = self.fc(x)
+            classification_output = self.bins_fc(x)
+            classification_output = self.softmax(classification_output)
+        #final_output = 0.5*regression_output + 0.5*torch.matmul(classification_output,self.bins)
+        return regression_output, classification_output
+    
 class LateFusion_ResNet(nn.Module):
 
     def __init__(self,
@@ -318,19 +561,26 @@ class LateFusion_ResNet(nn.Module):
         self.in_channel_lf = 16
         self.groups = groups
         self.width_per_group = width_per_group
-        self.actfunc = activation_func
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
         
        
         self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
         self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel_lf)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
@@ -354,7 +604,7 @@ class LateFusion_ResNet(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
 
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
@@ -363,21 +613,23 @@ class LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
     def _make_layer_lf(self, block, channel, block_num, stride=1):
@@ -387,21 +639,23 @@ class LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_lf, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_lf,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel_lf = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel_lf,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel_lf = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel_lf,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
     def _make_layer_fused(self, block, channel, block_num, stride=1):
@@ -410,21 +664,23 @@ class LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_lf+self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_lf+self.in_channel,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
-            layers.append(block(self.in_channel,
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
+            layers.append(block(self.in_channel_lf+self.in_channel,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
     def forward(self, x,x_lf):
@@ -454,6 +710,8 @@ class LateFusion_ResNet(nn.Module):
             x = self.fc(x)
 
         return x
+    
+
         
 '''
 class MultiHead_LateFusion_ResNet(nn.Module):
@@ -634,7 +892,14 @@ class MultiHead_LateFusion_ResNet(nn.Module):
 
         self.groups = groups
         self.width_per_group = width_per_group
-        self.actfunc = activation_func
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
         self.left_bin    = MultiHeadLateFusion_left_bin
         self.right_bin   = MultiHeadLateFusion_right_bin
         self.bins_number = MultiHeadLateFusion_bins_number
@@ -642,12 +907,12 @@ class MultiHead_LateFusion_ResNet(nn.Module):
 
         self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
         self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel_lf)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
@@ -663,12 +928,12 @@ class MultiHead_LateFusion_ResNet(nn.Module):
 
         self.layer0_clsfy = nn.Sequential(nn.Conv2d(nchannel, self.in_channel_clsfy, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel_clsfy)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
 
         self.layer0_lf_clsfy = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf_clsfy, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel_lf_clsfy)
-        ,activation_func
+        ,self.actfunc
         ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
         
         self.layer1_clsfy = self._make_layer_clsfy(block, 64, blocks_num[0])
@@ -692,7 +957,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
 
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
@@ -701,21 +966,23 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
     def _make_layer_lf(self, block, channel, block_num, stride=1):
@@ -725,21 +992,23 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_lf, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_lf,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel_lf = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel_lf,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel_lf = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel_lf,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
     def _make_layer_fused(self, block, channel, block_num, stride=1):
@@ -748,21 +1017,23 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_lf+self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_lf+self.in_channel,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
-            layers.append(block(self.in_channel,
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
+            layers.append(block(self.in_channel_lf+self.in_channel,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     def _make_layer_clsfy(self, block, channel, block_num, stride=1):
         downsample = None
@@ -771,21 +1042,23 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_clsfy, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_clsfy,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel_clsfy = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel_clsfy,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel_clsfy = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel_clsfy,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
     def _make_layer_lf_clsfy(self, block, channel, block_num, stride=1):
@@ -795,21 +1068,23 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_lf_clsfy, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_lf_clsfy,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel_lf_clsfy = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
             layers.append(block(self.in_channel_lf_clsfy,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel_lf_clsfy = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel_lf_clsfy,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
     def _make_layer_fused_clsfy(self, block, channel, block_num, stride=1):
@@ -818,21 +1093,23 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 nn.Conv2d(self.in_channel_lf_clsfy+self.in_channel_clsfy, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(channel * block.expansion))
         layers = []
-        
-        layers.append(block(self.in_channel_lf_clsfy+self.in_channel_clsfy,
-                            channel,
-                            downsample=downsample,
-                            stride=stride,
-                            groups=self.groups,
-                            width_per_group=self.width_per_group))
-
-        self.in_channel_clsfy = channel * block.expansion # The input channel changed here!``
-        
-        for _ in range(1, block_num):
-            layers.append(block(self.in_channel_clsfy,
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
+            layers.append(block(self.in_channel_lf_clsfy+self.in_channel_clsfy,
                                 channel,
+                                downsample=downsample,
+                                stride=stride,
                                 groups=self.groups,
                                 width_per_group=self.width_per_group))
+
+            self.in_channel_clsfy = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel_clsfy,
+                                    channel,
+                                    groups=self.groups,
+                                    width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
     def forward(self, x,x_lf):
@@ -880,6 +1157,8 @@ class MultiHead_LateFusion_ResNet(nn.Module):
             classification_output = self.softmax(classification_output)
         #final_output = 0.5*regression_output + 0.5*torch.matmul(classification_output,self.bins)
         return regression_output, classification_output
+    
+
 class Net(nn.Module):
     def __init__(self, nchannel):
         super(Net, self).__init__()

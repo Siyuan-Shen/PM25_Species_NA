@@ -8,6 +8,7 @@ from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidatio
 from Evaluation_pkg.Sensitivity_Spatial_CrossValidation import Sensitivity_Test_AVD_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
 from Evaluation_pkg.BLCO_CrossValidation import BLCO_AVD_Spatial_CrossValidation
+from Evaluation_pkg.SHAPvalue_analysis import Spatial_CV_SHAP_Analysis
 from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording, load_month_based_data_recording
 from Evaluation_pkg.utils import *
 from Estimation_pkg.Estimation import Estimation_Func
@@ -60,6 +61,18 @@ if __name__ == '__main__':
             every_point_regression_plot(plot_obs_pm25=obs_data,plot_pre_pm25=final_data,species=species, version=version, typeName=typeName,plot_beginyear=every_point_begin_years,plot_endyear=every_point_end_years,
                         MONTH=MONTH[imonth], nchannel=nchannel,special_name=special_name,width=width,height=height)
 
+    if SHAP_Analysis_switch:
+        cfg_outdir = Config_outdir + '{}/{}/Results/results-SpatialCV/configuration-files/'.format(species, version)
+        width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
+        if not os.path.isdir(cfg_outdir):
+            os.makedirs(cfg_outdir)
+        cfg_outfile = cfg_outdir + 'config_SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(typeName,species,version,nchannel,width,height,special_name)
+        f = open(cfg_outfile,'w')
+        toml.dump(cfg, f)
+        f.close()
+        Spatial_CV_SHAP_Analysis(width=width,height=height,sitesnumber=sitesnumber
+                                 ,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,
+                                 side_stream_nchannel_names=side_channel_names)
     if BLOO_CrossValidation_Switch:
         cfg_outdir = Config_outdir + '{}/{}/Results/results-BLOOCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)

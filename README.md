@@ -74,5 +74,14 @@ Updates:
 2. Latitude, longitude recording is added.
 3. Read previous testing datasets is available now.
 
+    Version 1.6.1 
+    Siyuan Shen, Jul 3rd, 2024 @ Washington University in St. Louis, MO. USA
+    
+    Negative outputs from the model are observed. Add penalty in loss function to constrain th emodel output. Also SHAP values analysis are added.
+    Update:
+    1. Add the loss function option 'GeoMSE' for regression model. Can constrain the model output larger than -geopysical species. The constraint can be adjuested by setting an appropriate GeoMSE_Lamba1_Penalty1 hypereparameter in the config file.
+    2. SHAP Value Analysis is added.
+    3. Add Classification structure and Multihead structure.
+    
 
 
