@@ -2,9 +2,9 @@
 #BSUB -q rvmartin
 #BSUB -n 8
 #BSUB -W 168:00
-#BSUB -R "rusage[mem=100GB] span[ptile=2] select[port8543=1]"
+#BSUB -R "rusage[mem=100GB] span[hosts=1] select[port8543=1]"
 #BSUB -a 'docker(syword/python3-pytorch:2024.05)'
-#BSUB -J "1.6.0 SO4 ResNET MLP 4years"
+#BSUB -J "1.6.0 SO4 SHAP Analysis '_GeoMSE_lambda1-10_Epoch31_TwoCombineModels_GeoDivide-3d0_ResNet_1101_BasicBlock_month_based_models_1year-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU_shap_values'"
 #BSUB -N
 #BSUB -G compute-rvmartin
 #BSUB -g /s.siyuan/Map

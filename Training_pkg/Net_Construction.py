@@ -5,9 +5,7 @@ import torch.nn as nn
 import numpy as np
 from Training_pkg.utils import *
 
-
-activation_func = activation_function_table()
-
+activation = activation_function_table()
 
 def resnet_block_lookup_table(blocktype):
     if blocktype == 'BasicBlock':
@@ -17,8 +15,19 @@ def resnet_block_lookup_table(blocktype):
     else:
         print(' Wrong Key Word! BasicBlock or Bottleneck only! ')
         return None
-    
+
+
 def initial_network(width,main_stream_nchannel,side_stream_nchannel):
+
+    if TwoCombineModels_settting:
+        Model_A = initial_OneStage_network(width=width,main_stream_nchannel=main_stream_nchannel,side_stream_nchannel=side_stream_nchannel)
+        Model_B = initial_OneStage_network(width=width,main_stream_nchannel=main_stream_nchannel,side_stream_nchannel=side_stream_nchannel)
+        cnn_model = Combine_GeophysicalDivide_Two_Models(model_A=Model_A, model_B=Model_B)
+    else:
+        cnn_model = initial_OneStage_network(width=width,main_stream_nchannel=main_stream_nchannel,side_stream_nchannel=side_stream_nchannel)
+    return cnn_model
+ 
+def initial_OneStage_network(width,main_stream_nchannel,side_stream_nchannel):
 
     if ResNet_setting:
         block = resnet_block_lookup_table(ResNet_Blocks)
@@ -43,36 +52,40 @@ def initial_network(width,main_stream_nchannel,side_stream_nchannel):
 class BasicBlock(nn.Module):  
     
     expansion = 1  
-    def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):
+    def __init__(self, in_channel, out_channel, stride=1,downsample=None,activation='tanh', **kwargs):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel,kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channel)  
         self.conv2 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel,kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channel)
-        if ReLU_ACF == True:
-            self.actfunc =  nn.ReLU()
-        elif Tanh_ACF == True:
+        if activation == 'relu':
+            self.actfunc = nn.ReLU()
+        elif activation == 'tanh':
             self.actfunc = nn.Tanh()
-        elif GeLU_ACF == True:
+        elif activation == 'gelu':
             self.actfunc = nn.GELU()
-        elif Sigmoid_ACF == True:
+        elif activation == 'sigmoid':
             self.actfunc = nn.Sigmoid()
+        else:
+            raise ValueError(f"Unsupported activation function: {activation}")
+        self.actfunction = nn.Tanh()
         self.downsample = downsample
         
     def forward(self, x):
+        
         identity = x
         if self.downsample is not None:
             identity = self.downsample(x)
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.actfunc(out)
+        out = self.actfunction(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
 
         out = out + identity # out=F(X)+X
-        out = self.actfunc(out)
+        out = self.actfunction(out)
 
         return out
     
@@ -86,7 +99,7 @@ class Bottleneck(nn.Module):
     
     expansion = 4
 
-    def __init__(self, in_channel, out_channel, stride=1, downsample=None, groups=1, width_per_group=64):
+    def __init__(self, in_channel, out_channel, stride=1, downsample=None, groups=1, activation='tanh', width_per_group=64):
         super(Bottleneck, self).__init__()
         width = int(out_channel * (width_per_group / 64.)) * groups
         # 此处width=out_channel
@@ -98,15 +111,17 @@ class Bottleneck(nn.Module):
         # -----------------------------------------
         self.conv3 = nn.Conv2d(in_channels=width, out_channels=out_channel * self.expansion,kernel_size=1, stride=1, bias=False)  # unsqueeze channels
         self.bn3 = nn.BatchNorm2d(out_channel * self.expansion)
-
-        if ReLU_ACF == True:
-            self.actfunc =  nn.ReLU()
-        elif Tanh_ACF == True:
+        global ReLU_ACF, Tanh_ACF, GeLU_ACF, Sigmoid_ACF
+        if activation == 'relu':
+            self.actfunc = nn.ReLU()
+        elif activation == 'tanh':
             self.actfunc = nn.Tanh()
-        elif GeLU_ACF == True:
+        elif activation == 'gelu':
             self.actfunc = nn.GELU()
-        elif Sigmoid_ACF == True:
+        elif activation == 'sigmoid':
             self.actfunc = nn.Sigmoid()
+        else:
+            raise ValueError(f"Unsupported activation function: {activation}")
         self.downsample = downsample
 
     def forward(self, x):
@@ -131,6 +146,116 @@ class Bottleneck(nn.Module):
         out = self.actfunc(out)
 
         return out
+    
+class ResNet(nn.Module):
+
+    def __init__(self,
+                 nchannel, # initial input channel
+                 block,  # block types
+                 blocks_num,  
+                 num_classes=1,  
+                 include_top=True, 
+                 groups=1,
+                 width_per_group=64):
+
+        super(ResNet, self).__init__()
+        self.include_top = include_top
+        self.in_channel = 64  
+
+        self.groups = groups
+        if ReLU_ACF == True:
+            self.actfunc =  nn.ReLU()
+        elif Tanh_ACF == True:
+            self.actfunc = nn.Tanh()
+        elif GeLU_ACF == True:
+            self.actfunc = nn.GELU()
+        elif Sigmoid_ACF == True:
+            self.actfunc = nn.Sigmoid()
+        self.width_per_group = width_per_group
+        #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
+        #self.bn1 = nn.BatchNorm2d(self.in_channel)
+
+        #self.tanh = nn.Tanh()
+        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
+        ,nn.BatchNorm2d(self.in_channel)
+        ,self.actfunc
+        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+
+        
+        self.layer1 = self._make_layer(block, 64, blocks_num[0])
+        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
+        self.layer3 = self._make_layer(block, 256, blocks_num[2], stride=1)
+        self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
+
+        if self.include_top: 
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  
+            
+            self.fc = nn.Linear(512 * block.expansion, num_classes)
+
+        for m in self.modules(): 
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
+
+   
+    def _make_layer(self, block, channel, block_num, stride=1):
+        downsample = None
+        if stride != 1 or self.in_channel != channel * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(channel * block.expansion))
+        layers = []
+        if block_num == 0:
+            layers.append(nn.Identity())
+        else:
+            layers.append(block(self.in_channel,
+                                channel,
+                                downsample=downsample,
+                                stride=stride,
+                                groups=self.groups,
+                                activation=activation,
+                                width_per_group=self.width_per_group))
+
+            self.in_channel = channel * block.expansion # The input channel changed here!``
+            
+            for _ in range(1, block_num):
+                layers.append(block(self.in_channel,
+                                    channel,
+                                    groups=self.groups,
+                                    activation=activation,
+                                    width_per_group=self.width_per_group))
+        return nn.Sequential(*layers)
+    def forward(self, x):
+        #x = self.conv1(x)
+        #x = self.bn1(x)
+        #x = self.tanh(x)
+        #x = self.maxpool(x)
+
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        if self.include_top:  
+            x = self.avgpool(x)
+            x = torch.flatten(x, 1)
+            #x = self.actfunc(x)
+            x = self.fc(x)
+
+        return x
+
+class Combine_GeophysicalDivide_Two_Models(nn.Module):
+    def __init__(self,model_A,model_B,):
+        super(Combine_GeophysicalDivide_Two_Models, self).__init__()
+        self.model_A = model_A
+        self.model_B = model_B
+    def forward(self,x_A,x_B):
+        x_A = self.model_A(x_A)
+        x_B = self.model_B(x_B)
+        return x_A, x_B
 
 class ResNet_MLP(nn.Module):
     
@@ -183,7 +308,7 @@ class ResNet_MLP(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
 
         self.mlp_outlayer = nn.Sequential(nn.Linear(512 * block.expansion,512),
                                           self.actfunc,
@@ -207,6 +332,7 @@ class ResNet_MLP(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -215,6 +341,7 @@ class ResNet_MLP(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
@@ -239,103 +366,6 @@ class ResNet_MLP(nn.Module):
 
         return x
     
-class ResNet(nn.Module):
-
-    def __init__(self,
-                 nchannel, # initial input channel
-                 block,  # block types
-                 blocks_num,  
-                 num_classes=1,  
-                 include_top=True, 
-                 groups=1,
-                 width_per_group=64):
-
-        super(ResNet, self).__init__()
-        self.include_top = include_top
-        self.in_channel = 64  
-
-        self.groups = groups
-        if ReLU_ACF == True:
-            self.actfunc =  nn.ReLU()
-        elif Tanh_ACF == True:
-            self.actfunc = nn.Tanh()
-        elif GeLU_ACF == True:
-            self.actfunc = nn.GELU()
-        elif Sigmoid_ACF == True:
-            self.actfunc = nn.Sigmoid()
-        
-        #self.conv1 = nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False)
-        #self.bn1 = nn.BatchNorm2d(self.in_channel)
-
-        #self.tanh = nn.Tanh()
-        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
-        #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
-        ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
-
-        
-        self.layer1 = self._make_layer(block, 64, blocks_num[0])
-        self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
-        self.layer3 = self._make_layer(block, 256, blocks_num[2], stride=1)
-        self.layer4 = self._make_layer(block, 512, blocks_num[3], stride=1)
-
-        if self.include_top: 
-            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  
-            
-            self.fc = nn.Linear(512 * block.expansion, num_classes)
-
-        for m in self.modules(): 
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
-
-   
-    def _make_layer(self, block, channel, block_num, stride=1):
-        downsample = None
-        if stride != 1 or self.in_channel != channel * block.expansion:
-            downsample = nn.Sequential(
-                nn.Conv2d(self.in_channel, channel * block.expansion, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(channel * block.expansion))
-        layers = []
-        if block_num == 0:
-            layers.append(nn.Identity())
-        else:
-            layers.append(block(self.in_channel,
-                                channel,
-                                downsample=downsample,
-                                stride=stride,
-                                groups=self.groups,
-                                width_per_group=self.width_per_group))
-
-            self.in_channel = channel * block.expansion # The input channel changed here!``
-            
-            for _ in range(1, block_num):
-                layers.append(block(self.in_channel,
-                                    channel,
-                                    groups=self.groups,
-                                    width_per_group=self.width_per_group))
-        return nn.Sequential(*layers)
-    def forward(self, x):
-        #x = self.conv1(x)
-        #x = self.bn1(x)
-        #x = self.tanh(x)
-        #x = self.maxpool(x)
-
-        x = self.layer0(x)
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-
-        if self.include_top:  
-            x = self.avgpool(x)
-            x = torch.flatten(x, 1)
-            #x = self.actfunc(x)
-            x = self.fc(x)
-
-        return x
 
 class ResNet_Classfication(nn.Module):
 
@@ -391,7 +421,7 @@ class ResNet_Classfication(nn.Module):
         self.softmax = nn.Softmax()
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
 
    
     def _make_layer(self, block, channel, block_num, stride=1):
@@ -409,6 +439,7 @@ class ResNet_Classfication(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -417,6 +448,7 @@ class ResNet_Classfication(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
@@ -493,7 +525,7 @@ class MultiHead_ResNet(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
 
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
@@ -510,6 +542,7 @@ class MultiHead_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -518,6 +551,7 @@ class MultiHead_ResNet(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
@@ -604,7 +638,7 @@ class LateFusion_ResNet(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
 
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
@@ -621,6 +655,7 @@ class LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -629,6 +664,7 @@ class LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
@@ -647,6 +683,7 @@ class LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel_lf = channel * block.expansion # The input channel changed here!``
@@ -655,6 +692,7 @@ class LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel_lf,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
@@ -672,6 +710,7 @@ class LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -680,6 +719,7 @@ class LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
@@ -957,7 +997,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
 
         for m in self.modules(): 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=self.actfunc)
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity=activation_func_name)
 
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
@@ -974,6 +1014,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -982,6 +1023,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
@@ -1000,6 +1042,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel_lf = channel * block.expansion # The input channel changed here!``
@@ -1008,6 +1051,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel_lf,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
@@ -1025,6 +1069,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel = channel * block.expansion # The input channel changed here!``
@@ -1033,6 +1078,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     def _make_layer_clsfy(self, block, channel, block_num, stride=1):
@@ -1050,6 +1096,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel_clsfy = channel * block.expansion # The input channel changed here!``
@@ -1058,6 +1105,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel_clsfy,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     
@@ -1076,6 +1124,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel_lf_clsfy = channel * block.expansion # The input channel changed here!``
@@ -1084,6 +1133,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel_lf_clsfy,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
 
@@ -1101,6 +1151,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                                 downsample=downsample,
                                 stride=stride,
                                 groups=self.groups,
+                                activation=activation,
                                 width_per_group=self.width_per_group))
 
             self.in_channel_clsfy = channel * block.expansion # The input channel changed here!``
@@ -1109,6 +1160,7 @@ class MultiHead_LateFusion_ResNet(nn.Module):
                 layers.append(block(self.in_channel_clsfy,
                                     channel,
                                     groups=self.groups,
+                                    activation=activation,
                                     width_per_group=self.width_per_group))
         return nn.Sequential(*layers)
     

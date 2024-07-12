@@ -29,8 +29,178 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
     else:
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
+
+
+    if TwoCombineModels_settting:
+        criterion_LowEnd = SelfDesigned_LossFunction(losstype=Loss_type)
+        criterion_FarEnd = SelfDesigned_LossFunction(losstype=Loss_type)
+        
+        optimizer_LowEnd = optimizer_lookup(model_parameters=model.model_A.parameters(),learning_rate=learning_rate)
+        optimizer_FarEnd = optimizer_lookup(model_parameters=model.model_B.parameters(),learning_rate=learning_rate)
+        scheduler_LowEnd = lr_strategy_lookup_table(optimizer=optimizer_LowEnd)
+        scheduler_FarEnd = lr_strategy_lookup_table(optimizer=optimizer_FarEnd)
+        GeoSpecies_train = X_train[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)]*input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)] + input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
+        GeoSpecies_train_LowEnd_index = np.where(GeoSpecies_train <= TwoCombineModels_geophysical_threshold)
+        GeoSpecies_train_FarEnd_index = np.where(GeoSpecies_train > TwoCombineModels_geophysical_threshold)
+        X_train_LowEnd = X_train[GeoSpecies_train_LowEnd_index, :, :, :]
+        X_train_FarEnd = X_train[:,:,:,:]#X_train[GeoSpecies_train_FarEnd_index, :, :, :] #
+        y_train_LowEnd = y_train[GeoSpecies_train_LowEnd_index]
+        y_train_FarEnd = y_train[:]#y_train[GeoSpecies_train_FarEnd_index]#
+        train_loader_LowEnd = DataLoader(Dataset(X_train_LowEnd, y_train_LowEnd), BATCH_SIZE, shuffle=True)
+        train_loader_FarEnd = DataLoader(Dataset(X_train_FarEnd, y_train_FarEnd), BATCH_SIZE, shuffle=True)
+
+        GeoSpecies_valid = X_test[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)]*input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)] + input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
+        GeoSpecies_valid_LowEnd_index = np.where(GeoSpecies_valid <= TwoCombineModels_geophysical_threshold)
+        GeoSpecies_valid_FarEnd_index = np.where(GeoSpecies_valid > TwoCombineModels_geophysical_threshold)
+        X_valid_LowEnd = X_test[GeoSpecies_valid_LowEnd_index, :, :, :]
+        X_valid_FarEnd = X_test[:,:,:,:]#X_test[GeoSpecies_valid_FarEnd_index, :, :, :]#
+        y_valid_LowEnd = y_test[GeoSpecies_valid_LowEnd_index]
+        y_valid_FarEnd = y_test[:]#y_test[GeoSpecies_valid_FarEnd_index]#
+        validation_loader_LowEnd = DataLoader(Dataset(X_valid_LowEnd, y_valid_LowEnd), 2000, shuffle=True)
+        validation_loader_FarEnd = DataLoader(Dataset(X_valid_FarEnd, y_valid_FarEnd), 2000, shuffle=True)
+
+        train_acc_LowEnd = []
+        train_acc_FarEnd = []
+        test_acc_LowEnd  = []
+        test_acc_FarEnd  = []
+        for epoch in range(TOTAL_EPOCHS):
+            correct_LowEnd = 0
+            counts_LowEnd = 0
+            correct_FarEnd = 0
+            counts_FarEnd = 0
+            for i, (images_LowEnd, labels_LowEnd) in enumerate(train_loader_LowEnd):
+                model.train()
+                print('images_LowEnd shape: {}, labels_LowEnd shape: {}'.format(images_LowEnd.shape,labels_LowEnd.shape))
+                images_LowEnd = images_LowEnd.to(device)
+                labels_LowEnd = labels_LowEnd.to(device)
+                #images_LowEnd = torch.squeeze(images_LowEnd)
+                #labels_LowEnd = torch.squeeze(labels_LowEnd)
+                
+                optimizer_LowEnd.zero_grad()  # Set grads to zero
+                outputs_LowEnd = model.model_A(images_LowEnd) #dimension: Nx1
+                outputs_LowEnd = torch.squeeze(outputs_LowEnd)
+
+                loss_LowEnd = criterion_LowEnd(outputs_LowEnd, labels_LowEnd, images_LowEnd[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)])
+                loss_LowEnd.backward()   ## backward
+                optimizer_LowEnd.step()  ## refresh training parameters
+                losses.append(loss_LowEnd.item())
+
+                # Calculate R2
+                y_hat_LowEnd = outputs_LowEnd.cpu().detach().numpy()
+                y_true_LowEnd = labels_LowEnd.cpu().detach().numpy()
+                y_hat_LowEnd = np.array(y_hat_LowEnd,ndmin=1)
+                #torch.cuda.empty_cache()
+                print('Epoch: ', epoch, ' i th: ', i, 'y_hat size: ',y_hat_LowEnd.shape)
+                #print('y_hat:', y_hat)
+                R2 = linear_regression(y_hat_LowEnd,y_true_LowEnd)
+                R2 = np.round(R2, 4)
+                #pred = y_hat.max(1, keepdim=True)[1] # 得到最大值及索引，a.max[0]为最大值，a.max[1]为最大值的索引
+                correct_LowEnd += R2
+                counts_LowEnd  += 1
+                if (i + 1) % 10 == 0:
+                # 每10个batches打印一次loss
+                    print('Low End Model Epoch : %d/%d, Iter : %d/%d,  Loss: %.4f' % (epoch + 1, TOTAL_EPOCHS,
+                                                                    i + 1, len(X_train) // BATCH_SIZE,
+                                                                    loss_LowEnd.item()))
+            scheduler_LowEnd.step()
+            for i, (images_FarEnd, labels_FarEnd) in enumerate(train_loader_FarEnd):
+                model.train()
+                
+                images_FarEnd = images_FarEnd.to(device)
+                labels_FarEnd = labels_FarEnd.to(device)
+                optimizer_FarEnd.zero_grad()  # Set grads to zero
+                outputs_FarEnd = model.model_B(images_FarEnd) #dimension: Nx1
+                outputs_FarEnd = torch.squeeze(outputs_FarEnd)
+                loss_FarEnd = criterion_FarEnd(outputs_FarEnd, labels_FarEnd, images_FarEnd[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)])
+                loss_FarEnd.backward()   ## backward
+                optimizer_FarEnd.step()  ## refresh training parameters
+                losses.append(loss_FarEnd.item())
+
+                # Calculate R2
+                y_hat_FarEnd = outputs_FarEnd.cpu().detach().numpy()
+                y_true_FarEnd = labels_FarEnd.cpu().detach().numpy()
+                y_hat_FarEnd = np.array(y_hat_FarEnd,ndmin=1)
+                #torch.cuda.empty_cache()
+                print('Epoch: ', epoch, ' i th: ', i, 'y_hat size: ',y_true_FarEnd.shape)
+                #print('y_hat:', y_hat)
+                R2 = linear_regression(y_hat_FarEnd,y_true_FarEnd)
+                R2 = np.round(R2, 4)
+                #pred = y_hat.max(1, keepdim=True)[1] # 得到最大值及索引，a.max[0]为最大值，a.max[1]为最大值的索引
+                correct_FarEnd += R2
+                counts_FarEnd  += 1
+                if (i + 1) % 10 == 0:
+                # 每10个batches打印一次loss
+                    print('Low End Model Epoch : %d/%d, Iter : %d/%d,  Loss: %.4f' % (epoch + 1, TOTAL_EPOCHS,
+                                                                    i + 1, len(X_train) // BATCH_SIZE,
+                                                                    loss_FarEnd.item()))
+            scheduler_FarEnd.step() 
+
+            valid_correct_LowEnd = 0
+            valid_counts_LowEnd  = 0
+            valid_correct_FarEnd = 0
+            valid_counts_FarEnd  = 0
+            for i, (valid_images_LowEnd, valid_labels_LowEnd) in enumerate(validation_loader_LowEnd):  
+                model.eval()
+                #valid_images_LowEnd = torch.squeeze(valid_images_LowEnd)
+                valid_images_LowEnd = valid_images_LowEnd.to(device)
+
+                #valid_labels_LowEnd = torch.squeeze(valid_labels_LowEnd.type(torch.FloatTensor))
+                valid_labels_LowEnd = valid_labels_LowEnd.to(device)
+                print('valid_images size: {}'.format(valid_labels_LowEnd.shape),'valid_labels size: {}'.format(valid_labels_LowEnd.shape))
+                valid_outputs_LowEnd = model.model_A(valid_images_LowEnd)
+                valid_outputs_LowEnd = torch.squeeze(valid_outputs_LowEnd)
+                valid_loss_LowEnd = criterion(valid_outputs_LowEnd, valid_labels_LowEnd, valid_images_LowEnd[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)])
+                valid_losses.append(valid_loss_LowEnd.item())
+                valid_y_hat_LowEnd = valid_outputs_LowEnd.cpu().detach().numpy()
+                valid_y_true_LowEnd = valid_labels_LowEnd.cpu().detach().numpy()
+                #print('test_y_hat size: {}'.format(test_y_hat.shape),'test_y_true size: {}'.format(test_y_true.shape))
+                Valid_R2 = linear_regression(valid_y_hat_LowEnd,valid_y_true_LowEnd)
+                Valid_R2 = np.round(Valid_R2, 4)
+                valid_correct_LowEnd += Valid_R2
+                valid_counts_LowEnd  += 1    
+                print('Epoch : %d/%d, Iter : %d/%d,  Validate Loss: %.4f, Validate R2: %.4f' % (epoch + 1, TOTAL_EPOCHS,
+                                                                    i + 1, len(X_train) // BATCH_SIZE,
+                                                                    valid_loss_LowEnd.item(), Valid_R2))
+            for i, (valid_images_FarEnd, valid_labels_FarEnd) in enumerate(validation_loader_FarEnd):  
+                model.eval()
+                #valid_images_FarEnd = torch.squeeze(valid_images_FarEnd)
+                valid_images_FarEnd = valid_images_FarEnd.to(device)
+
+                #valid_labels_FarEnd = torch.squeeze(valid_labels_FarEnd.type(torch.FloatTensor))
+                valid_labels_FarEnd = valid_labels_FarEnd.to(device)
+                print('valid_images size: {}'.format(valid_labels_FarEnd.shape),'valid_labels size: {}'.format(valid_labels_FarEnd.shape))
+                valid_outputs_FarEnd = model.model_B(valid_images_FarEnd)
+                valid_outputs_FarEnd = torch.squeeze(valid_outputs_FarEnd)
+                valid_loss_FarEnd = criterion(valid_outputs_FarEnd, valid_labels_FarEnd, valid_images_FarEnd[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)],input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)])
+                valid_losses.append(valid_loss_FarEnd.item())
+                valid_y_hat_FarEnd = valid_outputs_FarEnd.cpu().detach().numpy()
+                valid_y_true_FarEnd = valid_labels_FarEnd.cpu().detach().numpy()
+                #print('test_y_hat size: {}'.format(test_y_hat.shape),'test_y_true size: {}'.format(test_y_true.shape))
+                Valid_R2 = linear_regression(valid_y_hat_FarEnd,valid_y_true_FarEnd)
+                Valid_R2 = np.round(Valid_R2, 4)
+                valid_correct_FarEnd += Valid_R2
+                valid_counts_FarEnd  += 1    
+                print('Epoch : %d/%d, Iter : %d/%d,  Validate Loss: %.4f, Validate R2: %.4f' % (epoch + 1, TOTAL_EPOCHS,
+                                                                    i + 1, len(X_train) // BATCH_SIZE,
+                                                                    valid_loss_FarEnd.item(), Valid_R2)) 
+            accuracy_LowEnd = correct_LowEnd / counts_LowEnd
+            accuracy_FarEnd = correct_FarEnd / counts_FarEnd
+            test_accuracy_LowEnd = valid_correct_LowEnd / valid_counts_LowEnd
+            test_accuracy_FarEnd = valid_correct_FarEnd / valid_counts_FarEnd
+            print('Epoch: ',epoch, ', LowEnd Training Loss: ', loss_LowEnd.item(),', FarEnd Training Loss: ', loss_FarEnd.item(),',LowEnd Training accuracy:',accuracy_LowEnd, ',FarEnd Training accuracy:',accuracy_FarEnd, 
+                  ', \n LowEnd Testing Loss:', valid_loss_LowEnd.item(),'FarEnd Testing Loss:', valid_loss_FarEnd.item(),',LowEnd Testing accuracy:', test_accuracy_LowEnd,', FarEnd Testing accuracy:', test_accuracy_FarEnd,)
+            train_acc_LowEnd.append(accuracy_LowEnd)
+            train_acc_FarEnd.append(accuracy_FarEnd)
+            test_acc_LowEnd.append(test_accuracy_LowEnd)
+            test_acc_FarEnd.append(test_accuracy_FarEnd)
+            print('Epoch: ',epoch,'\nLearning Rate:',optimizer.param_groups[0]['lr'])
+
+        train_acc.extend(train_acc_LowEnd)
+        train_acc.extend(train_acc_FarEnd)
+        test_acc.extend(test_acc_LowEnd)
+        test_acc.extend(test_acc_FarEnd)
     
-    if ResNet_setting or ResNet_MLP_setting:
+    elif ResNet_setting or ResNet_MLP_setting:
         for epoch in range(TOTAL_EPOCHS):
             correct = 0
             counts = 0
@@ -419,13 +589,39 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
 
 def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channel_names,sidestream_channel_names):
     #output = np.zeros((), dtype = float)
+    if species == 'NO3':
+        GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
+    else:
+        GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
     model.eval()
     final_output = []
     final_output = np.array(final_output)
     predictinput = DataLoader(Dataset_Val(inputarray), batch_size= batchsize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    if ResNet_setting or ResNet_MLP_setting:
+    if TwoCombineModels_settting:
+        with torch.no_grad():
+            for i, image in enumerate(predictinput):
+                image = torch.squeeze(image)
+                width = image.shape[2]
+                height = image.shape[3]
+                temp_output = np.zeros((image.shape[0]),dtype=np.float32)
+                GeoSpecies = image[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
+                GeoSpecies_LowEnd_index = np.where(GeoSpecies <= TwoCombineModels_geophysical_threshold)[0]
+                GeoSpecies_FarEnd_index = np.where(GeoSpecies >= TwoCombineModels_geophysical_threshold)[0]
+                image_LowEnd = image[GeoSpecies_LowEnd_index,:,:,:].to(device)
+                image_FarEnd = image[:,:,:,:].to(device)
+                image_LowEnd = torch.squeeze(image_LowEnd)
+                image_FarEnd = torch.squeeze(image_FarEnd)
+                output_LowEnd = model.model_A(image_LowEnd).cpu().detach().numpy()
+                output_FarEnd = model.model_B(image_FarEnd).cpu().detach().numpy()
+                output_LowEnd = np.squeeze(output_LowEnd)
+                output_FarEnd = np.squeeze(output_FarEnd)
+                temp_output[GeoSpecies_LowEnd_index] = output_LowEnd
+                if len(GeoSpecies_FarEnd_index) != 0:
+                    temp_output[GeoSpecies_FarEnd_index] = output_FarEnd[GeoSpecies_FarEnd_index]
+                final_output = np.append(final_output,temp_output)
+    elif ResNet_setting or ResNet_MLP_setting:
         with torch.no_grad():
             for i, image in enumerate(predictinput):
                 image = image.to(device)

@@ -1,10 +1,10 @@
 #!/bin/bash
 #BSUB -q general
-#BSUB -R "rusage[mem=80GB] span[hosts=1] select[gpuhost && port8543=1]"
+#BSUB -R "rusage[mem=80GB] span[hosts=1] select[gpuhost && port8543=1 && hname!='compute1-exec-282.ris.wustl.edu']"
 #BSUB -G compute-rvmartin
 #BSUB -gpu "num=1:j_exclusive=no"
 #BSUB -a 'docker(syword/python3-pytorch:2024.05)'
-#BSUB -J "1.6.0 '_GeoMSE_lambda1-10_Epoch31_ResNet_1101_BasicBlock_month_based_models_1year-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU_shap_values' SO4 "
+#BSUB -J "1.6.0 '_GeoMSE_lambda1-10_Epoch31_ResNet_TwoCombineModels_GeoThreshold_3d0_1101_BasicBlock_month_based_models_1year-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU_shap_values'#'_SHAP_Analysis_Tanh_Test'#'_ResNet-MLP_BottleNeck_month_based_models_4years-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU' SO4 "
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu
