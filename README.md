@@ -83,5 +83,8 @@ Updates:
     2. SHAP Value Analysis is added.
     3. Add Classification structure and Multihead structure.
     
+    Version 1.6.2
+    Siyuan Shen , Jul 12th, 2024 @ Washington University in St. Louis, MO. USA
 
+    The model inputs are divided by geophysical a prioir values. Settings in Two Combined Models.
 

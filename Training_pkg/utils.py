@@ -44,6 +44,9 @@ batchsize = HyperParameters['batchsize']
 
 net_structure_settings = cfg['Training-Settings']['net_structure_settings']
 
+TwoCombineModels_settting = net_structure_settings['TwoCombineModels']['Settings']
+TwoCombineModels_geophysical_threshold = net_structure_settings['TwoCombineModels']['Geophysical_threshold']
+
 ResNet_setting      = net_structure_settings['ResNet']['Settings']
 ResNet_Blocks       = net_structure_settings['ResNet']['Blocks']
 ResNet_blocks_num   = net_structure_settings['ResNet']['blocks_num']
@@ -159,13 +162,13 @@ ground_observation_data_infile  = ground_observation_data_infile.format(species)
 
 def activation_function_table():
     if ReLU_ACF == True:
-        return nn.ReLU()
+        return 'relu' #nn.ReLU()
     elif Tanh_ACF == True:
-        return nn.Tanh()
+        return 'tanh' #nn.Tanh()
     elif GeLU_ACF == True:
-        return nn.GELU()
+        return 'gelu' #nn.GELU()
     elif Sigmoid_ACF == True:
-        return nn.Sigmoid()
+        return 'sigmoid' #nn.Sigmoid()
     
 
 def lr_strategy_lookup_table(optimizer):

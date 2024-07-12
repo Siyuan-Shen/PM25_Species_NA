@@ -14,7 +14,9 @@ def plot_valid_training_loss_accuracy_with_epoch_together(training_loss_recordin
     valid_loss = np.mean(valid_loss_recording,axis=(0,1))
     valid_loss = valid_loss[np.where(valid_loss>0)]
     train_accuracy = np.mean(training_accuracy_recording,axis=(0,1))
+    train_accuracy = train_accuracy[np.where(train_accuracy>0)]
     valid_accuracy = np.mean(valid_accuracy_recording,axis=(0,1))
+    valid_accuracy = valid_accuracy[np.where(valid_accuracy>0)]
 
     Train_COLOR_ACCURACY = "#69b3a2"
     Train_COLOR_LOSS = "#3399e6"

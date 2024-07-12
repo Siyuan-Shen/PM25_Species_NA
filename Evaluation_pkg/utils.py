@@ -261,9 +261,9 @@ def initialize_AVD_CV_Alltime_dict():
 
 def initialize_Loss_Accuracy_Recordings(kfolds,n_models,epoch,batchsize):
     Training_losses_recording = np.zeros((kfolds,n_models,epoch*2000))
-    Training_acc_recording    = np.zeros((kfolds,n_models,epoch))
+    Training_acc_recording    = np.zeros((kfolds,n_models,epoch*10))
     valid_losses_recording    = np.zeros((kfolds,n_models,epoch*2000))
-    valid_acc_recording       = np.zeros((kfolds,n_models,epoch))
+    valid_acc_recording       = np.zeros((kfolds,n_models,epoch*10))
     print('Training_losses_recording.shape: '.format(Training_losses_recording.shape) + '----------------------')
     return Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording
 
