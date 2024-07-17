@@ -19,7 +19,7 @@ def resnet_block_lookup_table(blocktype):
 
 def initial_network(width,main_stream_nchannel,side_stream_nchannel):
 
-    if TwoCombineModels_settting:
+    if TwoCombineModels_Settings:
         Model_A = initial_OneStage_network(width=width,main_stream_nchannel=main_stream_nchannel,side_stream_nchannel=side_stream_nchannel)
         Model_B = initial_OneStage_network(width=width,main_stream_nchannel=main_stream_nchannel,side_stream_nchannel=side_stream_nchannel)
         cnn_model = Combine_GeophysicalDivide_Two_Models(model_A=Model_A, model_B=Model_B)
