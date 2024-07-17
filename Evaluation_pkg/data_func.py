@@ -118,6 +118,8 @@ def ForcedSlopeUnity_Func(train_final_data,train_obs_data,test_final_data,train_
 
 def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_recording, obs_data_recording, geo_data_recording, training_final_data_recording, training_obs_data_recording,testing_population_data_recording):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    Season_MONTH = [['Mar', 'Apr', 'May'], ['Jun', 'Jul', 'Aug'], ['Sep', 'Oct', 'Nov'], ['Dec','Jan', 'Feb']]
+    Seasons = ['MAM','JJA','SON','DJF']
     test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE,slopes, PWAModel, PWAMonitors = initialize_AVD_CV_dict(test_beginyear=test_beginyear,test_endyear=test_endyear)
     
     for iyear in range(test_endyear-test_beginyear+1):
@@ -176,13 +178,43 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
             regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)]['Annual'],_y=final_data_recording[str(test_beginyear+iyear)]['Annual'],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
             intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
             slopes[str(test_beginyear+iyear)]['Annual'] = slope
-            
+
+            for iseason in range(len(Seasons)):
+                temp_final_data_recording = np.zeros(len(final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                temp_obs_data_recording   = np.zeros(len(obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                temp_geo_data_recording   = np.zeros(len(geo_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                temp_training_final_data_recording   = np.zeros(len(training_final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                temp_training_obs_data_recording   = np.zeros(len(training_obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                temp_testing_population_data_recording   = np.zeros(len(testing_population_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                for imonth in Season_MONTH[iseason]:
+                    temp_final_data_recording += final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                    temp_obs_data_recording   += obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                    temp_geo_data_recording   += geo_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                    temp_training_final_data_recording += training_final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                    temp_training_obs_data_recording   += training_obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                    temp_testing_population_data_recording += testing_population_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+
+                print('Area: {}, Year: {}, Season: {}'.format('NA', test_beginyear+iyear, Seasons[iseason]))
+                test_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_final_data_recording, temp_obs_data_recording)
+                train_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_training_final_data_recording, temp_training_obs_data_recording)
+                geo_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_geo_data_recording, temp_obs_data_recording)
+                RMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_RMSE(temp_final_data_recording, temp_obs_data_recording)
+                NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_NRMSE(temp_final_data_recording, temp_obs_data_recording)
+                PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_PWM_rRMSE(temp_final_data_recording, temp_obs_data_recording, temp_testing_population_data_recording)
+                
+                regression_Dic = regress2(_x= temp_obs_data_recording,_y=temp_final_data_recording,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+                intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
+                slopes[str(test_beginyear+iyear)][Seasons[iseason]] = slope
+                PWAModel[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording,PM25_array=temp_final_data_recording)
+                PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording,PM25_array=temp_obs_data_recording)
+                
+                
 
     return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slopes, PWAModel, PWAMonitors
 
 
 def calculate_Alltime_Statistics_results(test_beginyear:dict,test_endyear:int,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PWM_NRMSE, slope,PWAModel,PWAMonitors ):
-    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Annual']
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Annual','MAM','JJA','SON','DJF']
     test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime, slope_Alltime,PWAModel_Alltime, PWAMonitors_Alltime = initialize_AVD_CV_Alltime_dict()
     
     for imonth in MONTH:

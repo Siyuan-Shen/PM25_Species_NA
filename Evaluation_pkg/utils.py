@@ -199,6 +199,7 @@ def initialize_AVD_DataRecording(beginyear:int,endyear:int):
 
 def initialize_AVD_CV_dict(test_beginyear:int,test_endyear:int):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    Seasons = ['MAM','JJA','SON','DJF']
     test_CV_R2   = {}
     train_CV_R2  = {}
     geo_CV_R2    = {}
@@ -230,12 +231,23 @@ def initialize_AVD_CV_dict(test_beginyear:int,test_endyear:int):
                 slope[str(test_beginyear+iyear)][imonth]        = -1.0
                 PWAModel[str(test_beginyear+iyear)][imonth]     = -1.0
                 PWAMonitors[str(test_beginyear+iyear)][imonth]  = -1.0
+            
+            for iseason in Seasons:
+                test_CV_R2[str(test_beginyear+iyear)][iseason]   = -1.0
+                train_CV_R2[str(test_beginyear+iyear)][iseason]  = -1.0
+                geo_CV_R2[str(test_beginyear+iyear)][iseason]    = -1.0
+                RMSE[str(test_beginyear+iyear)][iseason]         = -1.0
+                NRMSE[str(test_beginyear+iyear)][iseason]        = -1.0
+                PWM_NRMSE[str(test_beginyear+iyear)][iseason]    = -1.0
+                slope[str(test_beginyear+iyear)][iseason]        = -1.0
+                PWAModel[str(test_beginyear+iyear)][iseason]     = -1.0
+                PWAMonitors[str(test_beginyear+iyear)][iseason]  = -1.0
 
     return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE,slope, PWAModel, PWAMonitors
 
 
 def initialize_AVD_CV_Alltime_dict():
-    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual','MAM','JJA','SON','DJF']
     test_CV_R2_Alltime   = {'Alltime':{}}
     train_CV_R2_Alltime  = {'Alltime':{}}
     geo_CV_R2_Alltime    = {'Alltime':{}}

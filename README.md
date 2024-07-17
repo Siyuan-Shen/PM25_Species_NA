@@ -84,7 +84,13 @@ Updates:
     3. Add Classification structure and Multihead structure.
     
     Version 1.6.2
-    Siyuan Shen , Jul 12th, 2024 @ Washington University in St. Louis, MO. USA
+    Siyuan Shen, Jul 12th, 2024 @ Washington University in St. Louis, MO. USA
 
     The model inputs are divided by geophysical a prioir values. Settings in Two Combined Models.
+
+    Version 1.6.3
+    Siyuan Shen, Jul 17th 2024 @ Washington University in St. Louis, MO. USA
+
+    1. The model can be divided by whichever variables in Two Combined Models Module. 
+    2. Add seasonal statistical results.
 

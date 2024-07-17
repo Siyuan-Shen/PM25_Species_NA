@@ -29,9 +29,11 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
     else:
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
+    
+    TwoCombineModel_Variable_index = initial_channel_names.index(TwoCombineModels_Variable)
 
 
-    if TwoCombineModels_settting:
+    if TwoCombineModels_Settings:
         criterion_LowEnd = SelfDesigned_LossFunction(losstype=Loss_type)
         criterion_FarEnd = SelfDesigned_LossFunction(losstype=Loss_type)
         
@@ -39,9 +41,9 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
         optimizer_FarEnd = optimizer_lookup(model_parameters=model.model_B.parameters(),learning_rate=learning_rate)
         scheduler_LowEnd = lr_strategy_lookup_table(optimizer=optimizer_LowEnd)
         scheduler_FarEnd = lr_strategy_lookup_table(optimizer=optimizer_FarEnd)
-        GeoSpecies_train = X_train[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)]*input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)] + input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
-        GeoSpecies_train_LowEnd_index = np.where(GeoSpecies_train <= TwoCombineModels_geophysical_threshold)
-        GeoSpecies_train_FarEnd_index = np.where(GeoSpecies_train > TwoCombineModels_geophysical_threshold)
+        GeoSpecies_train = X_train[:,TwoCombineModel_Variable_index,int((width-1)/2),int((height-1)/2)]*input_std[TwoCombineModel_Variable_index,int((width-1)/2),int((height-1)/2)] + input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
+        GeoSpecies_train_LowEnd_index = np.where(GeoSpecies_train <= TwoCombineModels_threshold)
+        GeoSpecies_train_FarEnd_index = np.where(GeoSpecies_train > TwoCombineModels_threshold)
         X_train_LowEnd = X_train[GeoSpecies_train_LowEnd_index, :, :, :]
         X_train_FarEnd = X_train[:,:,:,:]#X_train[GeoSpecies_train_FarEnd_index, :, :, :] #
         y_train_LowEnd = y_train[GeoSpecies_train_LowEnd_index]
@@ -49,9 +51,9 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
         train_loader_LowEnd = DataLoader(Dataset(X_train_LowEnd, y_train_LowEnd), BATCH_SIZE, shuffle=True)
         train_loader_FarEnd = DataLoader(Dataset(X_train_FarEnd, y_train_FarEnd), BATCH_SIZE, shuffle=True)
 
-        GeoSpecies_valid = X_test[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)]*input_std[GeoSpecies_index,int((width-1)/2),int((height-1)/2)] + input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
-        GeoSpecies_valid_LowEnd_index = np.where(GeoSpecies_valid <= TwoCombineModels_geophysical_threshold)
-        GeoSpecies_valid_FarEnd_index = np.where(GeoSpecies_valid > TwoCombineModels_geophysical_threshold)
+        GeoSpecies_valid = X_test[:,TwoCombineModel_Variable_index,int((width-1)/2),int((height-1)/2)]*input_std[TwoCombineModel_Variable_index,int((width-1)/2),int((height-1)/2)] + input_mean[GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
+        GeoSpecies_valid_LowEnd_index = np.where(GeoSpecies_valid <= TwoCombineModels_threshold)
+        GeoSpecies_valid_FarEnd_index = np.where(GeoSpecies_valid > TwoCombineModels_threshold)
         X_valid_LowEnd = X_test[GeoSpecies_valid_LowEnd_index, :, :, :]
         X_valid_FarEnd = X_test[:,:,:,:]#X_test[GeoSpecies_valid_FarEnd_index, :, :, :]#
         y_valid_LowEnd = y_test[GeoSpecies_valid_LowEnd_index]
@@ -593,22 +595,23 @@ def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channe
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
     else:
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
+    TwoCombineModel_Variable_index = initial_channel_names.index(TwoCombineModels_Variable)
     model.eval()
     final_output = []
     final_output = np.array(final_output)
     predictinput = DataLoader(Dataset_Val(inputarray), batch_size= batchsize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    if TwoCombineModels_settting:
+    if TwoCombineModels_Settings:
         with torch.no_grad():
             for i, image in enumerate(predictinput):
                 image = torch.squeeze(image)
                 width = image.shape[2]
                 height = image.shape[3]
                 temp_output = np.zeros((image.shape[0]),dtype=np.float32)
-                GeoSpecies = image[:,GeoSpecies_index,int((width-1)/2),int((height-1)/2)]
-                GeoSpecies_LowEnd_index = np.where(GeoSpecies <= TwoCombineModels_geophysical_threshold)[0]
-                GeoSpecies_FarEnd_index = np.where(GeoSpecies >= TwoCombineModels_geophysical_threshold)[0]
+                GeoSpecies = image[:,TwoCombineModel_Variable_index,int((width-1)/2),int((height-1)/2)]
+                GeoSpecies_LowEnd_index = np.where(GeoSpecies <= TwoCombineModels_threshold)[0]
+                GeoSpecies_FarEnd_index = np.where(GeoSpecies >= TwoCombineModels_threshold)[0]
                 image_LowEnd = image[GeoSpecies_LowEnd_index,:,:,:].to(device)
                 image_FarEnd = image[:,:,:,:].to(device)
                 image_LowEnd = torch.squeeze(image_LowEnd)

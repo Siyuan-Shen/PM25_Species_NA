@@ -44,8 +44,9 @@ batchsize = HyperParameters['batchsize']
 
 net_structure_settings = cfg['Training-Settings']['net_structure_settings']
 
-TwoCombineModels_settting = net_structure_settings['TwoCombineModels']['Settings']
-TwoCombineModels_geophysical_threshold = net_structure_settings['TwoCombineModels']['Geophysical_threshold']
+TwoCombineModels_Settings = net_structure_settings['TwoCombineModels']['Settings']
+TwoCombineModels_Variable = net_structure_settings['TwoCombineModels']['Variable']
+TwoCombineModels_threshold = net_structure_settings['TwoCombineModels']['threshold']
 
 ResNet_setting      = net_structure_settings['ResNet']['Settings']
 ResNet_Blocks       = net_structure_settings['ResNet']['Blocks']
