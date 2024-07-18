@@ -100,7 +100,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                         if ForcedSlopeUnity:
                             final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_Yindex]
                                                     ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
-                                                    endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,EachMonth=EachMonthForcedSlopeUnity)
+                                                    endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,month_index=training_months[imodel_month],EachMonth=EachMonthForcedSlopeUnity)
 
                         # *------------------------------------------------------------------------------*#
                         ## Recording observation and prediction for this model this fold.
@@ -230,7 +230,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
                         if ForcedSlopeUnity:
                             final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_Yindex]
                                                     ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
-                                                    endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,EachMonth=EachMonthForcedSlopeUnity)
+                                                    endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,month_index=training_months[imodel_month],EachMonth=EachMonthForcedSlopeUnity)
 
                         # *------------------------------------------------------------------------------*#
                         ## Recording observation and prediction for this model this fold.
