@@ -30,10 +30,10 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
     else:
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
     
-    TwoCombineModel_Variable_index = initial_channel_names.index(TwoCombineModels_Variable)
-
+    
 
     if TwoCombineModels_Settings:
+        TwoCombineModel_Variable_index = initial_channel_names.index(TwoCombineModels_Variable)
         criterion_LowEnd = SelfDesigned_LossFunction(losstype=Loss_type)
         criterion_FarEnd = SelfDesigned_LossFunction(losstype=Loss_type)
         
@@ -595,7 +595,7 @@ def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channe
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
     else:
         GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
-    TwoCombineModel_Variable_index = initial_channel_names.index(TwoCombineModels_Variable)
+    
     model.eval()
     final_output = []
     final_output = np.array(final_output)
@@ -603,6 +603,7 @@ def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channe
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     if TwoCombineModels_Settings:
+        TwoCombineModel_Variable_index = initial_channel_names.index(TwoCombineModels_Variable)
         with torch.no_grad():
             for i, image in enumerate(predictinput):
                 image = torch.squeeze(image)

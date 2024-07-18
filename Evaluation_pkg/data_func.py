@@ -90,9 +90,9 @@ def Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_b
 
 
 
-def ForcedSlopeUnity_Func(train_final_data,train_obs_data,test_final_data,train_area_index,test_area_index,endyear,beginyear,EachMonth:bool):
+def ForcedSlopeUnity_Func(train_final_data,train_obs_data,test_final_data,train_area_index,test_area_index,endyear,beginyear,month_index, EachMonth):
     if EachMonth:
-        for i in range(12 * (endyear - beginyear + 1)):
+        for i in range(len(month_index) * (endyear - beginyear + 1)):
             temp_train_final_data = train_final_data[i*len(train_area_index):(i+1)*len(train_area_index)]
             temp_train_obs_data   = train_obs_data[i*len(train_area_index):(i+1)*len(train_area_index)]
             temp_regression_dic = regress2(_x=temp_train_obs_data,_y=temp_train_final_data,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
@@ -101,8 +101,8 @@ def ForcedSlopeUnity_Func(train_final_data,train_obs_data,test_final_data,train_
     else:
         month_train_obs_average = np.zeros((len(train_area_index)))
         month_train_average = np.zeros((len(train_area_index)))
-        monthly_test_month = np.array(range(endyear - beginyear + 1)) * 12
-        for imonth in range(12):
+        monthly_test_month = np.array(range(endyear - beginyear + 1)) * len(month_index)
+        for imonth in range(len(month_index)):
             for isite in range(len(train_area_index)):
                 month_train_obs_average[isite] = np.mean(train_final_data[isite + (imonth + monthly_test_month) * len(train_area_index)])
                 month_train_average[isite] = np.mean(train_final_data[isite + (imonth + monthly_test_month) * len(train_area_index)])
@@ -110,8 +110,8 @@ def ForcedSlopeUnity_Func(train_final_data,train_obs_data,test_final_data,train_
             temp_offset,temp_slope = temp_regression_dic['intercept'], temp_regression_dic['slope']
 
             for iyear in range(endyear-beginyear+1):
-                test_final_data[(iyear*12+imonth)*len(test_area_index):(iyear*12+imonth+1)*len(test_area_index)] -= temp_offset
-                test_final_data[(iyear*12+imonth)*len(test_area_index):(iyear*12+imonth+1)*len(test_area_index)] /= temp_slope
+                test_final_data[(iyear*len(month_index)+imonth)*len(test_area_index):(iyear*len(month_index)+imonth+1)*len(test_area_index)] -= temp_offset
+                test_final_data[(iyear*len(month_index)+imonth)*len(test_area_index):(iyear*len(month_index)+imonth+1)*len(test_area_index)] /= temp_slope
     return test_final_data
 
 

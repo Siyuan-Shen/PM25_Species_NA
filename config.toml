@@ -60,7 +60,7 @@ every_point_end_years                                 = 2016
 
 [Spatial-CrossValidation.Forced-Slope-Unity]
 
-ForcedSlopeUnity                                      = false # True: force the slope to unity and offset to zero with Training datasets
+ForcedSlopeUnity                                      = true # True: force the slope to unity and offset to zero with Training datasets
 EachMonthForcedSlopeUnity                             = true # True: force the slope to unity and offset to zero by each year, each month; False: by each month, but all-year average 
 
 [Spatial-CrossValidation.SHAP_Analysis_Settings]
@@ -241,12 +241,12 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 
 [Training-Settings.identity]
 
-version                                               = 'v1.6.2'
-special_name                                          = '_GeoMSE_lambda1-10_Epoch31_ResNet_TwoCombineModels_GeoSO4_4d0_1101_BasicBlock_1year-SONDJF_MAMJJA_Obsv1118_NA-PM_v1.5.0_GeLU'#'_SHAP_Analysis_Tanh_Test'#'_ResNet-MLP_BottleNeck_month_based_models_4years-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU'
+version                                               = 'v1.6.3'
+special_name                                          = '_BenchMark_SlopeForced'#'_SHAP_Analysis_Tanh_Test'#'_ResNet-MLP_BottleNeck_month_based_models_4years-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU'
 
 [Training-Settings.learning-objective]
 
-species                                               = 'SO4' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
+species                                               = 'PM25' # ['PM25', 'NH4', 'SO4', 'NO3', 'OM', 'BC', 'DUST', 'SS' ]
 
 # Only one of these can be true. Default is bias.
 bias                                                  = true   # learning objectives: bias = ground-based species observation - geophysical species concentration estimation
@@ -261,14 +261,13 @@ log_species                                           = false
 [Training-Settings.net_structure_settings]
 
 ############# Two Combine Models; Classified by variables
-TwoCombineModels.Settings                             = true # Only Available to ResNet and ResNet_MLP; one of those two structures settings must be true.
+TwoCombineModels.Settings                             = false # Only Available to ResNet and ResNet_MLP; one of those two structures settings must be true.
 TwoCombineModels.Variable                             = 'GeoSO4'
 TwoCombineModels.threshold                            = 4.0
 
-
 ResNet.Settings                                       = true
 ResNet.Blocks                                         = 'BasicBlock'
-ResNet.blocks_num                                     = [1,1,0,1]
+ResNet.blocks_num                                     = [1,1,1,1]
 
 #############
 
@@ -369,17 +368,17 @@ Sigmoid.Settings                                      = false
 
 [Training-Settings.hyper-parameters]
 
-epoch                                                 = 31
+epoch                                                 = 51
 batchsize                                             = 128
 
 channel_names                                         =['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD',  'GeoPM25','ETA',
-                                                       'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
-                                                       'NA_CNN_PM25',#'GL_CNN_PM25',#
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
-                                                       'NH3_anthro_emi','NO_anthro_emi','SO2_anthro_emi', #'OC_anthro_emi', 'BC_anthro_emi', 'N2O_anthro_emi','NMVOC_anthro_emi',
-                                                       'DST_offline_emi', 'SSLT_offline_emi',
+                                                       #'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
+                                                       #'NA_CNN_PM25',#'GL_CNN_PM25',#
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4',  'GC_SOA', 'GC_OC', 'GC_BC', 'GC_DST','GC_SSLT',#'GC_NIT', 'GC_OM',
+                                                       'NH3_anthro_emi','NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi','N2O_anthro_emi','NMVOC_anthro_emi',# 'SO2_anthro_emi',
+                                                       #'DST_offline_emi', 'SSLT_offline_emi',
                                                        'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 
-                                                       'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 
+                                                       'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos','Permanent_Wetlands', 
                                                        'Month_of_Year',
                                                         'Lat', 'Lon','elevation'#'S1','S2','S3',#'S1','S2','S3','  'Lon',
                                                         #'Population'
@@ -387,7 +386,7 @@ channel_names                                         =['EtaAOD_Bias', 'EtaCoast
 
 [Training-Settings.Loss-Functions]
 
-Loss_type                                             = 'GeoMSE'           # MSE; GeoMSE; CrossEntropyLoss; MultiHead_Loss; <-- Regression Type for all other models
+Loss_type                                             = 'MSE'           # MSE; GeoMSE; CrossEntropyLoss; MultiHead_Loss; <-- Regression Type for all other models
 Classification_loss_type                              = 'CrossEntropyLoss' # Only for MultiHeadLateFusion, ResNet_classification and ResNet_MultiHeadNet. 
 
 ResNet_MultiHeadNet_regression_loss_coefficient       = 1 # This is used to decide the coefficient of regression loss in ResNet_MultiHeadNet 
