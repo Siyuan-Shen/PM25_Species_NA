@@ -33,6 +33,7 @@ def linear_regression(x, y):
 def Cal_RMSE(x,y):
     RMSE = np.sqrt(mean_squared_error(x, y))
     RMSE = round(RMSE, 2)
+    print('RMSE: {}'.format(RMSE))
     return RMSE
 
 def Cal_NRMSE(final_data,obs_data):

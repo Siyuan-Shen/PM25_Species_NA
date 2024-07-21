@@ -11,6 +11,8 @@ class SelfDesigned_LossFunction(nn.Module):
         self.Loss_Type = losstype
         self.reduction = reduction
         self.GeoMSE_Lamba1_Penalty1 = GeoMSE_Lamba1_Penalty1
+        self.GeoMSE_Lamba1_Penalty2 = GeoMSE_Lamba1_Penalty2
+        self.GeoMSE_Gamma  = GeoMSE_Gamma
     def forward(self,model_output,target,geophsical_species,geopysical_mean,geopysical_std):
         if self.Loss_Type == 'MSE':
             loss = F.mse_loss(model_output, target,reduction=self.reduction)
@@ -21,8 +23,9 @@ class SelfDesigned_LossFunction(nn.Module):
             geophsical_species = geophsical_species * geopysical_std + geopysical_mean
             MSE_loss = F.mse_loss(model_output, target)
             Penalty1 = self.GeoMSE_Lamba1_Penalty1 * torch.mean(torch.relu(-model_output - geophsical_species)) # To force the model output larger than -geophysical_species
-            loss = MSE_loss + Penalty1
-            print('Total loss: {}, MSE Loss: {}, Penalty 1: {}'.format(loss, MSE_loss, Penalty1))
+            Penalty2 = self.GeoMSE_Lamba1_Penalty2 * torch.mean(torch.relu(model_output - self.GeoMSE_Gamma * geophsical_species)) # To force the model output larger than -geophysical_species
+            loss = MSE_loss + Penalty1 + Penalty2
+            print('Total loss: {}, MSE Loss: {}, Penalty 1: {}, Penalty 2: {}'.format(loss, MSE_loss, Penalty1, Penalty2))
             return loss
 
         elif self.Loss_Type == 'CrossEntropyLoss':

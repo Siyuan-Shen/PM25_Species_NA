@@ -103,7 +103,7 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
                             final_data = (1.0-coeficient)*final_data + coeficient * geophysical_species[yearly_test_Yindex]
                         if ForcedSlopeUnity:
                             final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_Yindex]
-                                                    ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
+                                                    ,test_final_data=final_data,train_area_index=train_index,test_area_index=test_index,
                                                     endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,month_index=training_months[imodel_month],EachMonth=EachMonthForcedSlopeUnity)
 
                         # *------------------------------------------------------------------------------*#
@@ -125,9 +125,10 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
                 
 
             count += 1
-        save_sensitivity_test_month_based_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,lat_recording=lat_test_recording,lon_recording=lon_test_recording,
+        save_sensitivity_test_month_based_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,geo_data_recording=geo_data_recording,training_final_data_recording=training_final_data_recording,
+                                                         training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,lat_recording=lat_test_recording,lon_recording=lon_test_recording,
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,exclude_names_suffix=exclude_names_suffix)
-    obs_data_recording, final_data_recording, lat_test_recording, lon_test_recording = load_sensitivity_test_month_based_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,exclude_names_suffix=exclude_names_suffix)
+    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording = load_sensitivity_test_month_based_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,exclude_names_suffix=exclude_names_suffix)
     
     test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=Sensitivity_Test_test_beginyear, test_endyear=Sensitivity_Test_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,

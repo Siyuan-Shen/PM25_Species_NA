@@ -50,7 +50,7 @@ class Dataset_Val(torch.utils.data.Dataset):  # 'Characterizes a dataset for PyT
     '''
     def __init__(self, traindata):  # 'Initialization' Data Loading
             super(Dataset_Val, self).__init__()
-            self.traindatasets = torch.squeeze(torch.Tensor(traindata))
+            self.traindatasets = torch.Tensor(traindata) #torch.squeeze(torch.Tensor(traindata))
             print(self.traindatasets.shape)
             self.transforms = transform  # 转为tensor形式
             self.shape = self.traindatasets.shape

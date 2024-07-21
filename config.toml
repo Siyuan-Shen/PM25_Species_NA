@@ -54,7 +54,7 @@ test_endyear                                          = 2016
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = true
+regression_plot_switch                                = false
 every_point_begin_years                               = 2000
 every_point_end_years                                 = 2016
 
@@ -138,9 +138,9 @@ fixednumber_train_sites                               = []
 [Estimation-Settings]
 
 Estimation_Switch                                     = false
-Train_model_Switch                                    = false
-Map_estimation_Switch                                 = false
-Estimation_visualization_Switch                       = false
+Train_model_Switch                                    = true
+Map_estimation_Switch                                 = true
+Estimation_visualization_Switch                       = true
 Estimation_PWMPM_Cal_Switch                           = false
 Derive_combinedGeo_MapData_Switch                     = false
 
@@ -148,21 +148,21 @@ Derive_combinedGeo_MapData_Switch                     = false
 
 beginyears                                            = [2016]#[1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 endyears                                              = [2016]#[1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-training_months                                       = [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
+training_months                                       = [[9,10,11,0,1,2],[3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
 Estiamtion_trained_beginyears                         = [2016]#[1998,1999,2000,2001,2002]
 Estiamtion_trained_endyears                           = [2016]#[1998,1999,2000,2001,2002]
-Estiamtion_trained_months                             = [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
+Estiamtion_trained_months                             = [[9,10,11,0,1,2],[3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 Estimation_years                                      = [[2016]]#[[1998],[1999],[2000],[2001],[2002]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
-Estiamtion_months                                     = [[0],[2],[5],[9]]#[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
+Estiamtion_months                                     = [[9,10,11,0,1,2],[3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 
 [Estimation-Settings.Visualization_Settings]
 
-Map_Plot_Switch                                       = false       # Switch for plotting the map of estimated concentration. 
-Map_Plot_YEARS                                        = [1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
+Map_Plot_YEARS                                        = [2016]#[1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
 Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
@@ -242,7 +242,7 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 [Training-Settings.identity]
 
 version                                               = 'v1.6.3'
-special_name                                          = '_BenchMark_SlopeForced'#'_SHAP_Analysis_Tanh_Test'#'_ResNet-MLP_BottleNeck_month_based_models_4years-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU'
+special_name                                          = '_ResNet_1111_GeoMSE_P1-10d0_Gamma2d5_P2-3d5_ONDJFM_AMJJAS'
 
 [Training-Settings.learning-objective]
 
@@ -386,13 +386,14 @@ channel_names                                         =['EtaAOD_Bias', 'EtaCoast
 
 [Training-Settings.Loss-Functions]
 
-Loss_type                                             = 'MSE'           # MSE; GeoMSE; CrossEntropyLoss; MultiHead_Loss; <-- Regression Type for all other models
+Loss_type                                             = 'GeoMSE'           # MSE; GeoMSE; CrossEntropyLoss; MultiHead_Loss; <-- Regression Type for all other models
 Classification_loss_type                              = 'CrossEntropyLoss' # Only for MultiHeadLateFusion, ResNet_classification and ResNet_MultiHeadNet. 
 
 ResNet_MultiHeadNet_regression_loss_coefficient       = 1 # This is used to decide the coefficient of regression loss in ResNet_MultiHeadNet 
 ResNet_MultiHeadNet_classfication_loss_coefficient    = 1 # This is used to decide the coefficient of classfication loss in ResNet_MultiHeadNet 
 GeoMSE_Lamba1_Penalty1                                = 10.0  # This is for GeoMSE Penalty1 - Constrain form negative side.
-
+GeoMSE_Lamba1_Penalty2                                = 3.5   # This is for GeoMSE Penalty2 - Constrain form positive side.
+GeoMSE_Gamma                                          = 2.5   # This is for GeoMSE Penalty2 ratio. 
 [Training-Settings.CombineWithGeophysical]
 
 combine_with_GeophysicalSpeceis_Switch                = false
