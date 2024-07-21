@@ -145,6 +145,8 @@ Loss_Func = cfg['Training-Settings']['Loss-Functions']
 Loss_type = Loss_Func['Loss_type']
 Classification_loss_type = Loss_Func['Classification_loss_type']
 GeoMSE_Lamba1_Penalty1 = Loss_Func['GeoMSE_Lamba1_Penalty1']
+GeoMSE_Lamba1_Penalty2 = Loss_Func['GeoMSE_Lamba1_Penalty2']
+GeoMSE_Gamma = Loss_Func['GeoMSE_Gamma']
 ResNet_MultiHeadNet_regression_loss_coefficient = Loss_Func['ResNet_MultiHeadNet_regression_loss_coefficient']
 ResNet_MultiHeadNet_classfication_loss_coefficient = Loss_Func['ResNet_MultiHeadNet_classfication_loss_coefficient']
 #######################################################################################

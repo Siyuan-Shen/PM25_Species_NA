@@ -138,23 +138,23 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 PWAModel[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth],PM25_array=final_data_recording[str(test_beginyear+iyear)][imonth])
                 PWAMonitors[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth],PM25_array=obs_data_recording[str(test_beginyear+iyear)][imonth])
                 if imonth == 'Jan':
-                    final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)][imonth]
-                    obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)][imonth]
-                    geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)][imonth]
-                    training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)][imonth]
-                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth]
-                    training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)][imonth]
-                    PWAModel[str(test_beginyear+iyear)]['Annual']  = PWAModel[str(test_beginyear+iyear)][imonth]
-                    PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)][imonth]
+                    final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                    obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                    geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                    training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                    training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                    #PWAModel[str(test_beginyear+iyear)]['Annual']  = PWAModel[str(test_beginyear+iyear)][imonth]
+                    #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)][imonth]
                 else:
                     final_data_recording[str(test_beginyear+iyear)]['Annual'] += final_data_recording[str(test_beginyear+iyear)][imonth]
                     obs_data_recording[str(test_beginyear+iyear)]['Annual'] += obs_data_recording[str(test_beginyear+iyear)][imonth]
                     geo_data_recording[str(test_beginyear+iyear)]['Annual'] += geo_data_recording[str(test_beginyear+iyear)][imonth]
                     training_final_data_recording[str(test_beginyear+iyear)]['Annual'] += training_final_data_recording[str(test_beginyear+iyear)][imonth]
-                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth]
+                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] += testing_population_data_recording[str(test_beginyear+iyear)][imonth]
                     training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] += training_obs_data_recording[str(test_beginyear+iyear)][imonth]
-                    PWAModel[str(test_beginyear+iyear)]['Annual']  += PWAModel[str(test_beginyear+iyear)][imonth]
-                    PWAMonitors[str(test_beginyear+iyear)]['Annual'] += PWAMonitors[str(test_beginyear+iyear)][imonth]
+                    #PWAModel[str(test_beginyear+iyear)]['Annual']  += PWAModel[str(test_beginyear+iyear)][imonth]
+                    #PWAMonitors[str(test_beginyear+iyear)]['Annual'] += PWAMonitors[str(test_beginyear+iyear)][imonth]
                     
             final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
@@ -162,8 +162,8 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
             training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
             testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            PWAModel[str(test_beginyear+iyear)]['Annual'] = PWAModel[str(test_beginyear+iyear)]['Annual']/12.0
-            PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)]['Annual']/12.0
+            #PWAModel[str(test_beginyear+iyear)]['Annual'] = PWAModel[str(test_beginyear+iyear)]['Annual']/12.0
+            #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)]['Annual']/12.0
             
             print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, 'Annual'))
             test_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(final_data_recording[str(test_beginyear+iyear)]['Annual'], obs_data_recording[str(test_beginyear+iyear)]['Annual'])
@@ -187,6 +187,9 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 temp_training_obs_data_recording   = np.zeros(len(training_obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
                 temp_testing_population_data_recording   = np.zeros(len(testing_population_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
                 for imonth in Season_MONTH[iseason]:
+                    print('{} Season_Month[iseason]: {}'.format(iseason, imonth))
+                    print('temp_obs_data_recording: ',temp_obs_data_recording)
+                    print('obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0: ',obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0)
                     temp_final_data_recording += final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
                     temp_obs_data_recording   += obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
                     temp_geo_data_recording   += geo_data_recording[str(test_beginyear+iyear)][imonth]/3.0

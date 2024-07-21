@@ -107,7 +107,7 @@ def save_sensitivity_test_loss_accuracy(model_outdir, loss, accuracy, valid_loss
     np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
-def save_month_based_data_recording(obs_data,final_data,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height):
+def save_month_based_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
@@ -115,17 +115,29 @@ def save_month_based_data_recording(obs_data,final_data,lat_recording,lon_record
                                                                                             ,width, height, nchannel,special_name)
     final_data_outfile = outdir + '{}-{}-Final-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    geo_data_outfile = outdir + '{}-{}-Geo-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_outfile = outdir + '{}-{}-training_final_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_outfile = outdir + '{}-{}-training_obs_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_outfile = outdir + '{}-{}-testing_population_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)                                          
     lat_data_outfile = outdir + '{}-{}-lat-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     lon_data_outfile = outdir + '{}-{}-lat-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
+    np.save(geo_data_outfile, geo_data_recording)
+    np.save(training_final_data_outfile, training_final_data_recording)
+    np.save(training_obs_data_outfile, training_obs_data_recording)
+    np.save(testing_population_data_outfile, testing_population_data_recording)
     np.save(lat_data_outfile, lat_recording)
     np.save(lon_data_outfile, lon_recording)
     return
 
-def save_Fixnumber_month_based_data_recording(obs_data,final_data,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height, test_number,train_number):
+def save_Fixnumber_month_based_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height, test_number,train_number):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
@@ -133,17 +145,29 @@ def save_Fixnumber_month_based_data_recording(obs_data,final_data,lat_recording,
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
     final_data_outfile = outdir + '{}-{}-Final-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}_{}TestSites_{}TrainSites.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
+    geo_data_outfile = outdir + '{}-{}-Geo-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_outfile = outdir + '{}-{}-training_final_data-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_outfile = outdir + '{}-{}-training_obs_data-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_outfile = outdir + '{}-{}-testing_population_data-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
     lat_data_outfile = outdir + '{}-{}-lat-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}_{}TestSites_{}TrainSites.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
     lon_data_outfile = outdir + '{}-{}-lat-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}_{}TestSites_{}TrainSites.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
+    np.save(geo_data_outfile, geo_data_recording)
+    np.save(training_final_data_outfile, training_final_data_recording)
+    np.save(training_obs_data_outfile, training_obs_data_recording)
+    np.save(testing_population_data_outfile, testing_population_data_recording)
     np.save(lat_data_outfile, lat_recording)
     np.save(lon_data_outfile, lon_recording)
     return
 
-def save_sensitivity_test_month_based_data_recording(obs_data,final_data,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,exclude_names_suffix):
+def save_sensitivity_test_month_based_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,exclude_names_suffix):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
@@ -151,17 +175,30 @@ def save_sensitivity_test_month_based_data_recording(obs_data,final_data,lat_rec
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
     final_data_outfile = outdir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
+    geo_data_outfile = outdir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_outfile = outdir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_outfile = outdir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_outfile = outdir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    
     lat_data_outfile = outdir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
     lon_data_outfile = outdir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
+    np.save(geo_data_outfile, geo_data_recording)
+    np.save(training_final_data_outfile, training_final_data_recording)
+    np.save(training_obs_data_outfile, training_obs_data_recording)
+    np.save(testing_population_data_outfile, testing_population_data_recording)
     np.save(lat_data_outfile, lat_recording)
     np.save(lon_data_outfile, lon_recording)
     return
 
-def save_month_based_BLOO_data_recording(obs_data,final_data,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
+def save_month_based_BLOO_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
     outdir = txt_outdir + '{}/{}/Results/results-BLOO_DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
@@ -169,17 +206,29 @@ def save_month_based_BLOO_data_recording(obs_data,final_data,lat_recording,lon_r
                                                                                             ,width, height, nchannel,special_name)
     final_data_outfile = outdir + '{}-{}-Final-BLOODataRecording_{}km_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    geo_data_outfile = outdir + '{}-{}-Geo-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_outfile = outdir + '{}-{}-training_final_data-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_outfile = outdir + '{}-{}-training_obs_data-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_outfile = outdir + '{}-{}-testing_population_data-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
     lat_data_outfile = outdir + '{}-{}-lat-BLOODataRecording_{}km_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     lon_data_outfile = outdir + '{}-{}-lat-BLOODataRecording_{}km_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
+    np.save(geo_data_outfile, geo_data_recording)
+    np.save(training_final_data_outfile, training_final_data_recording)
+    np.save(training_obs_data_outfile, training_obs_data_recording)
+    np.save(testing_population_data_outfile, testing_population_data_recording)
     np.save(lat_data_outfile, lat_recording)
     np.save(lon_data_outfile, lon_recording)
     return
 
-def save_month_based_BLCO_data_recording(obs_data,final_data,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
+def save_month_based_BLCO_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
     outdir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
@@ -187,12 +236,24 @@ def save_month_based_BLCO_data_recording(obs_data,final_data,lat_recording,lon_r
                                                                                             ,width, height, nchannel,special_name)
     final_data_outfile = outdir + '{}-{}-Final-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    geo_data_outfile = outdir + '{}-{}-Geo-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_outfile = outdir + '{}-{}-training_final_data-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_outfile = outdir + '{}-{}-training_obs_data-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_outfile = outdir + '{}-{}-testing_population_data-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
     lat_data_outfile = outdir + '{}-{}-lat-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     lon_data_outfile = outdir + '{}-{}-lat-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
+    np.save(geo_data_outfile, geo_data_recording)
+    np.save(training_final_data_outfile, training_final_data_recording)
+    np.save(training_obs_data_outfile, training_obs_data_recording)
+    np.save(testing_population_data_outfile, testing_population_data_recording)
     np.save(lat_data_outfile, lat_recording)
     np.save(lon_data_outfile, lon_recording)
     return
@@ -313,15 +374,27 @@ def load_month_based_data_recording(species, version, typeName, beginyear, endye
                                                                                             ,width, height, nchannel,special_name)
     final_data_infile = indir + '{}-{}-Final-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    geo_data_infile = indir + '{}-{}-Geo-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_infile = indir + '{}-{}-training_final_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_infile = indir + '{}-{}-training_obs_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_infile = indir + '{}-{}-testing_population_data-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
     lat_data_infile = indir + '{}-{}-lat-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     lon_data_infile = indir + '{}-{}-lat-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
+    geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
+    training_final_data_recording = np.load(training_final_data_infile, allow_pickle=True).item()
+    training_obs_data_recording = np.load(training_obs_data_infile, allow_pickle=True).item()
+    testing_population_data_recording = np.load(testing_population_data_infile, allow_pickle=True).item()                                                                                                                   
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
-    return obs_data, final_data, lat_recording, lon_recording
+    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
 
 def load_Fixnumber_month_based_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height, test_number,train_number):
     indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
@@ -330,15 +403,27 @@ def load_Fixnumber_month_based_data_recording(species, version, typeName, beginy
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
     final_data_infile = indir + '{}-{}-Final-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}_{}TestSites_{}TrainSites.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
+    geo_data_infile = indir + '{}-{}-Geo-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_infile = indir + '{}-{}-training_final_data-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_infile = indir + '{}-{}-training_obs_data-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_infile = indir + '{}-{}-testing_population_data-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
     lat_data_infile = indir + '{}-{}-lat-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}_{}TestSites_{}TrainSites.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
     lon_data_infile = indir + '{}-{}-lat-FixnumberDataRecording_{}-{}_{}x{}_{}Channel{}_{}TestSites_{}TrainSites.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,test_number,train_number)
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
+    geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
+    training_final_data_recording = np.load(training_final_data_infile, allow_pickle=True).item()
+    training_obs_data_recording = np.load(training_obs_data_infile, allow_pickle=True).item()
+    testing_population_data_recording = np.load(testing_population_data_infile, allow_pickle=True).item()
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
-    return obs_data, final_data, lat_recording, lon_recording
+    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
 
 
 def load_sensitivity_test_month_based_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,exclude_names_suffix):
@@ -347,15 +432,28 @@ def load_sensitivity_test_month_based_data_recording(species, version, typeName,
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
     final_data_infile = indir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
+    geo_data_infile = indir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_infile = indir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_infile = indir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_infile = indir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
     lat_data_infile = indir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
     lon_data_infile = indir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name,exclude_names_suffix)
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
+    geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
+    training_final_data_recording = np.load(training_final_data_infile, allow_pickle=True).item()
+    training_obs_data_recording = np.load(training_obs_data_infile, allow_pickle=True).item()
+    testing_population_data_recording = np.load(testing_population_data_infile, allow_pickle=True).item()
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
-    return obs_data, final_data, lat_recording, lon_recording
+    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
+
 
 def load_month_based_BLOO_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
     indir = txt_outdir + '{}/{}/Results/results-BLOO_DataRecording/'.format(species, version)
@@ -364,15 +462,28 @@ def load_month_based_BLOO_data_recording(species, version, typeName, beginyear, 
                                                                                             ,width, height, nchannel,special_name)
     final_data_infile = indir + '{}-{}-Final-BLOODataRecording_{}km_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    geo_data_infile = indir + '{}-{}-Geo-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    training_final_data_infile = indir + '{}-{}-training_final_data-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_infile = indir + '{}-{}-training_obs_data-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_infile = indir + '{}-{}-testing_population_data-BLOODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
     lat_data_infile = indir + '{}-{}-lat-BLOODataRecording_{}km_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     lon_data_infile = indir  + '{}-{}-lat-BLOODataRecording_{}km_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
+    geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
+    training_final_data_recording = np.load(training_final_data_infile, allow_pickle=True).item()
+    training_obs_data_recording = np.load(training_obs_data_infile, allow_pickle=True).item()
+    testing_population_data_recording = np.load(testing_population_data_infile, allow_pickle=True).item()
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
-    return obs_data, final_data, lat_recording, lon_recording
+    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
+
 
 def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
     indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
@@ -380,16 +491,29 @@ def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, 
     obs_data_infile =  indir  + '{}-{}-Obs-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     final_data_infile = indir + '{}-{}-Final-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)   
+    geo_data_infile = indir + '{}-{}-Geo-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    training_final_data_infile = indir + '{}-{}-training_final_data-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)  
+    training_obs_data_infile = indir + '{}-{}-training_obs_data-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    testing_population_data_infile = indir + '{}-{}-testing_population_data-BLCODataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name) 
+    
     lat_data_infile = indir + '{}-{}-lat-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     lon_data_infile = indir + '{}-{}-lat-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
+    geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
+    training_final_data_recording = np.load(training_final_data_infile, allow_pickle=True).item()
+    training_obs_data_recording = np.load(training_obs_data_infile, allow_pickle=True).item()
+    testing_population_data_recording = np.load(testing_population_data_infile, allow_pickle=True).item()
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
-    return obs_data, final_data, lat_recording, lon_recording
+    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
 
 
 def load_coMonitor_Population():
@@ -677,7 +801,7 @@ def AVD_output_text(outfile:str,status:str,test_beginyears,test_endyears,
 def SensitivityTests_output_text(outfile:str,status:str,test_beginyears,test_endyears,
                 test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors,exclude_channels_names):
     
-    MONTH = ['Annual','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    MONTH = ['Annual','MAM','JJA','SON','DJF','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyears,test_endyears,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors)
     Exclude_Variables = ''
     for iname in exclude_channels_names:

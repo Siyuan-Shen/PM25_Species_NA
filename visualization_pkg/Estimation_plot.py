@@ -35,7 +35,7 @@ def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.arr
     PWA_PM25 = Calculate_PWA_PM25(Population_array=Cropped_Population_Map, PM25_array=Croppeed_PM25_Map)
     ax = plt.axes(projection=ccrs.PlateCarree())
     m1 = 0
-    m2 = PWA_PM25
+    m2 = PWA_PM25*2.5
     extent = [extent[2],extent[3],extent[0],extent[1]]
     
     #print('PM25_Lat Dim:',PM25_LAT.shape, 'PM25_Lon Dim:', PM25_LON.shape, 'PM25_Map Dim:', PM25_Map.shape,'PWA: ',PWA_PM25)

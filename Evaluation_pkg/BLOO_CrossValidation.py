@@ -107,7 +107,7 @@ def BLOO_AVD_Spatial_CrossValidation(buffer_radius, width, height, sitesnumber, 
                             final_data = (1.0-coeficient)*final_data + coeficient * geophysical_species[yearly_test_Yindex]
                         if ForcedSlopeUnity:
                             final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=SPECIES_OBS[yearly_train_Yindex]
-                                                    ,test_final_data=Validation_Prediction,train_area_index=train_index,test_area_index=test_index,
+                                                    ,test_final_data=final_data,train_area_index=train_index,test_area_index=test_index,
                                                     endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,month_index=training_months[imodel_month],EachMonth=EachMonthForcedSlopeUnity)
 
                         # *------------------------------------------------------------------------------*#
@@ -128,9 +128,10 @@ def BLOO_AVD_Spatial_CrossValidation(buffer_radius, width, height, sitesnumber, 
                             testing_population_data_recording[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]] = np.append(testing_population_data_recording[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]], population_test_data[imonth*len(test_index):(imonth+1)*len(test_index)])
                 
             count += 1
-        save_month_based_BLOO_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,lat_recording=lat_test_recording,lon_recording=lon_test_recording,
+        save_month_based_BLOO_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,geo_data_recording=geo_data_recording,training_final_data_recording=training_final_data_recording,
+                                             training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,lat_recording=lat_test_recording,lon_recording=lon_test_recording,
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
-    obs_data_recording, final_data_recording, lat_test_recording, lon_test_recording = load_month_based_BLOO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
+    obs_data_recording, final_data_recording,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_test_recording, lon_test_recording = load_month_based_BLOO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
     test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=BLOO_test_beginyear, test_endyear=BLOO_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
