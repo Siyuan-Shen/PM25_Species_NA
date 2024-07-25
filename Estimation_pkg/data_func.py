@@ -5,6 +5,8 @@ import mat73 as mat
 from Uncertainty_pkg.iostream import load_pixels_nearest_sites_distances_map
 from Estimation_pkg.iostream import load_map_data
 from Estimation_pkg.utils import *
+from Training_pkg.Statistic_Func import linear_regression,regress2, Cal_RMSE, Cal_NRMSE,Cal_PWM_rRMSE,Calculate_PWA_PM25
+
 from Training_pkg.utils import *
 
 def crop_mapdata(init_map,extent):
@@ -106,3 +108,18 @@ def Combine_CNN_GeophysicalSpecies(CNN_Species,coefficient,
    Cropped_GeophysicalSpecies = crop_mapdata(init_map=GeophysicalSpecies,extent=Extent)
    Combined_Species = (1.0-coefficient)*CNN_Species + coefficient * Cropped_GeophysicalSpecies
    return Combined_Species
+
+def Estimation_ForcedSlopeUnity_Func(train_final_data,train_obs_data,train_area_index,endyear,beginyear,month_index):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    ForcedSlopeUnity_Dictionary_forEstimation = {'slope':{}, 'offset':{}}
+    for iyear in range((endyear - beginyear + 1)):
+        ForcedSlopeUnity_Dictionary_forEstimation['slope'][str(beginyear+iyear)] = {}
+        ForcedSlopeUnity_Dictionary_forEstimation['offset'][str(beginyear+iyear)] = {}
+        for imonth in range(len(month_index)):        
+            temp_train_final_data = train_final_data[(iyear*len(month_index)+imonth)*len(train_area_index):(iyear*len(month_index)+imonth+1)*len(train_area_index)]
+            temp_train_obs_data   = train_obs_data[(iyear*len(month_index)+imonth)*len(train_area_index):(iyear*len(month_index)+imonth+1)*len(train_area_index)]
+            temp_regression_dic = regress2(_x=temp_train_obs_data,_y=temp_train_final_data,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+            temp_offset,temp_slope = temp_regression_dic['intercept'], temp_regression_dic['slope']
+            ForcedSlopeUnity_Dictionary_forEstimation['slope'][str(beginyear+iyear)][MONTH[month_index[imonth]]] = temp_slope
+            ForcedSlopeUnity_Dictionary_forEstimation['offset'][str(beginyear+iyear)][MONTH[month_index[imonth]]] = temp_offset
+    return ForcedSlopeUnity_Dictionary_forEstimation
