@@ -47,7 +47,7 @@ if __name__ == '__main__':
         MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         annual_obs_data, annual_final_data = load_data_recording(species=species,version=version,typeName=typeName, beginyear='Alltime', MONTH='Annual',
                                                                  nchannel=nchannel,special_name=special_name,width=width,height=height)
-        obs_data, final_data, lat_recording, lon_recording = load_month_based_data_recording(species=species,version=version,typeName=typeName, beginyear=beginyears[0],endyear=endyears[-1],
+        obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording = load_month_based_data_recording(species=species,version=version,typeName=typeName, beginyear=beginyears[0],endyear=endyears[-1],
                                                                  nchannel=nchannel,special_name=special_name,width=width,height=height)
         regression_plot(plot_obs_pm25=annual_obs_data,plot_pre_pm25=annual_final_data,species=species, version=version, typeName=typeName, beginyear='Alltime',
                         MONTH='Annual', nchannel=nchannel,special_name=special_name,width=width,height=height)

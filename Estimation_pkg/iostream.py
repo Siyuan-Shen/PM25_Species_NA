@@ -65,6 +65,26 @@ def load_Annual_estimation_map_data(YYYY:str,SPECIES:str, version:str, special_n
     SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
 
+def load_ForcedSlope_forEstimation(model_indir, typeName, version, species, nchannel, special_name,beginyear, endyear, month_index,width, height):
+    indir = model_indir + '{}/{}/Results/Estimation-ForcedSlopeUnity_Dicts/'.format(species, version)
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    Selected_MONTHS_list = [MONTH[i] for i in month_index]
+    Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
+    dic_infile = indir + 'Estimation-ForcedSlopeUnity_Dicts_{}_{}_{}x{}_{}-{}_{}_{}Channel{}.npy'.format(typeName, species, width,height, beginyear, endyear,Selected_MONTHS_str, nchannel,special_name)
+    ForcedSlopeUnity_Dictionary_forEstimation = np.load(dic_infile,allow_pickle=True).item()
+    return ForcedSlopeUnity_Dictionary_forEstimation
+def save_ForcedSlope_forEstimation(ForcedSlopeUnity_Dictionary_forEstimation, model_outdir, typeName, version, species, nchannel, special_name,beginyear, endyear, month_index,width, height):
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    Selected_MONTHS_list = [MONTH[i] for i in month_index]
+    Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
+
+    outdir = model_outdir + '{}/{}/Results/Estimation-ForcedSlopeUnity_Dicts/'.format(species, version)
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
+    dic_outfile = outdir + 'Estimation-ForcedSlopeUnity_Dicts_{}_{}_{}x{}_{}-{}_{}_{}Channel{}.npy'.format(typeName, species, width,height, beginyear, endyear,Selected_MONTHS_str, nchannel,special_name)
+    np.save(dic_outfile,ForcedSlopeUnity_Dictionary_forEstimation)
+    return
+
 def save_trained_model_forEstimation(cnn_model, model_outdir, typeName, version, species, nchannel, special_name,beginyear, endyear, width, height):
     outdir = model_outdir + '{}/{}/Results/Estimation-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):

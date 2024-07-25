@@ -36,7 +36,7 @@ Estiamtion_trained_beginyears = Map_Estimation_Settings['Estiamtion_trained_begi
 Estiamtion_trained_endyears   = Map_Estimation_Settings['Estiamtion_trained_endyears']
 Estiamtion_trained_months     = Map_Estimation_Settings['Estiamtion_trained_months']
 Extent = Map_Estimation_Settings['Extent']
-
+Estimation_ForcedSlopeUnity = Map_Estimation_Settings['Estimation_ForcedSlopeUnity']
 #######################################################################################
 # Visualization Settings
 Visualization_Settings = cfg['Estimation-Settings']['Visualization_Settings']
