@@ -1,7 +1,7 @@
 import shap
-from Estimation_pkg.iostream import load_estimation_map_data
+from Estimation_pkg.iostream import load_estimation_map_data,load_ForcedSlopeUnity_estimation_map_data
 from Uncertainty_pkg.iostream import load_absolute_uncertainty_map_data
-from visualization_pkg.iostream import save_shap_analysis_figures,save_loss_accuracy_figure, save_estimation_map_figure,load_Population_MapData,save_uncertainty_map_figure
+from visualization_pkg.iostream import save_ForcedSlopeUnity_estimation_map_figure,save_shap_analysis_figures,save_loss_accuracy_figure, save_estimation_map_figure,load_Population_MapData,save_uncertainty_map_figure
 from visualization_pkg.Training_plot import plot_loss_accuracy_with_epoch, plot_valid_training_loss_accuracy_with_epoch_together
 from visualization_pkg.Estimation_plot import Plot_Species_Map_Figures
 from visualization_pkg.Uncertainty_plot import Plot_Species_Uncertainty_Map_Figures
@@ -27,7 +27,7 @@ def plot_save_loss_accuracy_figure(loss, accuracy, valid_loss, valid_accuracy, t
                                                           valid_loss_recording=valid_loss,outfile=Combine_fig_outfile)
     return
 
-def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,typeName:str,width:int,height:int,species:str,version:str,Area:str,PLOT_YEARS:list,PLOT_MONTHS:list):
+def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,ForcedSlopeUnity_Map_Plot_Switch:bool,typeName:str,width:int,height:int,species:str,version:str,Area:str,PLOT_YEARS:list,PLOT_MONTHS:list):
     if Estimation_Map_Plot:
         for YEAR in PLOT_YEARS:
             for MM in PLOT_MONTHS:
@@ -39,6 +39,18 @@ def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,typeName:str,width:
                 Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=YEAR,MM=MM)
                 Plot_Species_Map_Figures(PM25_Map=SPECIES_Map,PM25_LAT=lat,PM25_LON=lon,Population_Map=Population_Map,population_Lat=Pop_lat,population_Lon=Pop_lon,extent=Map_Plot_Extent,outfile=Estimation_Map_Figure_outfile
                                          ,YYYY=YEAR,MM=MM)
+    if ForcedSlopeUnity_Map_Plot_Switch:
+        for YEAR in PLOT_YEARS:
+            for MM in PLOT_MONTHS:
+                print('ForcedSlopeUnity_Map_Plot YEAR: {}, MONTH: {}'.format(YEAR, MM))
+                Estimation_Map_ForcedSlopeUnity_Figure_outfile = save_ForcedSlopeUnity_estimation_map_figure(typeName=typeName,species=species,
+                                                                   version=version,Area=Area,nchannel=len(channel_names),width=width,height=height,
+                                                                   special_name=special_name,YYYY=YEAR,MM=MM)
+                SPECIES_Map, lat, lon = load_ForcedSlopeUnity_estimation_map_data(YYYY=YEAR,MM=MM,SPECIES=species,version=version,special_name=special_name)
+                Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=YEAR,MM=MM)
+                Plot_Species_Map_Figures(PM25_Map=SPECIES_Map,PM25_LAT=lat,PM25_LON=lon,Population_Map=Population_Map,population_Lat=Pop_lat,population_Lon=Pop_lon,extent=Map_Plot_Extent,outfile=Estimation_Map_ForcedSlopeUnity_Figure_outfile
+                                         ,YYYY=YEAR,MM=MM)
+
     return
 
 def plot_save_uncertainty_map_figure(typeName:str,width:int,height:int,species:str,version:str,Area:str,PLOT_YEARS:list,PLOT_MONTHS:list):

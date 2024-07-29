@@ -129,7 +129,7 @@ if __name__ == '__main__':
             Calculate_Regional_PWM_PM_Components()
         
         if Estimation_visualization_Switch:
-            plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,typeName=typeName,width=
+            plot_save_estimation_map_figure(Estimation_Map_Plot=Map_Plot_Switch,ForcedSlopeUnity_Map_Plot_Switch=ForcedSlopeUnity_Map_Plot_Switch,typeName=typeName,width=
                                             width,height=height,species=species,version=version,Area=Map_Plot_Area,PLOT_YEARS=Map_Plot_YEARS, PLOT_MONTHS=Map_Plot_MONTHS)
         
 

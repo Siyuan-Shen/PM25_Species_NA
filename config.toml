@@ -46,17 +46,18 @@ Spatial_CV_LossAccuracy_plot_Switch                   = false
 Spatial_CV_test_only_Switch                           = false  #False ==> Default. This Switch is for only run specific test time coverage. Have to train first.
 kfold                                                 = 10
 repeats                                               = 1
-beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#[2000,2002,2004,2006,2008,2010,2012,2014]#,2017,2018,2019,2020,2021,2022]
-endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#[2001,2003,2005,2007,2009,2011,2013,2016]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
+beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]#[2000,2002,2004,2006,2008,2010,2012,2014]#,2017,2018,2019,2020,2021,2022]
+endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]#[2001,2003,2005,2007,2009,2011,2013,2016]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,2,3,4,5,6,7,8,9,10,11]]#[[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] 
-test_beginyear                                        = 2000
-test_endyear                                          = 2016
+test_beginyears                                       = [2000]
+test_endyears                                         = [2022]
+additional_test_regions                               = ['']
 
 [Spatial-CrossValidation.Visualization_Settings]
 
 regression_plot_switch                                = false
 every_point_begin_years                               = 2000
-every_point_end_years                                 = 2016
+every_point_end_years                                 = 2022
 
 [Spatial-CrossValidation.Forced-Slope-Unity]
 
@@ -87,27 +88,30 @@ repeats                                               = 1
 beginyears                                            = [2000]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 endyears                                              = [2001]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 training_months                                       = [[9,10,11,0,1,2],[3,4,5,6,7,8]] # [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] 
-test_beginyear                                        = 2001
-test_endyear                                          = 2001
+test_beginyears                                       = [2000]
+test_endyears                                         = [2022]
+additional_test_regions                               = ['']
 
 #########################################################################################################################################################
 
 [BLCO-CrossValidation]
 
-BLCO_CrossValidation_Switch                           = false
-Buffer_size                                           = [200]#,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]#200]
+BLCO_CrossValidation_Switch                           = true
+Buffer_size                                           = [160,170,180,190,200]#[110,120,130,140,150,160,170,180,190,200]#0,10,20,30,40,50,60,70,80,90,100]#,110,120,130,140,150,160,170,180,190,200]#200]
 
 [BLCO-CrossValidation.TrainingSettings]
 
 Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
-seeds_number                                          = 2
-kfold                                                 = 3 # larger than seeds number
+seeds_number                                          = 10
+kfold                                                 = 20 # larger than seeds number
 repeats                                               = 1
-beginyears                                            = [2000]#,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
-endyears                                              = [2001]#,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
-training_months                                       = [[8,9,10,11,0,1],[2,3,4,5,6,7]]#[[9,10,11,0,1,2],[3,4,5,6,7,8]]# [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
-test_beginyear                                        = 2000
-test_endyear                                          = 2000
+beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
+endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
+training_months                                       = [[8,9,10,11,0,1,2,3,4,5,6,7]]#[[9,10,11,0,1,2],[3,4,5,6,7,8]]# [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
+test_beginyears                                       = [2000]
+test_endyears                                         = [2022]
+additional_test_regions                               = ['Canada','Contiguous United States','Eastern Canada','Maritimes','Mexico','Midwestern United States','Northeastern United States',
+                    'Northern Canada','Northern North America','Northwestern United States','Southern United States','Southwestern United States','Western Canada']
 
 [BLCO-CrossValidation.visualization_Settings]
 
@@ -126,45 +130,78 @@ repeats                                               = 1
 beginyears                                            = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 endyears                                              = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 training_months                                       = [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
-test_beginyear                                        = 2001
-test_endyear                                          = 2019
+test_beginyears                                       = [2000]
+test_endyears                                         = [2022]
+additional_test_regions                               = ['']
 fixednumber_test_sites                                = []
 fixednumber_train_sites                               = []
 
+#########################################################################################################################################################
 
+[Sensitivity_Test-Settings]
+
+Sensitivity_Test_Switch                               = false
+Sensitivity_plot_Switch                               = false
+
+[Sensitivity_Test-Settings.Training_Settings]
+
+Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
+kfold                                                 = 2
+repeats                                               = 1
+beginyears                                            = [2000]#,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
+endyears                                              = [2000]#,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
+training_months                                       = [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
+test_beginyears                                       = [2000]
+test_endyears                                         = [2022]
+additional_test_regions                               = ['']
+Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['EtaCoastal'], ['EtaMixing'], ['EtaSGAOD_Bias'], ['EtaSGTOPO_Bias'], ['AOD'], ['ETA'], ['GeoPM25'],
+                                                       #['GeoNH4'],['GeoNIT'],['GeoSO4'],['GeoBC'],['GeoOM'],['GeoDUST'],['GeoSS'],
+                                                       #['NA_CNN_PM25'],#'GL_CNN_PM25'
+                                                       #['GC_PM25'], ['GC_NH4'], ['GC_SO4'], ['GC_NIT'], ['GC_SOA'], ['GC_OC'], ['GC_OM'], ['GC_BC'], ['GC_DST'],['GC_SSLT'],
+                                                       #['NH3_anthro_emi'],['SO2_anthro_emi'], ['NO_anthro_emi'], ['OC_anthro_emi'], ['BC_anthro_emi'],  ['N2O_anthro_emi'],['NMVOC_anthro_emi'],
+                                                       #['DST_offline_emi'], ['SSLT_offline_emi'],
+                                                       #['PBLH'], ['RH'], ['T2M'], ['U10M'], ['V10M'],['PRECTOT'],
+                                                       #['Urban_Builtup_Lands'],# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
+                                                       #['Month_of_Year'],
+                                                       #['Lat'], ['Lon'],['elevation'] #'S1','S2','S3',#'S1','S2','S3','  'Lat', 'Lon',
+                                                        #'Population'
+                                                       # ]
 
 #########################################################################################################################################################
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = true
+Estimation_Switch                                     = false
 Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
 Estimation_PWMPM_Cal_Switch                           = false
+
+
 Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2016,2017]#[1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-endyears                                              = [2016,2017]#[1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+beginyears                                            = [2018,2019,2020,2021,2022]#[1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
+endyears                                              = [2018,2019,2020,2021,2022]#[1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2016,2017]#[1998,1999,2000,2001,2002]
-Estiamtion_trained_endyears                           = [2016,2017]#[1998,1999,2000,2001,2002]
+Estiamtion_trained_beginyears                         = [2018,2019,2020,2021,2022]
+Estiamtion_trained_endyears                           = [2018,2019,2020,2021,2022]
 Estiamtion_trained_months                             = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] # Must be same order of Estimation-Settings.Training_Settings.training_months
-Estimation_years                                      = [[2016],[2017]]#[[1998],[1999],[2000],[2001],[2002]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019]]
-Estiamtion_months                                     = [[0]]#[9,10,11,0,1,2],[3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
+Estimation_years                                      = [[2018],[2019],[2020],[2021],[2022]]#[[1998],[1999],[2000],[2001],[2002]]#[[2001],[2002],[2003],[2004],[2005],[2006],[2007],[2008],[2009],[2010],[2011],[2012],[2013],[2014],[2015],[2016],[2017],[2018],[2019],[2020],[2021],[2022]]
+Estiamtion_months                                     = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 Estimation_ForcedSlopeUnity                           = true
 
 [Estimation-Settings.Visualization_Settings]
 
 Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
-Map_Plot_YEARS                                        = [2016,2017]#[1998,1999,2000,2001,2002]#[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
-Map_Plot_MONTHS                                       = ['01']#,'02','03','04','05','06','07','08','09','10','11','12']
+ForcedSlopeUnity_Map_Plot_Switch                      = true
+Map_Plot_YEARS                                        = [2018,2019,2020,2021,2022] #[2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
+Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
 Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
 
@@ -207,43 +244,15 @@ Uncertainty_Plot_MONTHS                               = ['01','02','03','04','05
 Uncertainty_Plot_Area                                 = 'NA'
 
 
-#########################################################################################################################################################
 
-[Sensitivity_Test-Settings]
-
-Sensitivity_Test_Switch                               = false
-Sensitivity_plot_Switch                               = false
-
-[Sensitivity_Test-Settings.Training_Settings]
-
-Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
-kfold                                                 = 2
-repeats                                               = 1
-beginyears                                            = [2000]#,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
-endyears                                              = [2000]#,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019]
-training_months                                       = [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
-test_beginyear                                        = 2000
-test_endyear                                          = 2000
-Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['EtaCoastal'], ['EtaMixing'], ['EtaSGAOD_Bias'], ['EtaSGTOPO_Bias'], ['AOD'], ['ETA'], ['GeoPM25'],
-                                                       #['GeoNH4'],['GeoNIT'],['GeoSO4'],['GeoBC'],['GeoOM'],['GeoDUST'],['GeoSS'],
-                                                       #['NA_CNN_PM25'],#'GL_CNN_PM25'
-                                                       #['GC_PM25'], ['GC_NH4'], ['GC_SO4'], ['GC_NIT'], ['GC_SOA'], ['GC_OC'], ['GC_OM'], ['GC_BC'], ['GC_DST'],['GC_SSLT'],
-                                                       #['NH3_anthro_emi'],['SO2_anthro_emi'], ['NO_anthro_emi'], ['OC_anthro_emi'], ['BC_anthro_emi'],  ['N2O_anthro_emi'],['NMVOC_anthro_emi'],
-                                                       #['DST_offline_emi'], ['SSLT_offline_emi'],
-                                                       #['PBLH'], ['RH'], ['T2M'], ['U10M'], ['V10M'],['PRECTOT'],
-                                                       #['Urban_Builtup_Lands'],# 'Croplands',#'Crop_Nat_Vege_Mos', 'Permanent_Wetlands', 'Croplands', 
-                                                       #['Month_of_Year'],
-                                                       #['Lat'], ['Lon'],['elevation'] #'S1','S2','S3',#'S1','S2','S3','  'Lat', 'Lon',
-                                                        #'Population'
-                                                       # ]
 
 #########################################################################################################################################################
 [Training-Settings]
 
 [Training-Settings.identity]
 
-version                                               = 'v1.6.3'
-special_name                                          = '_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-10d0_OneYearModel_ForcedSlopeUNity'
+version                                               = 'v1.6.4'
+special_name                                          = '_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-10d0_OneYearModel' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
 
 [Training-Settings.learning-objective]
 

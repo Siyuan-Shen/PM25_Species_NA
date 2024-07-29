@@ -4,7 +4,7 @@
 #BSUB -G compute-rvmartin
 #BSUB -gpu "num=1:j_exclusive=no"
 #BSUB -a 'docker(syword/python3-pytorch:2024.05)'
-#BSUB -J "1.6.2 '_GeoMSE_lambda1-10_Epoch31_ResNet_TwoCombineModels_GeoThreshold_4d0_1101_BasicBlock_month_based_models_1year-byHalfYear_Obsv1118_NA-PM_v1.5.0_GeLU_shap_values' SO4 w/OtherLandCover "
+#BSUB -J "1.6.4 '_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-10d0_OneYearModel' BLCO 160-200"
 #BSUB -g /s.siyuan/Test
 #BSUB -N
 #BSUB -u s.siyuan@wustl.edu
@@ -12,7 +12,7 @@
 
 /bin/true
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/SO4/v1.6.2
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.6.4
 python3 main.py
 
 # NVIDIAA100_SXM4_80GB

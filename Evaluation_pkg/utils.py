@@ -19,9 +19,9 @@ repeats = Spatial_Trainning_Settings['repeats']
 beginyears = Spatial_Trainning_Settings['beginyears']
 endyears = Spatial_Trainning_Settings['endyears']
 training_months = Spatial_Trainning_Settings['training_months']
-test_beginyear = Spatial_Trainning_Settings['test_beginyear']
-test_endyear = Spatial_Trainning_Settings['test_endyear']
-
+test_beginyears = Spatial_Trainning_Settings['test_beginyears']
+test_endyears = Spatial_Trainning_Settings['test_endyears']
+additional_test_regions = Spatial_Trainning_Settings['additional_test_regions']
 #######################################################################################
 # Forced Slope Unity Settings
 ForcedSlopeUnityTable = cfg['Spatial-CrossValidation']['Forced-Slope-Unity']
@@ -62,8 +62,9 @@ Fixnumber_repeats = FixNumber_Spatial_Settings['repeats']
 Fixnumber_beginyears = FixNumber_Spatial_Settings['beginyears']
 Fixnumber_endyears   = FixNumber_Spatial_Settings['endyears']
 Fixnumber_training_months = FixNumber_Spatial_Settings['training_months']
-Fixnumber_test_beginyear = FixNumber_Spatial_Settings['test_beginyear'] 
-Fixnumber_test_endyear   = FixNumber_Spatial_Settings['test_endyear'] 
+Fixnumber_test_beginyears = FixNumber_Spatial_Settings['test_beginyears'] 
+Fixnumber_test_endyears   = FixNumber_Spatial_Settings['test_endyears'] 
+Fixnumber_additional_test_regions = FixNumber_Spatial_Settings['additional_test_regions']
 Fixednumber_test_sites   = FixNumber_Spatial_Settings['fixednumber_test_sites']
 Fixednumber_train_sites  = FixNumber_Spatial_Settings['fixednumber_train_sites']
 
@@ -82,8 +83,9 @@ BLOO_repeats = BLOO_TrainingSettings['repeats']
 BLOO_beginyears = BLOO_TrainingSettings['beginyears']
 BLOO_endyears   = BLOO_TrainingSettings['endyears']
 BLOO_training_months = BLOO_TrainingSettings['training_months']
-BLOO_test_beginyear = BLOO_TrainingSettings['test_beginyear']
-BLOO_test_endyear   = BLOO_TrainingSettings['test_endyear']
+BLOO_test_beginyears = BLOO_TrainingSettings['test_beginyears']
+BLOO_test_endyears   = BLOO_TrainingSettings['test_endyears']
+BLOO_additional_test_regions = BLOO_TrainingSettings['additional_test_regions']
 
 
 ################################## BLCO Cross-Validation ################################
@@ -102,9 +104,9 @@ BLCO_repeats = BLCO_TrainingSettings['repeats']
 BLCO_beginyears = BLCO_TrainingSettings['beginyears']
 BLCO_endyears   = BLCO_TrainingSettings['endyears']
 BLCO_training_months = BLCO_TrainingSettings['training_months']
-BLCO_test_beginyear = BLCO_TrainingSettings['test_beginyear']
-BLCO_test_endyear   = BLCO_TrainingSettings['test_endyear']
-
+BLCO_test_beginyears = BLCO_TrainingSettings['test_beginyears']
+BLCO_test_endyears   = BLCO_TrainingSettings['test_endyears']
+BLCO_additional_test_regions = BLCO_TrainingSettings['additional_test_regions']
 #######################################################################################
 # BLCO Visualiztion Settings
 BLCO_Visualization_Settings = cfg['BLCO-CrossValidation']['visualization_Settings']
@@ -122,9 +124,42 @@ Sensitivity_Test_repeats           = Sensitivity_Test_Training_Settings['repeats
 Sensitivity_Test_beginyears        = Sensitivity_Test_Training_Settings['beginyears']
 Sensitivity_Test_endyears          = Sensitivity_Test_Training_Settings['endyears']
 Sensitivity_Test_training_months   = Sensitivity_Test_Training_Settings['training_months']         
-Sensitivity_Test_test_beginyear    = Sensitivity_Test_Training_Settings['test_beginyear']
-Sensitivity_Test_test_endyear      = Sensitivity_Test_Training_Settings['test_endyear']
+Sensitivity_Test_test_beginyears   = Sensitivity_Test_Training_Settings['test_beginyears']
+Sensitivity_Test_test_endyears     = Sensitivity_Test_Training_Settings['test_endyears']
+Sensitivity_Test_additional_test_regions = Sensitivity_Test_Training_Settings['additional_test_regions']
 Sensitivity_Test_Sensitivity_Test_Variables = Sensitivity_Test_Training_Settings['Sensitivity_Test_Variables']
+
+PROVMASK_lists = ['Alberta','British Columbia','Manitoba','New Brunswick','Newfoundland  & Labrador','Northwest Territories','Nova Scotia','Nunavut',
+                 'Ontario','Prince Edward Island','Quebec','Saskatchewan','Yukon Territory']
+REGIONMASK_lists = ['Alaska','Canada','Contiguous United States','Eastern Canada','Maritimes','Mexico','Midwestern United States','Northeastern United States',
+                    'Northern Canada','Northern North America','Northwestern United States','Southern United States','Southwestern United States','Western Canada']
+STATEMASK_lists = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','District of Columbia','Florida','Georgia','Hawaii',
+                   'Idaho', 'Illinois', 'Indiana', 'Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi',
+                   'Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon',
+                   'Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming']
+
+
+def get_nearest_point_index(sitelon, sitelat, lon_grid, lat_grid):
+    '''
+    func: get the index of stations on the grids map
+    inputs:
+        sitelon, sitelat: stations location, eg:[42.353,110.137] 0th dim:lat 1st dim:lat
+        lon_grid: grids longitude
+        lat_grid: grids latitude
+    return:
+        index: [index_lat,index_lon]
+    '''
+    # step1: get the spatial resolution; Default: the latitude and longitude have the same resolution
+    det = 0.01
+    # step2:
+    lon_min = np.min(lon_grid)
+    lat_min = np.min(lat_grid)
+    index_lon = np.round((sitelon - lon_min) / det)
+    index_lat = np.round((sitelat - lat_min) / det)
+    index_lon = index_lon.astype(int)
+    index_lat = index_lat.astype(int)
+    print('site_lat: {}, \n lat_min: {}'.format(sitelat, lat_min))
+    return index_lon,index_lat
 
 
 def Get_typeName(bias, normalize_bias, normalize_species, absolute_species, log_species, species):

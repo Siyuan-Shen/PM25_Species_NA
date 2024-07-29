@@ -51,12 +51,13 @@ def Estimation_Func(total_channel_names,mainstream_channel_names,side_channel_na
                         final_map_data = map_final_output(output=final_map_data,extent=Extent,YYYY=YEAR,MM=MM[imonth],SPECIES=species,bias=bias,
                                                         normalize_bias=normalize_bias,normalize_species=normalize_species,absolute_species=absolute_species,
                                                         log_species=log_species,mean=mean,std=std)
+                        save_final_map_data(final_data=final_map_data,YYYY=YEAR,MM=MM[imonth],extent=Extent,SPECIES=species,version=version,special_name=special_name)
                         if Estimation_ForcedSlopeUnity:
                             temp_offset = ForcedSlopeUnity_Dictionary_forEstimation['offset'][str(YEAR)][MONTH[imonth]]
                             temp_slope  = ForcedSlopeUnity_Dictionary_forEstimation['slope'][str(YEAR)][MONTH[imonth]]
                             final_map_data -= temp_offset
                             final_map_data /= temp_slope
-                        save_final_map_data(final_data=final_map_data,YYYY=YEAR,MM=MM[imonth],extent=Extent,SPECIES=species,version=version,special_name=special_name)
+                        
                         del map_input, final_map_data
                         gc.collect()
 

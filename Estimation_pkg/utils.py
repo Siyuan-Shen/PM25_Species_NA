@@ -42,6 +42,7 @@ Estimation_ForcedSlopeUnity = Map_Estimation_Settings['Estimation_ForcedSlopeUni
 Visualization_Settings = cfg['Estimation-Settings']['Visualization_Settings']
 
 Map_Plot_Switch                                       = Visualization_Settings['Map_Plot_Switch']       # Switch for plotting the map of estimated concentration. 
+ForcedSlopeUnity_Map_Plot_Switch                      = Visualization_Settings['ForcedSlopeUnity_Map_Plot_Switch']
 Map_Plot_YEARS                                        = Visualization_Settings['Map_Plot_YEARS']
 Map_Plot_MONTHS                                       = Visualization_Settings['Map_Plot_MONTHS']
 Map_Plot_Area                                         = Visualization_Settings['Map_Plot_Area']

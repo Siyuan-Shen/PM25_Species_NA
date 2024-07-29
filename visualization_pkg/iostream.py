@@ -26,6 +26,13 @@ def save_estimation_map_figure(typeName, species,version,Area,YYYY,MM,nchannel,w
     estimation_map_fig_outfile =  fig_outdir + 'EstimationMap_{}_{}_{}_{}_{}{}_{}Channel_{}x{}{}.png'.format(typeName,species,version,Area,YYYY,MM,nchannel,width,height,special_name)
     return estimation_map_fig_outfile
 
+def save_ForcedSlopeUnity_estimation_map_figure(typeName, species,version,Area,YYYY,MM,nchannel,width,height,special_name ):
+    fig_outdir = Estimation_Map_outdir + '{}/{}/Figures/figures-ForcedSlopeUnity_Estimation_Map/{}/'.format(species, version,YYYY)
+    if not os.path.isdir(fig_outdir):
+        os.makedirs(fig_outdir)
+    estimation_map_fig_outfile =  fig_outdir + 'EstimationMap_ForcedSlopeUnity_{}_{}_{}_{}_{}{}_{}Channel_{}x{}{}.png'.format(typeName,species,version,Area,YYYY,MM,nchannel,width,height,special_name)
+    return estimation_map_fig_outfile
+
 def save_uncertainty_map_figure(typeName, species,version,Area,YYYY,MM,nchannel,width,height,special_name ):
     fig_outdir = Uncertainty_Map_outdir + '{}/{}/Figures/figures-Uncertainty_Map/{}/'.format(species, version,YYYY)
     if not os.path.isdir(fig_outdir):
