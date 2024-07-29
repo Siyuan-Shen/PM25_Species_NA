@@ -210,7 +210,7 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 geo_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_geo_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
                 RMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_RMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
                 NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_NRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
-                PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_PWM_rRMSE(temp_final_data_recording, temp_obs_data_recording[masked_array_index], temp_testing_population_data_recording[masked_array_index])
+                PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_PWM_rRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index], temp_testing_population_data_recording[masked_array_index])
                 
                 regression_Dic = regress2(_x= temp_obs_data_recording,_y=temp_final_data_recording,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
                 intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
