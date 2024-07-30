@@ -142,10 +142,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                                             buffer_radius=buffer_radius,extent=[10.055,69.945,-169.945,-40.055],fig_outfile=fig_outfile)
         save_month_based_BLCO_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,geo_data_recording=geo_data_recording,training_final_data_recording=training_final_data_recording,
                                              training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,
-                                             lat_recording=lat_test_recording,lon_recording=lon_test_recording,
+                                             lat_recording=lat_test_recording,lon_recording=lon_test_recording,train_index_number=train_index_number,test_index_number=test_index_number,
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
 
-    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording = load_month_based_BLCO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
+    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording,train_index_number, test_index_number = load_month_based_BLCO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
 
     txtfile_outdir = txt_outdir + '{}/{}/Results/results-BLCOCV/statistical_indicators/{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
     if not os.path.isdir(txtfile_outdir):
