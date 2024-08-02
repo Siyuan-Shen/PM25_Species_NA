@@ -7,7 +7,7 @@ from Estimation_pkg.utils import *
 from Estimation_pkg.data_func import *
 from Estimation_pkg.training_func import Train_Model_forEstimation
 from Estimation_pkg.predict_func import map_predict,map_final_output
-from Estimation_pkg.iostream import load_ForcedSlope_forEstimation,load_map_data, load_trained_model_forEstimation,load_trained_month_based_model_forEstimation,save_final_map_data, load_estimation_map_data,save_combinedGeo_map_data
+from Estimation_pkg.iostream import save_ForcedSlopeUnity_final_map_data,load_ForcedSlope_forEstimation,load_map_data, load_trained_model_forEstimation,load_trained_month_based_model_forEstimation,save_final_map_data, load_estimation_map_data,save_combinedGeo_map_data
 
 from Training_pkg.iostream import load_TrainingVariables
 from Training_pkg.iostream import Learning_Object_Datasets
@@ -57,7 +57,8 @@ def Estimation_Func(total_channel_names,mainstream_channel_names,side_channel_na
                             temp_slope  = ForcedSlopeUnity_Dictionary_forEstimation['slope'][str(YEAR)][MONTH[imonth]]
                             final_map_data -= temp_offset
                             final_map_data /= temp_slope
-                        
+                        save_ForcedSlopeUnity_final_map_data(final_data=final_map_data,YYYY=YEAR,MM=MONTH[imonth],extent=Extent,SPECIES=species,
+                                                             version=version,special_name=special_name)
                         del map_input, final_map_data
                         gc.collect()
 
