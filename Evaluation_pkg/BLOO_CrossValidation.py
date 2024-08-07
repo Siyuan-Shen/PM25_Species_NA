@@ -139,27 +139,27 @@ def BLOO_AVD_Spatial_CrossValidation(buffer_radius, width, height, sitesnumber, 
     for iyear in range(len(BLOO_test_beginyears)):
         BLOO_test_beginyear = BLOO_test_beginyears[iyear]
         BLOO_test_endyear   = BLOO_test_endyears[iyear]
-        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=BLOO_test_beginyear, test_endyear=BLOO_test_endyear,
+        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors, regional_number = calculate_Statistics_results(test_beginyear=BLOO_test_beginyear, test_endyear=BLOO_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=site_index)
         txt_outfile =  txtfile_outdir + 'Buffered_{}-{}_{}km-{}fold-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLOO_test_beginyear,BLOO_test_endyear,buffer_radius,BLOO_kfold,typeName,species,version,nchannel,width,height,special_name)
         Output_Text_Sites_Number(outfile=txt_outfile, status='w', train_index_number=train_index_number, test_index_number=test_index_number, buffer=buffer_radius)
         AVD_output_text(outfile=txt_outfile,status='a',Area='North America',test_beginyears=BLOO_test_beginyear,test_endyears=BLOO_test_endyear, test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
     for iregion in BLOO_additional_test_regions:
         mask_map, mask_lat, mask_lon = load_NA_Mask_data(region_name=iregion)
         masked_array_index = find_masked_latlon(mask_map=mask_map,mask_lat=mask_lat,mask_lon=mask_lon,test_lat=lat_test_recording,test_lon=lon_test_recording)
         for iyear in range(len(BLOO_test_beginyears)):
             BLOO_test_beginyear = BLOO_test_beginyears[iyear]
             BLOO_test_endyear   = BLOO_test_endyears[iyear]
-            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=BLOO_test_beginyear, test_endyear=BLOO_test_endyear,
+            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors, regional_number = calculate_Statistics_results(test_beginyear=BLOO_test_beginyear, test_endyear=BLOO_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index)
             txt_outfile =  txtfile_outdir + 'Buffered_{}-{}_{}km-{}fold-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLOO_test_beginyear,BLOO_test_endyear,buffer_radius,BLOO_kfold,typeName,species,version,nchannel,width,height,special_name)
             AVD_output_text(outfile=txt_outfile,status='a',Area=iregion,test_beginyears=BLOO_test_beginyear,test_endyears=BLOO_test_endyear, test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
 
     save_BLOO_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,buffer_radius=buffer_radius)

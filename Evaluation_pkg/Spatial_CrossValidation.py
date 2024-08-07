@@ -132,26 +132,26 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
     for iyear in range(len(test_beginyears)):
         test_beginyear = test_beginyears[iyear]
         test_endyear   = test_endyears[iyear]
-        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
+        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors, regional_number = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=site_index)
         txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}-{}_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(test_beginyear,test_endyear,typeName,species,version,nchannel,width,height,special_name)
         AVD_output_text(outfile=txt_outfile,status='w', Area='North America',test_beginyears=test_beginyear,test_endyears=test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                            slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                            slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
     for iregion in additional_test_regions:
         mask_map, mask_lat, mask_lon = load_NA_Mask_data(region_name=iregion)
         masked_array_index = find_masked_latlon(mask_map=mask_map,mask_lat=mask_lat,mask_lon=mask_lon,test_lat=lat_test_recording,test_lon=lon_test_recording)
         for iyear in range(len(test_beginyears)):
             test_beginyear = test_beginyears[iyear]
             test_endyear   = test_endyears[iyear]
-            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
+            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors,regional_number = calculate_Statistics_results(test_beginyear=test_beginyear, test_endyear=test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index)
             txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}-{}_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(test_beginyear,test_endyear,typeName,species,version,nchannel,width,height,special_name)
             AVD_output_text(outfile=txt_outfile,status='a', Area=iregion,test_beginyears=test_beginyear,test_endyears=test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                                slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                                slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
     
     save_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
@@ -281,25 +281,25 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
         Fixnumber_test_beginyear = Fixnumber_test_beginyears[iyear]
         Fixnumber_test_endyear   = Fixnumber_test_endyears[iyear]
         txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}-{}_{}_{}_{}_{}Channel_{}testsites_{}trainsites_{}x{}{}.csv'.format(Fixnumber_test_beginyear,Fixnumber_test_endyear,typeName,species,version,nchannel,Fixednumber_test_site,Fixednumber_train_site,width,height,special_name)
-        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=Fixnumber_test_beginyear, test_endyear=Fixnumber_test_endyear,
+        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors,regional_number = calculate_Statistics_results(test_beginyear=Fixnumber_test_beginyear, test_endyear=Fixnumber_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=site_index)
         AVD_output_text(outfile=txt_outfile,status='w',Area='North America', test_beginyears=Fixnumber_test_beginyear,test_endyears=Fixnumber_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
     for iregion in Fixnumber_additional_test_regions:
         mask_map, mask_lat, mask_lon = load_NA_Mask_data(region_name=iregion)
         masked_array_index = find_masked_latlon(mask_map=mask_map,mask_lat=mask_lat,mask_lon=mask_lon,test_lat=lat_test_recording,test_lon=lon_test_recording)
         for iyear in range(len(Fixnumber_test_beginyears)):
             Fixnumber_test_beginyear = test_beginyears[iyear]
             Fixnumber_test_endyear   = test_endyears[iyear]
-            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=Fixnumber_test_beginyear, test_endyear=Fixnumber_test_beginyear,
+            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors, regional_number = calculate_Statistics_results(test_beginyear=Fixnumber_test_beginyear, test_endyear=Fixnumber_test_beginyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index)
             txt_outfile =  txtfile_outdir + 'AVDSpatialCV_{}-{}_{}_{}_{}_{}Channel_{}testsites_{}trainsites_{}x{}{}.csv'.format(Fixnumber_test_beginyear,Fixnumber_test_endyear,typeName,species,version,nchannel,Fixednumber_test_site,Fixednumber_train_site,width,height,special_name)
             AVD_output_text(outfile=txt_outfile,status='a', Area=iregion,test_beginyears=Fixnumber_test_beginyear,test_endyears=Fixnumber_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                                slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                                slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
     
     save_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)

@@ -62,7 +62,7 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
                         shap_values = CNNModel_Explainer.shap_values(Data_to_Explain,check_additivity=False)
                         shap_values = np.squeeze(shap_values)
                         print(shap_values.shape)
-                        Data_to_Explain = Data_to_Explain.numpy()
+                        Data_to_Explain = Data_to_Explain.cpu().detach().numpy()
                         shap_values_values = np.append(shap_values_values, shap_values, axis=0)
                         shap_values_data   = np.append(shap_values_data, Data_to_Explain, axis=0)
 
@@ -73,8 +73,8 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
         shap_values_values, shap_values_data = load_SHAPValues_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,
                                                                     width=width,height=height)
         if SHAP_Analysis_plot_type == 'beeswarm':
-            shap_values_values = np.mean(shap_values_values, axis=(2,3))
-            shap_values_data   = np.mean(shap_values_data, axis=(2,3))
+            shap_values_values = np.sum(shap_values_values, axis=(2,3))
+            shap_values_data   = np.sum(shap_values_data, axis=(2,3))
             shap_values_with_feature_names = shap.Explanation(values=shap_values_values,data=shap_values_data,feature_names=total_channel_names)
         SHAPvalues_Analysis_figure(shap_values_with_feature_names=shap_values_with_feature_names,plot_type=SHAP_Analysis_plot_type,typeName=typeName,
                                    species=species,version=version,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,width=width,height=height,special_name=special_name)
