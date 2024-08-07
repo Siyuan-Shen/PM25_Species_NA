@@ -798,7 +798,7 @@ def AVD_output_text(outfile:str,status:str,Area,test_beginyears,test_endyears,
 
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Area: {} ; Time Period: {} - {}; '.format(Area, test_beginyears, test_endyears), ' Total Site Number: {}'.format(regional_number)])
+        writer.writerow(['Area: {} ; Time Period: {} - {}'.format(Area, test_beginyears, test_endyears), ' Total Site Number: {}'.format(regional_number)])
         
         for imonth in MONTH:
             writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
@@ -850,7 +850,7 @@ def SensitivityTests_output_text(outfile:str,status:str,Area,test_beginyears,tes
 
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {} ;'.format(Area, test_beginyears, test_endyears, Exclude_Variables), ' Total Site Number: {}'.format(regional_number)])
+        writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {}'.format(Area, test_beginyears, test_endyears, Exclude_Variables), ' Total Site Number: {}'.format(regional_number)])
         
         for imonth in MONTH:
             writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
