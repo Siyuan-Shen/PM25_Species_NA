@@ -10,7 +10,7 @@ def find_masked_latlon(mask_map,mask_lat,mask_lon,test_lat,test_lon):
     index_lon,index_lat = get_nearest_point_index(test_lon,test_lat,mask_lon,mask_lat)
     masked_obs_array = mask_map[index_lat,index_lon]
     masked_array_index = np.where(masked_obs_array == 1)
-    return masked_array_index
+    return masked_array_index[0]
 
 def GetXIndex(index,beginyear:int, endyear:int, sitenumber:int):
     X_index = np.zeros((12 * (endyear - beginyear + 1) * len(index)), dtype=int)
