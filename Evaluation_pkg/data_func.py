@@ -219,8 +219,8 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_obs_data_recording[masked_array_index])
                 
                 
-
-    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slopes, PWAModel, PWAMonitors
+    
+    return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slopes, PWAModel, PWAMonitors, len(masked_array_index)
 
 
 def calculate_Alltime_Statistics_results(test_beginyear:dict,test_endyear:int,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PWM_NRMSE, slope,PWAModel,PWAMonitors ):

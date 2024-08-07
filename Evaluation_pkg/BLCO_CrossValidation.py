@@ -154,14 +154,14 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
         BLCO_test_beginyear = BLCO_test_beginyears[iyear]
         BLCO_test_endyear   = BLCO_test_endyears[iyear]
         
-        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=BLCO_test_beginyear, test_endyear=BLCO_test_endyear,
+        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors,regional_number = calculate_Statistics_results(test_beginyear=BLCO_test_beginyear, test_endyear=BLCO_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=np.array(range(len(lat_test_recording))))
         txt_outfile =  txtfile_outdir + 'BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
         Output_Text_Sites_Number(outfile=txt_outfile, status='w', train_index_number=train_index_number, test_index_number=test_index_number, buffer=buffer_radius)
         AVD_output_text(outfile=txt_outfile,status='a',Area='North America',test_beginyears=BLCO_test_beginyear,test_endyears=BLCO_test_endyear, test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
         
     for iregion in BLCO_additional_test_regions:
         mask_map, mask_lat, mask_lon = load_NA_Mask_data(region_name=iregion)
@@ -169,13 +169,13 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
         for iyear in range(len(BLCO_test_beginyears)):
             BLCO_test_beginyear = BLCO_test_beginyears[iyear]
             BLCO_test_endyear   = BLCO_test_endyears[iyear]
-            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=BLCO_test_beginyear, test_endyear=BLCO_test_endyear,
+            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors, regional_number = calculate_Statistics_results(test_beginyear=BLCO_test_beginyear, test_endyear=BLCO_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index)
             txt_outfile =  txtfile_outdir + 'BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
             AVD_output_text(outfile=txt_outfile,status='a', Area=iregion,test_beginyears=BLCO_test_beginyear,test_endyears=BLCO_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                                slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors)
+                                slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
 
     save_BLCO_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,buffer_radius=buffer_radius)

@@ -136,28 +136,28 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
     for iyear in range(len(Sensitivity_Test_test_beginyears)):
         Sensitivity_Test_test_beginyear = Sensitivity_Test_test_beginyears[iyear]
         Sensitivity_Test_test_endyear   = Sensitivity_Test_test_endyears[iyear]
-        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=Sensitivity_Test_test_beginyear, test_endyear=Sensitivity_Test_test_endyear,
+        test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors,regional_number = calculate_Statistics_results(test_beginyear=Sensitivity_Test_test_beginyear, test_endyear=Sensitivity_Test_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=site_index)
         
         txt_outfile =  txtfile_outdir + 'Sensitivity_Tests_{}-{}_{}_{}_{}_{}Channel_{}x{}{}_Exclude{}.csv'.format(Sensitivity_Test_test_beginyear,Sensitivity_Test_test_endyear,typeName,species,version,nchannel,width,height,special_name,exclude_names_suffix)
         SensitivityTests_output_text(outfile=txt_outfile,status='w',Area='North America', test_beginyears=Sensitivity_Test_test_beginyear,test_endyears=Sensitivity_Test_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,exclude_channels_names=exclude_channel_names)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,exclude_channels_names=exclude_channel_names,regional_number=regional_number)
     for iregion in Sensitivity_Test_additional_test_regions:
         mask_map, mask_lat, mask_lon = load_NA_Mask_data(region_name=iregion)
         masked_array_index = find_masked_latlon(mask_map=mask_map,mask_lat=mask_lat,mask_lon=mask_lon,test_lat=lat_test_recording,test_lon=lon_test_recording)
         for iyear in range(len(Sensitivity_Test_test_beginyears)):
             Sensitivity_Test_test_beginyear = Sensitivity_Test_test_beginyears[iyear]
             Sensitivity_Test_test_endyear   = Sensitivity_Test_test_endyears[iyear]
-            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors = calculate_Statistics_results(test_beginyear=Sensitivity_Test_test_beginyear, test_endyear=Sensitivity_Test_test_endyear,
+            test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors,regional_number = calculate_Statistics_results(test_beginyear=Sensitivity_Test_test_beginyear, test_endyear=Sensitivity_Test_test_endyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index)
         
             txt_outfile =  txtfile_outdir + 'Sensitivity_Tests_{}-{}_{}_{}_{}_{}Channel_{}x{}{}_Exclude{}.csv'.format(Sensitivity_Test_test_beginyear,Sensitivity_Test_test_endyear,typeName,species,version,nchannel,width,height,special_name,exclude_names_suffix)
             SensitivityTests_output_text(outfile=txt_outfile,status='a',Area=iregion, test_beginyears=Sensitivity_Test_test_beginyear,test_endyears=Sensitivity_Test_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,exclude_channels_names=exclude_channel_names)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,exclude_channels_names=exclude_channel_names,regional_number=regional_number)
     
     save_sensitivity_test_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,exclude_names_suffix=exclude_names_suffix)
