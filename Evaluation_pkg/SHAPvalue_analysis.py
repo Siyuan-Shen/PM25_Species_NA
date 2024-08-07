@@ -33,7 +33,7 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
         Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
         rkf = RepeatedKFold(n_splits=kfold, n_repeats=repeats, random_state=seed)
         count = 0
-        shap_values_values, shap_values_base,shap_values_data = np.array([],dtype=np.float32),np.array([],dtype=np.float32),np.array([],dtype=np.float32) #initialize_AVD_SHAPValues_DataRecording(beginyear=test_beginyear,endyear=test_endyear)
+        shap_values_values, shap_values_base,shap_values_data = np.zeros([0,nchannel,width,height],dtype=np.float32),np.array([],dtype=np.float32),np.zeros([0,nchannel,width,height],dtype=np.float32) #initialize_AVD_SHAPValues_DataRecording(beginyear=test_beginyear,endyear=test_endyear)
         for train_index, test_index in rkf.split(site_index):
             for imodel_year in range(len(beginyears)):
                 Normalized_TrainingData = get_trainingdata_within_sart_end_YEAR(initial_array=Initial_Normalized_TrainingData, training_start_YYYY=beginyears[imodel_year],training_end_YYYY=endyears[imodel_year],start_YYYY=start_YYYY,sitesnumber=sitesnumber)
