@@ -125,6 +125,8 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                                         training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,lat_recording=lat_test_recording,lon_recording=lon_test_recording,
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height)
     
+        save_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
+                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
     txtfile_outdir = txt_outdir + '{}/{}/Results/results-SpatialCV/statistical_indicators/{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,typeName,species,version,nchannel,width,height,special_name)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
@@ -153,8 +155,7 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
             AVD_output_text(outfile=txt_outfile,status='a', Area=iregion,test_beginyears=test_beginyear,test_endyears=test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                                 slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
     
-    save_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
-                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height)
+    
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=test_beginyear, endyear=test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height)
@@ -293,6 +294,7 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
         for iyear in range(len(Fixnumber_test_beginyears)):
             Fixnumber_test_beginyear = test_beginyears[iyear]
             Fixnumber_test_endyear   = test_endyears[iyear]
+        
             test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slope, PWAModel, PWAMonitors, regional_number = calculate_Statistics_results(test_beginyear=Fixnumber_test_beginyear, test_endyear=Fixnumber_test_beginyear,
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,

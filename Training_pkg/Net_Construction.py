@@ -453,11 +453,6 @@ class ResNet_Classfication(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        #x = self.conv1(x)
-        #x = self.bn1(x)
-        #x = self.tanh(x)
-        #x = self.maxpool(x)
-
         x = self.layer0(x)
         x = self.layer1(x)
         x = self.layer2(x)
@@ -469,7 +464,6 @@ class ResNet_Classfication(nn.Module):
             x = torch.flatten(x, 1)
             classification_output = self.bins_fc(x)
             classification_output = self.softmax(classification_output)
-        #final_output = 0.5*regression_output + 0.5*torch.matmul(classification_output,self.bins)
         return classification_output
 
 
@@ -556,11 +550,6 @@ class MultiHead_ResNet(nn.Module):
         return nn.Sequential(*layers)
     
     def forward(self, x):
-        #x = self.conv1(x)
-        #x = self.bn1(x)
-        #x = self.tanh(x)
-        #x = self.maxpool(x)
-
         
         x = self.layer0(x)
         x = self.layer1(x)
@@ -574,7 +563,6 @@ class MultiHead_ResNet(nn.Module):
             regression_output = self.fc(x)
             classification_output = self.bins_fc(x)
             classification_output = self.softmax(classification_output)
-        #final_output = 0.5*regression_output + 0.5*torch.matmul(classification_output,self.bins)
         return regression_output, classification_output
     
 class LateFusion_ResNet(nn.Module):

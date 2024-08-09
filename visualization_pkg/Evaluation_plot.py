@@ -6,6 +6,7 @@ import matplotlib.colors as colors
 import cartopy.crs as ccrs
 from sklearn.metrics import mean_squared_error,r2_score
 from Training_pkg.Statistic_Func import regress2, linear_regression
+from Training_pkg.utils import species
 from visualization_pkg.utils import Loss_Accuracy_outdir
 
 nrows = 2
@@ -32,6 +33,7 @@ figheight = height*2 + vmargin*2
 def shap_value_plot(shap_values_with_feature_names:shap._explanation.Explanation,plot_type:str,outfile:str):
     if plot_type == 'beeswarm':
         shap.plots.beeswarm(shap_values_with_feature_names, show=False)
+        plt.xlabel('Impact on {} bias (ug/m3)'.format(species))
         plt.savefig(outfile,format='png',dpi=1000, bbox_inches='tight')
     return
 def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
