@@ -128,96 +128,128 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
     Season_MONTH = [['Mar', 'Apr', 'May'], ['Jun', 'Jul', 'Aug'], ['Sep', 'Oct', 'Nov'], ['Dec','Jan', 'Feb']]
     Seasons = ['MAM','JJA','SON','DJF']
     test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE,slopes, PWAModel, PWAMonitors = initialize_AVD_CV_dict(test_beginyear=test_beginyear,test_endyear=test_endyear)
-    
-    for iyear in range(test_endyear-test_beginyear+1):
-            for imonth in MONTH:
-                print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, imonth))
-                test_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                train_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                geo_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(geo_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                RMSE[str(test_beginyear+iyear)][imonth] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                PWM_NRMSE[str(test_beginyear+iyear)][imonth] = Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                NRMSE[str(test_beginyear+iyear)][imonth] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                
-                regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)][imonth],_y=final_data_recording[str(test_beginyear+iyear)][imonth],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
-                intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
-                slopes[str(test_beginyear+iyear)][imonth] = slope
-                PWAModel[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                PWAMonitors[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
-                if imonth == 'Jan':
-                    final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)][imonth].copy()
-                    obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
-                    geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)][imonth].copy()
-                    training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)][imonth].copy()
-                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth].copy()
-                    training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
-                    #PWAModel[str(test_beginyear+iyear)]['Annual']  = PWAModel[str(test_beginyear+iyear)][imonth]
-                    #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)][imonth]
-                else:
-                    final_data_recording[str(test_beginyear+iyear)]['Annual'] += final_data_recording[str(test_beginyear+iyear)][imonth]
-                    obs_data_recording[str(test_beginyear+iyear)]['Annual'] += obs_data_recording[str(test_beginyear+iyear)][imonth]
-                    geo_data_recording[str(test_beginyear+iyear)]['Annual'] += geo_data_recording[str(test_beginyear+iyear)][imonth]
-                    training_final_data_recording[str(test_beginyear+iyear)]['Annual'] += training_final_data_recording[str(test_beginyear+iyear)][imonth]
-                    testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] += testing_population_data_recording[str(test_beginyear+iyear)][imonth]
-                    training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] += training_obs_data_recording[str(test_beginyear+iyear)][imonth]
-                    #PWAModel[str(test_beginyear+iyear)]['Annual']  += PWAModel[str(test_beginyear+iyear)][imonth]
-                    #PWAMonitors[str(test_beginyear+iyear)]['Annual'] += PWAMonitors[str(test_beginyear+iyear)][imonth]
+    if len(masked_array_index)!=0:
+        for iyear in range(test_endyear-test_beginyear+1):
+                for imonth in MONTH:
+                    print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, imonth))
+                    test_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    train_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    geo_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(geo_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    RMSE[str(test_beginyear+iyear)][imonth] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    PWM_NRMSE[str(test_beginyear+iyear)][imonth] = Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    NRMSE[str(test_beginyear+iyear)][imonth] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
                     
-            final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
-            #PWAModel[str(test_beginyear+iyear)]['Annual'] = PWAModel[str(test_beginyear+iyear)]['Annual']/12.0
-            #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)]['Annual']/12.0
-            
-            print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, 'Annual'))
-            test_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            train_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            geo_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(geo_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            RMSE[str(test_beginyear+iyear)]['Annual'] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            NRMSE[str(test_beginyear+iyear)]['Annual'] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            PWM_NRMSE[str(test_beginyear+iyear)]['Annual'] = Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            
-            PWAModel[str(test_beginyear+iyear)]['Annual'] = Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            PWAMonitors [str(test_beginyear+iyear)]['Annual'] = Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
-            regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],_y=final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
-            intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
-            slopes[str(test_beginyear+iyear)]['Annual'] = slope
-
-            for iseason in range(len(Seasons)):
-                temp_final_data_recording = np.zeros(len(final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
-                temp_obs_data_recording   = np.zeros(len(obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
-                temp_geo_data_recording   = np.zeros(len(geo_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
-                temp_training_final_data_recording   = np.zeros(len(training_final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
-                temp_training_obs_data_recording   = np.zeros(len(training_obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
-                temp_testing_population_data_recording   = np.zeros(len(testing_population_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
-                for imonth in Season_MONTH[iseason]:
-                    print('{} Season_Month[iseason]: {}'.format(iseason, imonth))
-                    print('temp_obs_data_recording: ',temp_obs_data_recording)
-                    print('obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0: ',obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0)
-                    temp_final_data_recording += final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-                    temp_obs_data_recording   += obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-                    temp_geo_data_recording   += geo_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-                    temp_training_final_data_recording += training_final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-                    temp_training_obs_data_recording   += training_obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-                    temp_testing_population_data_recording += testing_population_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-
-                print('Area: {}, Year: {}, Season: {}'.format('NA', test_beginyear+iyear, Seasons[iseason]))
-                test_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
-                train_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_training_final_data_recording[masked_array_index], temp_training_obs_data_recording[masked_array_index])
-                geo_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_geo_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
-                RMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_RMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
-                NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_NRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
-                PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_PWM_rRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index], temp_testing_population_data_recording[masked_array_index])
+                    regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)][imonth],_y=final_data_recording[str(test_beginyear+iyear)][imonth],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+                    intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
+                    slopes[str(test_beginyear+iyear)][imonth] = slope
+                    PWAModel[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    PWAMonitors[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    if imonth == 'Jan':
+                        final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                        obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                        geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                        training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                        testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                        training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
+                        #PWAModel[str(test_beginyear+iyear)]['Annual']  = PWAModel[str(test_beginyear+iyear)][imonth]
+                        #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)][imonth]
+                    else:
+                        final_data_recording[str(test_beginyear+iyear)]['Annual'] += final_data_recording[str(test_beginyear+iyear)][imonth]
+                        obs_data_recording[str(test_beginyear+iyear)]['Annual'] += obs_data_recording[str(test_beginyear+iyear)][imonth]
+                        geo_data_recording[str(test_beginyear+iyear)]['Annual'] += geo_data_recording[str(test_beginyear+iyear)][imonth]
+                        training_final_data_recording[str(test_beginyear+iyear)]['Annual'] += training_final_data_recording[str(test_beginyear+iyear)][imonth]
+                        testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] += testing_population_data_recording[str(test_beginyear+iyear)][imonth]
+                        training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] += training_obs_data_recording[str(test_beginyear+iyear)][imonth]
+                        #PWAModel[str(test_beginyear+iyear)]['Annual']  += PWAModel[str(test_beginyear+iyear)][imonth]
+                        #PWAMonitors[str(test_beginyear+iyear)]['Annual'] += PWAMonitors[str(test_beginyear+iyear)][imonth]
+                        
+                final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+                obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+                geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+                training_final_data_recording[str(test_beginyear+iyear)]['Annual'] = training_final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+                training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] = training_obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+                testing_population_data_recording[str(test_beginyear+iyear)]['Annual'] = testing_population_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
+                #PWAModel[str(test_beginyear+iyear)]['Annual'] = PWAModel[str(test_beginyear+iyear)]['Annual']/12.0
+                #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)]['Annual']/12.0
                 
-                regression_Dic = regress2(_x= temp_obs_data_recording,_y=temp_final_data_recording,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+                print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, 'Annual'))
+                test_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                train_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                geo_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(geo_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                RMSE[str(test_beginyear+iyear)]['Annual'] = Cal_RMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                NRMSE[str(test_beginyear+iyear)]['Annual'] = Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                PWM_NRMSE[str(test_beginyear+iyear)]['Annual'] = Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                
+                PWAModel[str(test_beginyear+iyear)]['Annual'] = Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                PWAMonitors [str(test_beginyear+iyear)]['Annual'] = Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                regression_Dic = regress2(_x= obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],_y=final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
                 intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
-                slopes[str(test_beginyear+iyear)][Seasons[iseason]] = slope
-                PWAModel[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_final_data_recording[masked_array_index])
-                PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_obs_data_recording[masked_array_index])
+                slopes[str(test_beginyear+iyear)]['Annual'] = slope
+
+                for iseason in range(len(Seasons)):
+                    temp_final_data_recording = np.zeros(len(final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                    temp_obs_data_recording   = np.zeros(len(obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                    temp_geo_data_recording   = np.zeros(len(geo_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                    temp_training_final_data_recording   = np.zeros(len(training_final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                    temp_training_obs_data_recording   = np.zeros(len(training_obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                    temp_testing_population_data_recording   = np.zeros(len(testing_population_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
+                    for imonth in Season_MONTH[iseason]:
+                        print('{} Season_Month[iseason]: {}'.format(iseason, imonth))
+                        print('temp_obs_data_recording: ',temp_obs_data_recording)
+                        print('obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0: ',obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0)
+                        temp_final_data_recording += final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                        temp_obs_data_recording   += obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                        temp_geo_data_recording   += geo_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                        temp_training_final_data_recording += training_final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                        temp_training_obs_data_recording   += training_obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+                        temp_testing_population_data_recording += testing_population_data_recording[str(test_beginyear+iyear)][imonth]/3.0
+
+                    print('Area: {}, Year: {}, Season: {}'.format('NA', test_beginyear+iyear, Seasons[iseason]))
+                    test_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    train_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_training_final_data_recording[masked_array_index], temp_training_obs_data_recording[masked_array_index])
+                    geo_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_geo_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    RMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_RMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_NRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = Cal_PWM_rRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index], temp_testing_population_data_recording[masked_array_index])
+                    
+                    regression_Dic = regress2(_x= temp_obs_data_recording,_y=temp_final_data_recording,_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+                    intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
+                    slopes[str(test_beginyear+iyear)][Seasons[iseason]] = slope
+                    PWAModel[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_final_data_recording[masked_array_index])
+                    PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_obs_data_recording[masked_array_index])
+    else:
+        for iyear in range(test_endyear-test_beginyear+1):
+                for imonth in MONTH:
+                    print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, imonth))
+                    test_CV_R2[str(test_beginyear+iyear)][imonth] = 0
+                    train_CV_R2[str(test_beginyear+iyear)][imonth] = 0#linear_regression(training_final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    geo_CV_R2[str(test_beginyear+iyear)][imonth] = 0#linear_regression(geo_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    RMSE[str(test_beginyear+iyear)][imonth] = 0#Cal_RMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    PWM_NRMSE[str(test_beginyear+iyear)][imonth] = 0#Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    NRMSE[str(test_beginyear+iyear)][imonth] = 0#Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+
+                    PWAModel[str(test_beginyear+iyear)][imonth] = 0#Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    PWAMonitors[str(test_beginyear+iyear)][imonth] = 0#Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                        
+                test_CV_R2[str(test_beginyear+iyear)]['Annual'] = 0#linear_regression(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                train_CV_R2[str(test_beginyear+iyear)]['Annual'] = 0#linear_regression(training_final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                geo_CV_R2[str(test_beginyear+iyear)]['Annual'] = 0#linear_regression(geo_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                RMSE[str(test_beginyear+iyear)]['Annual'] =0# Cal_RMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                NRMSE[str(test_beginyear+iyear)]['Annual'] = 0#Cal_NRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                PWM_NRMSE[str(test_beginyear+iyear)]['Annual'] = 0#Cal_PWM_rRMSE(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
                 
+                PWAModel[str(test_beginyear+iyear)]['Annual'] = 0#Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                PWAMonitors [str(test_beginyear+iyear)]['Annual'] = 0#Calculate_PWA_PM25(testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index],obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                for iseason in range(len(Seasons)):
+                    test_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = 0#linear_regression(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    train_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = 0#linear_regression(temp_training_final_data_recording[masked_array_index], temp_training_obs_data_recording[masked_array_index])
+                    geo_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = 0#linear_regression(temp_geo_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    RMSE[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Cal_RMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Cal_NRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
+                    PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Cal_PWM_rRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index], temp_testing_population_data_recording[masked_array_index])
+                    PWAModel[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_final_data_recording[masked_array_index])
+                    PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_obs_data_recording[masked_array_index])
+
                 
     
     return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slopes, PWAModel, PWAMonitors, len(masked_array_index)

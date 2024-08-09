@@ -1,5 +1,6 @@
 import toml
 import os
+import pprint
 from Training_pkg.utils import *
 from Training_pkg.iostream import load_TrainingVariables
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure, plot_save_estimation_map_figure
@@ -18,6 +19,7 @@ from Uncertainty_pkg.uncertainty_estimation import Derive_Estimation_Uncertainty
 from Uncertainty_pkg.utils import Uncertainty_Switch
 
 cfg = toml.load('./config.toml')
+pprint.pprint(cfg)
 
 if __name__ == '__main__':
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)

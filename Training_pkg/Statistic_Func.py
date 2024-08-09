@@ -26,8 +26,11 @@ def linear_regression(x, y):
         varX += diffXXBar ** 2
         varY += diffYYBar ** 2
     SST = math.sqrt(varX * varY)
-    print("r: ", SSR / SST, "r-squared: ", (SSR / SST) ** 2)
-    rsquared = (SSR / SST) ** 2
+    if SST == 0.0:
+        rsquared = 0.0
+    else:
+        print("r: ", SSR / SST, "r-squared: ", (SSR / SST) ** 2)
+        rsquared = (SSR / SST) ** 2
     return rsquared
 
 def Cal_RMSE(x,y):
