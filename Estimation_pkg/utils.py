@@ -7,7 +7,8 @@ cfg = toml.load('./config.toml')
 #######################################################################################
 # outdir
 Estimation_outdir = cfg['Pathway']['Estimation-dir']['Estimation_outdir']
-
+NorthAmerica_PM25_version =  cfg['Pathway']['Estimation-dir']['NorthAmerica_PM25_version']
+NorthAmerica_PM25_special_name  = cfg['Pathway']['Estimation-dir']['NorthAmerica_PM25_special_name']
 #######################################################################################
 # Estimation Switch
 
@@ -70,8 +71,6 @@ Analysis_MONTH                                        = PWM_PM_Calculation_Setti
 #######################################################################################################################
 #######################################################################################################################
 
-NorthAmerica_PM25_version           = 'v1.0.0'
-NorthAmerica_PM25_special_name      = '_ResNet_Basic1111_2'
 
 GeoPM25_AOD_ETA_input_indir         = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoPM25_AOD_ETA_input/'
 GeoSpecies_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoSpecies/'
