@@ -9,7 +9,7 @@ from Uncertainty_pkg.utils import *
 from Training_pkg.iostream import load_TrainingVariables
 from Training_pkg.utils import *
 
-from Estimation_pkg.iostream import load_estimation_map_data
+from Estimation_pkg.iostream import load_estimation_map_data,load_Annual_estimation_map_data
 
 from visualization_pkg.Assemble_Func import plot_save_uncertainty_map_figure
 def Derive_Estimation_Uncertainty():
@@ -19,7 +19,7 @@ def Derive_Estimation_Uncertainty():
     
     if Derive_rRMSE_map_Switch:
         distances_map = load_pixels_nearest_sites_distances_map()
-        rRMSE = load_BLOO_rRMSE()
+        rRMSE = load_BLCO_rRMSE()
         for imonth in range(len(MONTH)):
             rRMSE_Map = convert_distance_to_rRMSE_uncertainty(buffer_radii=Buffer_radii_forUncertainty,BLOO_rRMSE=rRMSE[imonth,:],map_distances=distances_map)
             save_rRMSE_uncertainty_Map(Map_rRMSE=rRMSE_Map,MM=MONTH[imonth])
@@ -28,7 +28,11 @@ def Derive_Estimation_Uncertainty():
         for iyear in range(len(Uncertainty_Estimation_years)):
             for imonth in range(len(Uncertainty_Estimation_months)):
                 print('Derive Absolute Uncertainty - YEAR:{}, MONTH:{}'.format(Uncertainty_Estimation_years[iyear],Uncertainty_Estimation_months[imonth]))
-                Estimation_Map,lat, lon = load_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],MM=Uncertainty_Estimation_months[imonth],
+                if Uncertainty_Estimation_months[imonth] == 'Annual':
+                    Estimation_Map, lat, lon = Uncertainty_Estimation_months(YYYY=Uncertainty_Estimation_years[iyear],
+                                                          SPECIES=species,version=version,special_name=special_name)
+                else:
+                    Estimation_Map,lat, lon = load_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],MM=Uncertainty_Estimation_months[imonth],
                                                           SPECIES=species,version=version,special_name=special_name)
                 rRMSE_Map,lat, lon      = load_rRMSE_map_data(MM=Uncertainty_Estimation_months[imonth],version=version,special_name=special_name)
                 print('rRMSE type:{}, Estimation type:{}'.format(type(rRMSE_Map),type(Estimation_Map)))
