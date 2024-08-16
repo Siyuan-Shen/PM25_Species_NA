@@ -29,7 +29,6 @@ def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.arr
     MONTH = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     PM25_Map[np.where(PM25_Map < 0)] = 0
     PM25_Map = np.nan_to_num(PM25_Map, nan=5.0, posinf=3.0, neginf=2.0)
-
     Cropped_Population_Map = crop_map_data(Population_Map,population_Lat,population_Lon,extent)
     Croppeed_PM25_Map      = crop_map_data(PM25_Map, PM25_LAT, PM25_LON,Extent=extent)
     PWA_PM25 = Calculate_PWA_PM25(Population_array=Cropped_Population_Map, PM25_array=Croppeed_PM25_Map)
@@ -45,8 +44,8 @@ def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.arr
     ax.set_extent(extent,crs=ccrs.PlateCarree())
     ax.add_feature(cfeat.NaturalEarthFeature('physical', 'ocean', '50m', edgecolor='none', facecolor='white'))
     #ax.add_feature(cfeat.COASTLINE,linewidth = 0.15) 
-    ax.add_feature(cfeat.LAKES, linewidth = 0.05)
-    ax.add_feature(cfeat.BORDERS, linewidth=0.1)
+    ax.add_feature(cfeat.LAKES, linewidth   = 0.05)
+    ax.add_feature(cfeat.BORDERS, linewidth = 0.1)
     pcm = plt.pcolormesh(PM25_LON, PM25_LAT,PM25_Map,transform=ccrs.PlateCarree(),
           cmap = 'YlOrRd',norm=colors.Normalize(vmin = m1, vmax = m2))
     #ax.add_feature(cfeat.OCEAN) 
