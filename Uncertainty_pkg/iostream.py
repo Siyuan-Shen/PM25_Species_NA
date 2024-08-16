@@ -4,14 +4,16 @@ import netCDF4 as nc
 import os
 from Training_pkg.utils import *
 from Estimation_pkg.utils import *
+from Evaluation_pkg.utils import *
 from Uncertainty_pkg.utils import *
 
 
-def load_BLOO_rRMSE():
-    indir = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/results-BLOOCV/'.format(species, version)
+def load_BLCO_rRMSE():
+    nchannel   = len(channel_names)
+    indir = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/results-BLCOCV/statistical_indicators/'.format(species, version)
     rRMSE = np.zeros((13,len(Buffer_radii_forUncertainty)))
     for iradius in range(len(Buffer_radii_forUncertainty)):
-        infile = indir + 'BLOO-{}km-SpatialCV_PM25-bias_PM25_v1.0.0_29Channel_11x11_ResNet_Basic1111_1.csv'.format(Buffer_radii_forUncertainty[iradius])
+        infile = indir + 'BLCO-{}km-{}fold-{}ClusterSeeds-SpatialCV_{}-bias_{}_{}_{}Channel_11x11{}_2000-2022.csv'.format(Buffer_radii_forUncertainty[iradius],BLCO_kfold,BLCO_seeds_number,species,species,version,nchannel,special_name)
         with open(infile, newline='') as f:
             reader = csv.reader(f)
             count = 0
@@ -106,8 +108,8 @@ def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
     outfile = outdir + 'rRMSE_Map_{}_{}_{}{}.nc'.format(species,version,MM,special_name)
     lat_size = Map_rRMSE.shape[0]
     lon_size = Map_rRMSE.shape[1]
-    lat_delta = (Extent[1]-Extent[0])/(lat_size-1)
-    lon_delta = (Extent[3]-Extent[2])/(lon_size-1)
+    lat_delta = (Extent[1]-Extent[0])/lat_size
+    lon_delta = (Extent[3]-Extent[2])/lon_size
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Monthly {} rRMSE Map over North America Area.'.format(species)
@@ -121,8 +123,8 @@ def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
     rRMSE = MapData.createVariable(species,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(Extent[0],Extent[1+lat_delta],lat_delta)
-    longitudes[:] = np.arange(Extent[2],Extent[3]+lon_delta,lon_delta) 
+    latitudes[:] = np.arange(Extent[0],Extent[1],lat_delta)
+    longitudes[:] = np.arange(Extent[2],Extent[3],lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -142,8 +144,8 @@ def save_absolute_uncertainty_data(final_data:np.array, YYYY:str, MM:str):
     outfile = outdir + 'AbsoluteUncertainty_{}_{}_{}{}{}.nc'.format(species,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
-    lat_delta = (Extent[1]-Extent[0])/(lat_size-1)
-    lon_delta = (Extent[3]-Extent[2])/(lon_size-1)
+    lat_delta = (Extent[1]-Extent[0])/lat_size
+    lon_delta = (Extent[3]-Extent[2])/lon_size
 
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Convolutional Neural Network Monthly {} Absolute Uncertainty Estimation over North America Area.'.format(species)
@@ -157,8 +159,8 @@ def save_absolute_uncertainty_data(final_data:np.array, YYYY:str, MM:str):
     PM25 = MapData.createVariable(species,'f4',('lat','lon',))
     latitudes = MapData.createVariable("latitude","f4",("lat",))
     longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(Extent[0],Extent[1]+lat_delta,lat_delta)
-    longitudes[:] = np.arange(Extent[2],Extent[3]+lon_delta,lon_delta) 
+    latitudes[:] = np.arange(Extent[0],Extent[1],lat_delta)
+    longitudes[:] = np.arange(Extent[2],Extent[3],lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'

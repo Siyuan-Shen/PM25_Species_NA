@@ -100,7 +100,8 @@ def Calculate_Regional_PWM_PM_Components():
             indir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(species,version,Analysis_YEARS[iyear])
             infile =  indir + 'Annual_{}_{}_{}{}.nc'.format(species,version,Analysis_YEARS[iyear],special_name)
             if os.path.exists(infile):
-                SPECIES_Map, lat, lon = load_Annual_estimation_map_data(YYYY=Analysis_YEARS[iyear],SPECIES=species,version=version,special_name=special_name)
+                SPECIES_Map = np.zeros((6000,13000),dtype=np.float32)
+                SPECIES_Map[5:5995,5:12995], lat, lon = load_Annual_estimation_map_data(YYYY=Analysis_YEARS[iyear],SPECIES=species,version=version,special_name=special_name)
                 Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=Analysis_YEARS[iyear],MM='01')
                 if NorthAmerica_Analysis_Switch:
                     for iregion in REGIONMASK_lists:
@@ -122,7 +123,7 @@ def Calculate_Regional_PWM_PM_Components():
                     SPECIES_Map[5:5995,5:12995] = init_SPECIES_Map
                     temp_annual_map += SPECIES_Map
                 temp_annual_map = temp_annual_map/12.0
-                save_annual_final_map_data(final_data=temp_annual_map,YYYY=Analysis_YEARS[iyear],extent=Extent,SPECIES=species,version=version,special_name=special_name)
+                save_annual_final_map_data(final_data=temp_annual_map[5:5995,5:12995],YYYY=Analysis_YEARS[iyear],extent=Extent,SPECIES=species,version=version,special_name=special_name)
                 Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=Analysis_YEARS[iyear],MM='01')
                 if NorthAmerica_Analysis_Switch:
                     for iregion in REGIONMASK_lists:
