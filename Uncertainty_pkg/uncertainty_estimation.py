@@ -29,7 +29,7 @@ def Derive_Estimation_Uncertainty():
             for imonth in range(len(Uncertainty_Estimation_months)):
                 print('Derive Absolute Uncertainty - YEAR:{}, MONTH:{}'.format(Uncertainty_Estimation_years[iyear],Uncertainty_Estimation_months[imonth]))
                 if Uncertainty_Estimation_months[imonth] == 'Annual':
-                    Estimation_Map, lat, lon = load_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],
+                    Estimation_Map, lat, lon = load_Annual_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],
                                                           SPECIES=species,version=version,special_name=special_name)
                 else:
                     Estimation_Map,lat, lon = load_estimation_map_data(YYYY=Uncertainty_Estimation_years[iyear],MM=Uncertainty_Estimation_months[imonth],
