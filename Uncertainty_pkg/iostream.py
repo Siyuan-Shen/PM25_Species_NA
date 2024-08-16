@@ -13,7 +13,7 @@ def load_BLCO_rRMSE():
     indir = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/results-BLCOCV/statistical_indicators/'.format(species, version)
     rRMSE = np.zeros((13,len(Buffer_radii_forUncertainty)))
     for iradius in range(len(Buffer_radii_forUncertainty)):
-        infile = indir + 'BLCO-{}km-{}fold-{}ClusterSeeds-SpatialCV_{}-bias_{}_{}_{}Channel_11x11{}_2000-2022.csv'.format(Buffer_radii_forUncertainty[iradius],BLCO_kfold,BLCO_seeds_number,species,species,version,nchannel,special_name)
+        infile = indir + 'BLCO-{}km-{}fold-{}ClusterSeeds-SpatialCV_{}-bias_{}_{}_{}Channel_11x11{}.csv'.format(Buffer_radii_forUncertainty[iradius],BLCO_kfold,BLCO_seeds_number,species,species,version,nchannel,special_name)
         with open(infile, newline='') as f:
             reader = csv.reader(f)
             count = 0
