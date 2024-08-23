@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = 'v1.5.0/{}_monthly_biase
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.5.0/{}-cnn_TrainingData_55channels_11x11_199801-202212_BenchMark.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.6.4/{}-cnn_TrainingData_59channels_11x11_199801-202212_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-10d0_OneYearModel.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -40,8 +40,8 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 
 [Spatial-CrossValidation]
 
-Spatial_CrossValidation_Switch                        = false
-Spatial_CV_LossAccuracy_plot_Switch                   = false
+Spatial_CrossValidation_Switch                        = true
+Spatial_CV_LossAccuracy_plot_Switch                   = true
 
 [Spatial-CrossValidation.Training_Settings]
 
@@ -58,7 +58,7 @@ additional_test_regions                               = ['Canada','Contiguous Un
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = false
+regression_plot_switch                                = true
 every_point_begin_years                               = 2000
 every_point_end_years                                 = 2022
 
@@ -70,7 +70,7 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 [Spatial-CrossValidation.SHAP_Analysis_Settings]
 
 SHAP_Analysis_switch                                  = true
-SHAP_Analysis_Calculation_Switch                      = false
+SHAP_Analysis_Calculation_Switch                      = true
 SHAP_Analysis_visualization_Switch                    = true
 SHAP_Analysis_background_number                       = 1000 # Typical 100-1000, do not feed all data in it.
 SHAP_Analysis_test_number                             = 200
@@ -174,8 +174,8 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = false
-Train_model_Switch                                    = false
+Estimation_Switch                                     = true
+Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
 Estimation_PWMPM_Cal_Switch                           = false
@@ -183,16 +183,16 @@ Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2008]
-endyears                                              = [2008]
+beginyears                                            = [2018,2019,2020,2021,2022]
+endyears                                              = [2018,2019,2020,2021,2022]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2008]
-Estiamtion_trained_endyears                           = [2008]
+Estiamtion_trained_beginyears                         = [2018,2019,2020,2021,2022]
+Estiamtion_trained_endyears                           = [2018,2019,2020,2021,2022]
 Estiamtion_trained_months                             = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] # Must be same order of Estimation-Settings.Training_Settings.training_months
-Estimation_years                                      = [[2008]]
+Estimation_years                                      = [[2018],[2019],[2020],[2021],[2022]]
 Estiamtion_months                                     = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 Estimation_ForcedSlopeUnity                           = true
@@ -201,7 +201,7 @@ Estimation_ForcedSlopeUnity                           = true
 
 Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
 ForcedSlopeUnity_Map_Plot_Switch                      = true
-Map_Plot_YEARS                                        = [2008]
+Map_Plot_YEARS                                        = [2018,2019,2020,2021,2022]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
 Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
@@ -253,7 +253,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 [Training-Settings.identity]
 
 version                                               = 'v1.6.4'
-special_name                                          = '_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_Epoch51' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
+special_name                                          = '_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_Epoch51_NewDustEmi' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
 
 [Training-Settings.learning-objective]
 
@@ -387,7 +387,7 @@ channel_names                                         =['EtaAOD_Bias', 'EtaCoast
                                                        #'NA_CNN_PM25',#'GL_CNN_PM25',#
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4',  'GC_SOA', 'GC_OC', 'GC_BC', 'GC_DST','GC_SSLT',#'GC_NIT', 'GC_OM',
                                                        'NH3_anthro_emi','NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi','N2O_anthro_emi','NMVOC_anthro_emi',# 'SO2_anthro_emi',
-                                                       #'DST_offline_emi', 'SSLT_offline_emi',
+                                                       'DST_offline_emi',# 'SSLT_offline_emi',
                                                        'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 
                                                        'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos','Permanent_Wetlands', 
                                                        'Month_of_Year',
@@ -403,7 +403,7 @@ Classification_loss_type                              = 'CrossEntropyLoss' # Onl
 ResNet_MultiHeadNet_regression_loss_coefficient       = 1 # This is used to decide the coefficient of regression loss in ResNet_MultiHeadNet 
 ResNet_MultiHeadNet_classfication_loss_coefficient    = 1 # This is used to decide the coefficient of classfication loss in ResNet_MultiHeadNet 
 GeoMSE_Lamba1_Penalty1                                = 10.0  # This is for GeoMSE Penalty1 - Constrain form negative side.
-GeoMSE_Lamba1_Penalty2                                = 0.1   # This is for GeoMSE Penalty2 - Constrain form positive side.
+GeoMSE_Lamba1_Penalty2                                = 3.5   # This is for GeoMSE Penalty2 - Constrain form positive side.
 GeoMSE_Gamma                                          = 2.5   # This is for GeoMSE Penalty2 ratio. 
 [Training-Settings.CombineWithGeophysical]
 
