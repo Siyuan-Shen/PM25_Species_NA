@@ -2,6 +2,7 @@ import os
 import netCDF4 as nc
 from visualization_pkg.utils import *
 from Estimation_pkg.utils import *
+from Training_pkg.utils import *
 
 def save_shap_analysis_figures(plot_type,typeName, species,version,beginyear,endyear,nchannel,width,height,special_name ):
     fig_outdir = SHAP_Analysis_outdir + '{}/{}/Figures/figures-SHAP_Analysis/'.format(species, version)
@@ -50,3 +51,15 @@ def load_Population_MapData(YYYY,MM):
     lon = np.linspace(-169.995,-40.005,13000)
     return output,lat,lon
     
+def load_monthly_obs_data_forEstimationMap(species:str):
+    infile = ground_observation_data_dir + ground_observation_data_infile
+    data = nc.Dataset(infile)
+    SPECIES_OBS = data.variables[species][:]
+    SPECIES_OBS = np.array(SPECIES_OBS)
+
+    lat = data.variables["latitude"][:]
+    lon = data.variables["longitude"][:]
+    lat = np.array(lat)
+    lon = np.array(lon)
+
+    return SPECIES_OBS, lat, lon 
