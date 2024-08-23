@@ -24,7 +24,7 @@ from visualization_pkg.utils import crop_map_data
 
 
 
-def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.array,Population_Map:np.array,
+def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.array,PM25_Sites_LON:np.array, PM25_Sites_LAT:np.array, PM25_Sites:np.array,Population_Map:np.array,
                              population_Lat:np.array, population_Lon:np.array, extent:np.array, outfile:str,YYYY,MM):
     MONTH = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     PM25_Map[np.where(PM25_Map < 0)] = 0
@@ -59,10 +59,10 @@ def Plot_Species_Map_Figures(PM25_Map:np.array,PM25_LAT:np.array,PM25_LON:np.arr
     ax.text(extent[0]+0.01*abs(extent[1]-extent[0]),extent[2]+0.05*abs(extent[3]-extent[2]),'PWM ' + r'$\rm{PM_{2.5} = }$' + str(round(PWA_PM25,1)) +r' $\rm{(\mu g/m^3)}$', style='italic',fontsize = 6)
     ax.text(extent[0]+0.01*abs(extent[1]-extent[0]),extent[2]+0.10*abs(extent[3]-extent[2]),'{} {}'.format(YYYY,MM), style='italic',fontsize = 6)
     
-   # plt.scatter(PM25_Sites_LON, PM25_Sites_LAT, c=PM25_Sites, s=0.1,
-    #                linewidths=0.1, marker='o', edgecolors='black', vmin=0, vmax=m2,
-     #               cmap='YlOrRd',
-     #              alpha=0.4)
+    plt.scatter(PM25_Sites_LON, PM25_Sites_LAT, c=PM25_Sites, s=0.1,
+                    linewidths=0.1, marker='o', edgecolors='black', vmin=0, vmax=m2,
+                    cmap='YlOrRd',
+                   alpha=0.4)
     
     ## Global colorbar parameters fraction=0.35, pad=-1.63, shrink=0.5, aspect=50.0
     cbar = plt.colorbar(pcm, location = 'right',fraction=0.15, shrink=0.5,aspect=40.0, orientation='vertical', extend='both')
