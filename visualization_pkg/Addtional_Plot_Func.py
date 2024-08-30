@@ -35,24 +35,22 @@ def plot_BLCO_test_train_buffers(train_index, test_index, excluded_index, sitela
     ax.add_feature(cfeat.NaturalEarthFeature('physical', 'ocean', '50m', edgecolor='none', facecolor='white'))
     ax.add_feature(cfeat.NaturalEarthFeature('physical', 'land', '50m', edgecolor='none', facecolor=cfeat.COLORS['land']))
     ax.add_feature(cfeat.BORDERS, linewidth=0.1)
-    
+    ax.add_feature(cfeat.BORDERS, linewidth=0.1)
+    ax.add_feature(cfeat.LAKES, linewidth = 0.05)
     
     for isite in range(len(test_index)):
         
-        ax.add_patch(mpatches.Circle(xy=[sitelon[test_index[isite]], sitelat[test_index[isite]]], radius=buffer_radius*0.01, color='red', alpha=0.1, transform=ccrs.PlateCarree(), zorder=30))
-    plt.scatter(sitelon[test_index], sitelat[test_index], s=3,
-            linewidths=0.1, marker='o', edgecolors='red',c='red',
-            alpha=0.8,label='Test Sites',zorder=2)
-    plt.scatter(sitelon[train_index], sitelat[train_index], s=1,
+        ax.add_patch(mpatches.Circle(xy=[sitelon[test_index[isite]], sitelat[test_index[isite]]], radius=buffer_radius*0.01, color='white', alpha=0.8, transform=ccrs.PlateCarree(), zorder=6))
+    plt.scatter(sitelon[test_index], sitelat[test_index], s=10,
+            linewidths=0.1, marker='*', edgecolors='red',c='red',
+            alpha=0.8,label='Test Sites - {}'.format(len(test_index)),zorder=10)
+    plt.scatter(sitelon[train_index], sitelat[train_index], s=3,  
             linewidths=0.1, marker='o', edgecolors='black',c='black',
-            alpha=0.8,label='Training Sites',zorder=2)
-    plt.scatter(sitelon[excluded_index], sitelat[excluded_index], s=1,
+            alpha=0.8,label='Training Sites - {}'.format(len(train_index)),zorder=8)
+    plt.scatter(sitelon[excluded_index], sitelat[excluded_index], s=3,
             linewidths=0.1, marker='X',c='blue',
-            alpha=0.5,label='Excluded Sites',zorder=2)
+            alpha=0.5,label='Excluded Sites - {}'.format(len(excluded_index)),zorder=8)
     plt.legend(fontsize='small',markerscale = 3.0,loc=4)
-    ax.text(0, 0.15, '# of test sites: {}'.format(len(test_index)), style='italic', fontsize=32)
-    ax.text(0, 0.15, '# of train sites: {}'.format(len(train_index)),style='italic', fontsize=32)
-    ax.text(0, 0.15, '# of Exclude sites: {}'.format(len(excluded_index)), style='italic', fontsize=32)
     plt.savefig(fig_outfile, format='png', dpi=2000, transparent=True,bbox_inches='tight')
     plt.close()
     return

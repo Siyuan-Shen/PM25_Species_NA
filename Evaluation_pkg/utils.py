@@ -1,7 +1,7 @@
 import toml
 import numpy as np
 import time
-
+import math
 
 cfg = toml.load('./config.toml')
 
@@ -91,6 +91,7 @@ BLOO_additional_test_regions = BLOO_TrainingSettings['additional_test_regions']
 ################################## BLCO Cross-Validation ################################
 
 BLCO_CrossValidation_Switch = cfg['BLCO-CrossValidation']['BLCO_CrossValidation_Switch']
+utilize_self_isolated_sites = cfg['BLCO-CrossValidation']['Utilize_SelfIsolated_Sites_BLCO_Switch']
 BLCO_Buffer_size = cfg['BLCO-CrossValidation']['Buffer_size']
 
 #######################################################################################
@@ -511,19 +512,22 @@ def find_sites_nearby(test_lat: np.float32, test_lon: np.float32,train_index:np.
     return train_index
 
 def calculate_distance(pixel_lat:np.float32,pixel_lon:np.float32,site_lat:np.float32,site_lon:np.float32,r=6371.01):
-    site_pos1 = pixel_lat * np.pi / 180.0
-    site_pos2 = pixel_lon * np.pi / 180.0
-    other_sites_pos1_array = site_lat * np.pi / 180.0
-    other_sites_pos2_array = site_lon * np.pi / 180.0
+    site_pos1 = math.radians(pixel_lat)
+    site_pos2 = math.radians(pixel_lon)
+    other_sites_pos1_array = math.radians(site_lat)
+    other_sites_pos2_array = math.radians(site_lon)
     dist = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
     return dist
 
 def calculate_distance_forArray(site_lat:np.float32,site_lon:np.float32,
                                 SATLAT_MAP:np.array,SATLON_MAP:np.array,r=6371.01):
-    site_pos1 = site_lat * np.pi / 180.0
-    site_pos2 = site_lon * np.pi / 180.0
-    other_sites_pos1_array = SATLAT_MAP * np.pi / 180.0
-    other_sites_pos2_array = SATLON_MAP * np.pi / 180.0
+    site_pos1 = math.radians(site_lat)
+    site_pos2 = math.radians(site_lon)
+    other_sites_pos1_array = np.zeros(len(SATLAT_MAP),dtype=np.float64)
+    other_sites_pos2_array = np.zeros(len(SATLAT_MAP),dtype=np.float64)
+    for i in range(len(SATLAT_MAP)):
+        other_sites_pos1_array[i] = math.radians(SATLAT_MAP[i])
+        other_sites_pos2_array[i] = math.radians(SATLON_MAP[i])
     dist_map = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
     return dist_map
 def get_nearest_test_distance(area_test_index,area_train_index, site_lon, site_lat):
