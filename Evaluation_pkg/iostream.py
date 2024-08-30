@@ -81,7 +81,11 @@ def save_trained_month_based_BLCO_model(cnn_model, model_outdir, typeName, begin
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-    model_outfile = outdir +  'BLCO_SpatialCV_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}.pt'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count)
+    if utilize_self_isolated_sites:
+        model_outfile = outdir +  'SelfIsolated_BLCO_SpatialCV_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}.pt'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count)
+    
+    else:
+        model_outfile = outdir +  'BLCO_SpatialCV_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}.pt'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count)
     torch.save(cnn_model, model_outfile)
     return
 
@@ -257,7 +261,10 @@ def save_month_based_BLOO_data_recording(obs_data,final_data,geo_data_recording,
 
 def save_month_based_BLCO_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording, train_index_number,test_index_number,
 species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
-    outdir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
+    if utilize_self_isolated_sites:
+        outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
+    else:
+        outdir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
     obs_data_outfile =  outdir + '{}-{}-Obs-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
@@ -333,7 +340,10 @@ def save_BLOO_data_recording(obs_data, final_data,species, version, typeName, be
     return
 
 def save_BLCO_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
-    outdir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
+    if utilize_self_isolated_sites:
+        outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
+    else:
+        outdir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
     obs_data_outfile   = outdir + '{}-{}-Obs-BLCODataRecording_longterm_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number,beginyear, MONTH
@@ -362,14 +372,20 @@ def save_BLOO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accu
 
 
 def save_BLCO_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height, buffer_radius):
-
+    
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    loss_outfile = outdir + 'BLCOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
-    accuracy_outfile = outdir + 'BLCOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
-    valid_loss_outfile = outdir + 'BLCOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
-    valid_accuracy_outfile = outdir + 'BLCOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    if utilize_self_isolated_sites:
+        loss_outfile = outdir + 'SelfIsolated_BLCOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        accuracy_outfile = outdir + 'SelfIsolated_BLCOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        valid_loss_outfile = outdir + 'SelfIsolated_BLCOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        valid_accuracy_outfile = outdir + 'SelfIsolated_BLCOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+    else:
+        loss_outfile = outdir + 'BLCOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        accuracy_outfile = outdir + 'BLCOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        valid_loss_outfile = outdir + 'BLCOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        valid_accuracy_outfile = outdir + 'BLCOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
     np.save(loss_outfile, loss)
     np.save(accuracy_outfile, accuracy)
     np.save(valid_loss_outfile, valid_loss)
@@ -521,7 +537,10 @@ def load_month_based_BLOO_data_recording(species, version, typeName, beginyear, 
 
 
 def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
-    indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
+    if utilize_self_isolated_sites:
+         indir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
+    else:
+        indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
 
     obs_data_infile =  indir  + '{}-{}-Obs-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
@@ -615,8 +634,12 @@ def load_trained_month_based_BLCO_model(model_indir, typeName, beginyear,endyear
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     Selected_MONTHS_list = [MONTH[i] for i in month_index]
     Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
-    indir = model_indir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
-    PATH = indir +  'BLCO_SpatialCV_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}.pt'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count)
+    if utilize_self_isolated_sites:
+        indir = model_indir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+        PATH = indir +  'SelfIsolated_BLCO_SpatialCV_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}.pt'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count)
+    else:
+        indir = model_indir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
+        PATH = indir +  'BLCO_SpatialCV_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}.pt'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model  = torch.load(PATH, map_location=torch.device(device)).eval()
     model.to(device)
@@ -706,7 +729,10 @@ def load_BLOO_loss_accuracy(model_outdir, typeName, version, species, nchannel, 
     return loss, accuracy, valid_loss, valid_accuracy
 
 def load_BLCO_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height, buffer_radius):
-    indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
+    if utilize_self_isolated_sites:
+        indir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
+    else:
+        indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
     obs_data_infile   = indir + '{}-{}-Obs-BLOODataRecording_longterm_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number,beginyear, MONTH
                                                                                             ,width, height, nchannel,special_name)
     final_data_infile = indir + '{}-{}-Final-BLOODataRecording_longterm_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, MONTH
@@ -718,14 +744,20 @@ def load_BLCO_data_recording(species, version, typeName, beginyear, MONTH, nchan
     return obs_data, final_data
 
 def load_BLCO_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height, buffer_radius):
-
+    
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    loss_outfile = outdir +'BLOOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
-    accuracy_outfile = outdir + 'BLOOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
-    valid_loss_outfile = outdir + 'BLOOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
-    valid_accuracy_outfile = outdir + 'BLOOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+    if utilize_self_isolated_sites:
+        loss_outfile = outdir +'SelfIsolated_BLCOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+        accuracy_outfile = outdir + 'SelfIsolated_BLCOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+        valid_loss_outfile = outdir + 'SelfIsolated_BLCOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        valid_accuracy_outfile = outdir + 'SelfIsolated_BLCOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+    else:
+        loss_outfile = outdir +'BLCOCV_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+        accuracy_outfile = outdir + 'BLCOCV_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
+        valid_loss_outfile = outdir + 'BLCOCV_valid_loss_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius, BLCO_kfold,BLCO_seeds_number,typeName, species, width, height, nchannel,special_name)
+        valid_accuracy_outfile = outdir + 'BLCOCV_valid_accuracy_{}km_{}-folds_{}-ClusterSeeds_{}_{}_{}x{}_{}Channel{}.npy'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number, typeName, species, width, height, nchannel,special_name)
     loss = np.load(loss_outfile)
     accuracy = np.load(accuracy_outfile)
     valid_loss = np.load(valid_loss_outfile )

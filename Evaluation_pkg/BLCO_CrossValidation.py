@@ -50,8 +50,35 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
     lat_test_recording = np.array([],dtype=np.float32)
     lon_test_recording = np.array([],dtype=np.float32)
 
-    index_for_BLCO = derive_Test_Training_index_4Each_BLCO_fold(kfolds=BLCO_kfold,number_of_SeedClusters=BLCO_seeds_number,site_lat=lat,site_lon=lon,
+    if utilize_self_isolated_sites:
+        nearest_distances = np.array([],dtype=np.float32)
+        for isite in range(len(lat)):
+            site_distances = calculate_distance_forArray(site_lat=lat[isite],site_lon=lon[isite],SATLAT_MAP=lat,SATLON_MAP=lon)
+            nearest_distances = np.append(nearest_distances,np.min(site_distances[np.where(site_distances>0.1)]))
+        site_index = np.array(range(len(lat)))
+        index_for_BLCO = np.zeros((BLCO_kfold,len(lat)),dtype=np.int32)
+        Self_Isolated_sites_index = np.where(nearest_distances>=buffer_radius)[0]
+        Sites_forBLeCO_index      = np.where(nearest_distances<buffer_radius)[0]
+        self_isolated_fold_count = 0
+        if len(Self_Isolated_sites_index) > 0:
+            rkf = RepeatedKFold(n_splits=BLCO_kfold, n_repeats=repeats, random_state=seed)
+            for train_index, test_index in rkf.split(Self_Isolated_sites_index):
+                index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[test_index]]  = 1.0
+                index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[train_index]] = -1.0
+                self_isolated_fold_count += 1
+
+        if len(Sites_forBLeCO_index) > 0:
+            Only_BLeCO_index = derive_Test_Training_index_4Each_BLCO_fold(kfolds=BLCO_kfold,number_of_SeedClusters=BLCO_seeds_number,site_lat=lat[Sites_forBLeCO_index],site_lon=lon[Sites_forBLeCO_index],
                                                                 BLCO_Buffer_Size=buffer_radius)
+            for ifold in range(BLCO_kfold):
+                
+                index_for_BLCO[ifold,Sites_forBLeCO_index[np.where(Only_BLeCO_index[ifold,:]==1.0)]] = 1.0
+                index_for_BLCO[ifold,Sites_forBLeCO_index[np.where(Only_BLeCO_index[ifold,:]==-1.0)]] = -1.0
+                
+    else:
+        index_for_BLCO = derive_Test_Training_index_4Each_BLCO_fold(kfolds=BLCO_kfold,number_of_SeedClusters=BLCO_seeds_number,site_lat=lat,site_lon=lon,
+                                                                BLCO_Buffer_Size=buffer_radius)
+    
     test_index_number = np.array([],dtype = int)
     train_index_number = np.array([],dtype=int)
     if not BLCO_Spatial_CV_test_only_Switch:
@@ -134,7 +161,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                 
                
             if Test_Train_Buffers_Distributions_plot:
-                fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
+                if utilize_self_isolated_sites:
+                    fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-SelfIsolated_BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
+                else:
+                    fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
                 if not os.path.isdir(fig_outdir):
                     os.makedirs(fig_outdir)
                 fig_outfile = fig_outdir + 'Buffer-{}km_Total-{}folds_Total-{}ClustersSeeds-No.{}-fold_BLCO_Sites-Buffers-Distributions.png'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,ifold)
@@ -146,8 +176,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
 
     obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording,train_index_number, test_index_number = load_month_based_BLCO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
-
-    txtfile_outdir = txt_outdir + '{}/{}/Results/results-BLCOCV/statistical_indicators/{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
+    if utilize_self_isolated_sites:
+        txtfile_outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCOCV/statistical_indicators/{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
+    else:
+        txtfile_outdir = txt_outdir + '{}/{}/Results/results-BLCOCV/statistical_indicators/{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
     for iyear in range(len(BLCO_test_beginyears)):
@@ -158,7 +190,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=np.array(range(len(lat_test_recording))))
-        txt_outfile =  txtfile_outdir + 'BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
+        if utilize_self_isolated_sites:
+            txt_outfile =  txtfile_outdir + 'SelfIsolated_BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
+        else:
+            txt_outfile =  txtfile_outdir + 'BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
         Output_Text_Sites_Number(outfile=txt_outfile, status='w', train_index_number=train_index_number, test_index_number=test_index_number, buffer=buffer_radius)
         AVD_output_text(outfile=txt_outfile,status='a',Area='North America',test_beginyears=BLCO_test_beginyear,test_endyears=BLCO_test_endyear, test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
@@ -173,7 +208,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                                                                                                                 final_data_recording=final_data_recording, obs_data_recording=obs_data_recording,
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index)
-            txt_outfile =  txtfile_outdir + 'BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
+            if utilize_self_isolated_sites:
+                txt_outfile =  txtfile_outdir + 'SelfIsolated_BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
+            else:
+                txt_outfile =  txtfile_outdir + 'BLCO-{}-{}_{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}.csv'.format(BLCO_test_beginyear,BLCO_test_endyear,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
             AVD_output_text(outfile=txt_outfile,status='a', Area=iregion,test_beginyears=BLCO_test_beginyear,test_endyears=BLCO_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
                                 slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,regional_number=regional_number)
 

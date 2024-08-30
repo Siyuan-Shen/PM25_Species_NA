@@ -90,12 +90,18 @@ if __name__ == '__main__':
             #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
     
     if BLCO_CrossValidation_Switch:
-        cfg_outdir = Config_outdir + '{}/{}/Results/results-BLCOCV/configuration-files/'.format(species, version)
+        if utilize_self_isolated_sites:
+            cfg_outdir = Config_outdir + '{}/{}/Results/results-SelfIsolated_BLCOCV/configuration-files/'.format(species, version)
+        else:
+            cfg_outdir = Config_outdir + '{}/{}/Results/results-BLCOCV/configuration-files/'.format(species, version)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=channel_names)
         for buffer_radius in BLCO_Buffer_size:
             if not os.path.isdir(cfg_outdir):
                 os.makedirs(cfg_outdir)
-            cfg_outfile = cfg_outdir + 'config_BLCO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
+            if utilize_self_isolated_sites:
+                cfg_outfile = cfg_outdir + 'config_SelfIsolated_BLCO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
+            else:
+                cfg_outfile = cfg_outdir + 'config_BLCO_SpatialCV_{}km-buffer_{}_{}_{}_{}Channel_{}x{}{}.toml'.format(buffer_radius,typeName,species,version,nchannel,width,height,special_name)
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
