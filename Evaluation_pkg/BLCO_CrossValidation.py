@@ -402,7 +402,7 @@ def derive_Test_Training_index_4Each_BLCO_fold(kfolds, number_of_SeedClusters, s
         # --- print('sites_unwithheld4testing shape: {}, sites_unwithheld4testing 0:10 - {}, cluster_seeds_index[0:10]: {}'.format(sites_unwithheld4testing.shape,sites_unwithheld4testing[0:10],cluster_seeds_index[0:10]))
         
         # find distances between selected stations and other stations
-        sites_unwithheld4testing_Distance = np.zeros((number_of_SeedClusters,len(sites_unwithheld4testing)-1))
+        sites_unwithheld4testing_Distance = np.zeros((number_of_SeedClusters,len(sites_unwithheld4testing)))
         for icluster in range(number_of_SeedClusters):
             print('icluster: {}, \ncluster_seeds_index shape: {}, \nsites_unwithheld4testing shape:{}, \n site_lat shape:{}; site lon shape: {}, \nsites_unwithheld4testing_Distance shape:{}'.format(icluster,cluster_seeds_index.shape,sites_unwithheld4testing.shape,site_lat.shape,site_lon.shape,sites_unwithheld4testing_Distance.shape))
             temp_distance = calculate_distance_forArray(site_lat=site_lat[sites_unwithheld4testing[cluster_seeds_index[icluster]]],
