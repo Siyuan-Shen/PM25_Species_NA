@@ -511,25 +511,53 @@ def find_sites_nearby(test_lat: np.float32, test_lon: np.float32,train_index:np.
     train_index = np.delete(train_index,X_index)
     return train_index
 
-def calculate_distance(pixel_lat:np.float32,pixel_lon:np.float32,site_lat:np.float32,site_lon:np.float32,r=6371.01):
-    site_pos1 = math.radians(pixel_lat)
-    site_pos2 = math.radians(pixel_lon)
-    other_sites_pos1_array = math.radians(site_lat)
-    other_sites_pos2_array = math.radians(site_lon)
-    dist = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
-    return dist
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = np.sin(dlat / 2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2)**2
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    
+    # Radius of the Earth in kilometers (use 3956 for miles)
+    r = 6371
+    
+    # Calculate the distance
+    distance = r * c
+    
+    return distance
 
 def calculate_distance_forArray(site_lat:np.float32,site_lon:np.float32,
                                 SATLAT_MAP:np.array,SATLON_MAP:np.array,r=6371.01):
-    site_pos1 = math.radians(site_lat)
-    site_pos2 = math.radians(site_lon)
-    other_sites_pos1_array = np.zeros(len(SATLAT_MAP),dtype=np.float64)
-    other_sites_pos2_array = np.zeros(len(SATLAT_MAP),dtype=np.float64)
-    for i in range(len(SATLAT_MAP)):
-        other_sites_pos1_array[i] = math.radians(SATLAT_MAP[i])
-        other_sites_pos2_array[i] = math.radians(SATLON_MAP[i])
-    dist_map = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
+    if np.ndim(SATLAT_MAP) == 0:
+        dist_map = calculate_distance(site_lat,site_lon,SATLAT_MAP,SATLON_MAP)
+    elif np.ndim(SATLAT_MAP) == 1:
+        dist_map = np.zeros(SATLAT_MAP.shape,dtype = np.float64)
+        for ix in range(SATLAT_MAP.shape[0]):
+            dist_map[ix] = calculate_distance(site_lat,site_lon,SATLAT_MAP[ix],SATLON_MAP[ix])
+    elif np.ndim(SATLAT_MAP) == 2:
+        dist_map = np.zeros(SATLAT_MAP.shape,dtype = np.float64)
+        for ix in range(SATLAT_MAP.shape[0]):
+            for iy in range(SATLAT_MAP.shape[1]):
+                dist_map[ix,iy] = calculate_distance(site_lat,site_lon,SATLAT_MAP[ix,iy],SATLON_MAP[ix,iy])
+   
+   #other_sites_pos1_array = np.zeros(len(SATLAT_MAP),dtype=np.float64)
+    #other_sites_pos2_array = np.zeros(len(SATLAT_MAP),dtype=np.float64)
+    #for i in range(len(SATLAT_MAP)):
+       # other_sites_pos1_array[i] = math.radians(SATLAT_MAP[i])
+       # other_sites_pos2_array[i] = math.radians(SATLON_MAP[i])
+    
+    #site_pos1 = site_lat * np.pi / 180.0
+    #site_pos2 = site_lon * np.pi / 180.0
+    #other_sites_pos1_array = SATLAT_MAP * np.pi / 180.0
+    #other_sites_pos2_array = SATLON_MAP * np.pi / 180.0
+    #dist_map = r * np.arccos(np.sin(site_pos1)*np.sin(other_sites_pos1_array)+np.cos(site_pos1)*np.cos(other_sites_pos1_array)*np.cos(site_pos2-other_sites_pos2_array))
+    
     return dist_map
+
 def get_nearest_test_distance(area_test_index,area_train_index, site_lon, site_lat):
     """This function is used to calcaulate the nearest distance from one site in 
     testing datasets to the whole training datasets.

@@ -384,7 +384,12 @@ def Original_BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, 
 def derive_Test_Training_index_4Each_BLCO_fold(kfolds, number_of_SeedClusters, site_lat, site_lon, BLCO_Buffer_Size):
     frac_testing  = 1.0/kfolds
     frac_training = 1.0 - frac_testing
-
+    rkf = RepeatedKFold(n_splits=kfolds, n_repeats=1, random_state=19980130)
+    number_of_test_sites = np.zeros((kfolds),dtype=np.int32)
+    test_fold = 0
+    for train_index, test_index in rkf.split(site_lat):
+        number_of_test_sites[test_fold] = len(test_index)
+        test_fold+=1
     # if # == -1   -> this site is for training for this fold, 
     # elif # == +1 -> this site is for testing for this fold.
     # elif # == 0  -> this site is exlcuded from training for this fold.
@@ -407,17 +412,23 @@ def derive_Test_Training_index_4Each_BLCO_fold(kfolds, number_of_SeedClusters, s
         sites_withheld4testing   = np.where(ispot > 0)[0].astype(int)
 
         # evenly divide stations by density, get the sites density limits by percentile
-        density_percentile = np.percentile(usite_density[sites_unwithheld4testing], np.linspace(0,100,number_of_SeedClusters+1),interpolation='midpoint' )
-        
+        density_percentile = np.percentile(usite_density[sites_unwithheld4testing], np.linspace(0,100,kfolds+1),interpolation='midpoint' )
         #randomly choose one stations within each density percentile range
-        cluster_seeds_index = np.zeros(number_of_SeedClusters,dtype=np.int64)
-        for icluster in range(len(cluster_seeds_index)):
-            sites_unwithheld4testing2 = np.intersect1d(np.where(usite_density[sites_unwithheld4testing]>=density_percentile[icluster]), np.where(usite_density[sites_unwithheld4testing]<=density_percentile[icluster+1]))
-            if len(sites_unwithheld4testing2)>0:
-                random_cluster_index      = np.random.randint(0,len(sites_unwithheld4testing2),1)
-                cluster_seeds_index[icluster] = sites_unwithheld4testing2[random_cluster_index].astype(int)
-            else:
-                None
+        # cluster_seeds_index = np.full(number_of_SeedClusters,-1,dtype=np.int64)#np.zeros((len(density_percentile)-1),dtype=np.int64)
+        #for icluster in range(len(cluster_seeds_index)):
+            #sites_unwithheld4testing2 = np.intersect1d(np.where(usite_density[sites_unwithheld4testing]>=density_percentile[icluster]), np.where(usite_density[sites_unwithheld4testing]<=density_percentile[icluster+1]))
+            
+            #if len(sites_unwithheld4testing2)>0:
+                
+                #random_cluster_index      = np.random.randint(0,len(sites_unwithheld4testing2),1)
+                #print(cluster_seeds_index,icluster,sites_unwithheld4testing2,sites_unwithheld4testing2[random_cluster_index])
+                #while sites_unwithheld4testing2[random_cluster_index] in cluster_seeds_index:
+                    #random_cluster_index      = np.random.randint(0,len(sites_unwithheld4testing2),1)
+                #cluster_seeds_index[icluster] = sites_unwithheld4testing2[random_cluster_index].astype(int)
+            #else:
+               # None
+        cluster_seeds_index = np.random.choice(range(len(sites_unwithheld4testing)), min(len(sites_unwithheld4testing),number_of_SeedClusters), replace=False)
+
         # --- print('sites_unwithheld4testing shape: {}, sites_unwithheld4testing 0:10 - {}, cluster_seeds_index[0:10]: {}'.format(sites_unwithheld4testing.shape,sites_unwithheld4testing[0:10],cluster_seeds_index[0:10]))
         
         # find distances between selected stations and other stations
@@ -435,11 +446,15 @@ def derive_Test_Training_index_4Each_BLCO_fold(kfolds, number_of_SeedClusters, s
         
         ### calculate radius within which enough stations are located to fulfill this fold's quota.
         
-        criterial_index = min(int(np.floor((frac_testing * len(site_lat))))-1+number_of_SeedClusters,len(Minimal_Distance2clusters_Sorted)-1)
+        criterial_index = min(int(number_of_test_sites[ifold])-1,len(Minimal_Distance2clusters_Sorted)-1)
         BLCO_criteria_radius[ifold] = Minimal_Distance2clusters_Sorted[criterial_index]
         # store testing stations for this fold, find all sites with distances smaller than the criterial radius
-        ispot[sites_unwithheld4testing[np.where(Minimal_Distance2clusters < BLCO_criteria_radius[ifold] )]] = ifold + 1
-
+        if criterial_index < number_of_SeedClusters:
+            #print('ifold: ',ifold,cluster_seeds_index[0:criterial_index+1],criterial_index+1, len(Minimal_Distance2clusters_Sorted),)
+            ispot[sites_unwithheld4testing[cluster_seeds_index[0:criterial_index+1]]]= ifold + 1
+        else:    
+            ispot[sites_unwithheld4testing[np.where(Minimal_Distance2clusters <= BLCO_criteria_radius[ifold] )]] = ifold + 1
+        
         ifold_test_site_index       = np.where(ispot == (ifold+1))[0]
         ifold_init_train_site_index = np.where(ispot != (ifold+1))[0]
 
