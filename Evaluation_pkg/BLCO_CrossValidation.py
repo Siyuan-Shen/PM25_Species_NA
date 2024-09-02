@@ -64,16 +64,16 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
         if len(Self_Isolated_sites_index) > 0:
             if len(Self_Isolated_sites_index) < BLCO_kfold:
                 for i in range(BLCO_kfold - length_of_Self_Isolated_sites_index):
-                    Self_Isolated_sites_index = np.append(Self_Isolated_sites_index,-999.0)
+                    Self_Isolated_sites_index = np.append(Self_Isolated_sites_index,-999)
                 rkf = RepeatedKFold(n_splits=BLCO_kfold, n_repeats=repeats, random_state=seed)
                 for train_index, test_index in rkf.split(Self_Isolated_sites_index):
-                    if Self_Isolated_sites_index[test_index] == -999.0:
-                        temp_train_index = np.where(Self_Isolated_sites_index!=-999.0)
+                    if Self_Isolated_sites_index[test_index] == -999:
+                        temp_train_index = np.where(Self_Isolated_sites_index!=-999)
                         print(test_index,temp_train_index,Self_Isolated_sites_index[temp_train_index])
                         index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[temp_train_index]] = -1.0
                         self_isolated_fold_count += 1
                     else:
-                        temp_train_index = np.where(Self_Isolated_sites_index[train_index]!=-999.0)
+                        temp_train_index = np.where(Self_Isolated_sites_index[train_index]!=-999)
                         print(test_index,train_index[temp_train_index],Self_Isolated_sites_index[train_index[temp_train_index]])
                         Self_Isolated_sites_index = Self_Isolated_sites_index.astype(int)
                         index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[test_index]]  = 1.0
