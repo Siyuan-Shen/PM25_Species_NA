@@ -489,10 +489,10 @@ def find_sites_nearby(test_lat: np.float32, test_lon: np.float32,train_index:np.
     Returns:
         np.array : The train index exclude the sites within the input test sites surronding buffer zone.
     """
-    lat_min = max(-69.95, (test_lat - 0.009 * buffer_radius))
-    lat_max = min(59.95, (test_lat + 0.009 * buffer_radius))
-    lon_min = max(-179.95, (test_lon - 0.026 * buffer_radius))
-    lon_max = min(179.95, (test_lon + 0.026 * buffer_radius))
+    lat_min = max(-69.95, (test_lat - 0.1 * buffer_radius))
+    lat_max = min(69.95, (test_lat + 0.1 * buffer_radius))
+    lon_min = max(-179.95, (test_lon - 0.1 * buffer_radius))
+    lon_max = min(179.95, (test_lon + 0.1 * buffer_radius))
     # Find the sites within the square first
     lat_index = np.intersect1d(np.where(train_lat>lat_min),np.where(train_lat<lat_max))
     lon_index = np.intersect1d(np.where(train_lon>lon_min),np.where(train_lon<lon_max))
