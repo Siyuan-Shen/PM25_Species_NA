@@ -68,11 +68,16 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                 rkf = RepeatedKFold(n_splits=BLCO_kfold, n_repeats=repeats, random_state=seed)
                 for train_index, test_index in rkf.split(Self_Isolated_sites_index):
                     if Self_Isolated_sites_index[test_index] == -999.0:
-                        None
+                        temp_train_index = np.where(Self_Isolated_sites_index!=-999.0)
+                        print(test_index,temp_train_index,Self_Isolated_sites_index[temp_train_index])
+                        index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[temp_train_index]] = -1.0
+                        self_isolated_fold_count += 1
                     else:
+                        temp_train_index = np.where(Self_Isolated_sites_index[train_index]!=-999.0)
+                        print(test_index,train_index[temp_train_index],Self_Isolated_sites_index[train_index[temp_train_index]])
                         Self_Isolated_sites_index = Self_Isolated_sites_index.astype(int)
                         index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[test_index]]  = 1.0
-                        index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[train_index]] = -1.0
+                        index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[train_index[temp_train_index]]] = -1.0
                         self_isolated_fold_count += 1
             else:
                 rkf = RepeatedKFold(n_splits=BLCO_kfold, n_repeats=repeats, random_state=seed)
@@ -81,7 +86,6 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                     index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[test_index]]  = 1.0
                     index_for_BLCO[self_isolated_fold_count,Self_Isolated_sites_index[train_index]] = -1.0
                     self_isolated_fold_count += 1
-
         if len(Sites_forBLeCO_index) > 0:
             Only_BLeCO_index = derive_Test_Training_index_4Each_BLCO_fold(kfolds=BLCO_kfold,number_of_SeedClusters=BLCO_seeds_number,site_lat=lat[Sites_forBLeCO_index],site_lon=lon[Sites_forBLeCO_index],
                                                                 BLCO_Buffer_Size=buffer_radius)
