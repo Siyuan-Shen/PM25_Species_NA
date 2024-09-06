@@ -37,13 +37,16 @@ def plot_BLCO_test_train_buffers(train_index, test_index, excluded_index, sitela
     ax.add_feature(cfeat.BORDERS, linewidth=0.1)
     ax.add_feature(cfeat.BORDERS, linewidth=0.1)
     ax.add_feature(cfeat.LAKES, linewidth = 0.05)
-    
+    nearest_distances = np.array([],dtype=np.float32)
     for isite in range(len(test_index)):
-        
+        site_distances = calculate_distance_forArray(site_lat=sitelat[test_index[isite]],site_lon=sitelon[test_index[isite]],SATLAT_MAP=sitelat[train_index],SATLON_MAP=sitelon[train_index])
+        nearest_distances = np.append(nearest_distances,np.min(site_distances[np.where(site_distances>0.1)]))
         ax.add_patch(mpatches.Circle(xy=[sitelon[test_index[isite]], sitelat[test_index[isite]]], radius=buffer_radius*0.01, color='white', alpha=0.8, transform=ccrs.PlateCarree(), zorder=6))
+    average_neaerest_distance = round(np.average(nearest_distances),1)
+            
     plt.scatter(sitelon[test_index], sitelat[test_index], s=10,
             linewidths=0.1, marker='*', edgecolors='red',c='red',
-            alpha=0.8,label='Test Sites - {}'.format(len(test_index)),zorder=10)
+            alpha=0.8,label='Test Sites - {}\n Average Distance {}'.format(len(test_index),average_neaerest_distance),zorder=10)
     plt.scatter(sitelon[train_index], sitelat[train_index], s=3,  
             linewidths=0.1, marker='o', edgecolors='black',c='black',
             alpha=0.8,label='Training Sites - {}'.format(len(train_index)),zorder=8)
