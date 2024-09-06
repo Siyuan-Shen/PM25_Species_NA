@@ -21,6 +21,7 @@ import matplotlib.patches as mpatches
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from Training_pkg.Statistic_Func import Calculate_PWA_PM25
+from Evaluation_pkg.utils import calculate_distance_forArray
 from visualization_pkg.utils import crop_map_data
 
 def plot_BLCO_test_train_buffers(train_index, test_index, excluded_index, sitelat, sitelon, buffer_radius,extent,fig_outfile):
