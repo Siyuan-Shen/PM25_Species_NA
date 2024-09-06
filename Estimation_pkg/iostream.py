@@ -49,8 +49,8 @@ def load_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_
     indir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     infile = indir + '{}_{}_{}{}{}.nc'.format(SPECIES,version,YYYY,MM,special_name)
     MapData = nc.Dataset(infile)
-    lat = MapData.variables['latitude'][:]
-    lon = MapData.variables['longitude'][:]
+    lat = MapData.variables['lat'][:]
+    lon = MapData.variables['lon'][:]
     SPECIES_Map = MapData.variables[SPECIES][:]
     SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
@@ -59,8 +59,8 @@ def load_ForcedSlopeUnity_estimation_map_data(YYYY:str, MM:str,SPECIES:str, vers
     indir = Estimation_outdir + '{}/{}/ForcedSlopeUnity_Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     infile = indir + '{}_{}_{}{}{}_ForcedSlopeUnity.nc'.format(SPECIES,version,YYYY,MM,special_name)
     MapData = nc.Dataset(infile)
-    lat = MapData.variables['latitude'][:]
-    lon = MapData.variables['longitude'][:]
+    lat = MapData.variables['lat'][:]
+    lon = MapData.variables['lon'][:]
     SPECIES_Map = MapData.variables[SPECIES][:]
     SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
@@ -70,8 +70,8 @@ def load_Annual_estimation_map_data(YYYY:str,SPECIES:str, version:str, special_n
     indir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     infile = indir + 'Annual_{}_{}_{}{}.nc'.format(SPECIES,version,YYYY,special_name)
     MapData = nc.Dataset(infile)
-    lat = MapData.variables['latitude'][:]
-    lon = MapData.variables['longitude'][:]
+    lat = MapData.variables['lat'][:]
+    lon = MapData.variables['lon'][:]
     SPECIES_Map = MapData.variables[SPECIES][:]
     SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
@@ -138,10 +138,10 @@ def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECI
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
+    latitudes[:] = np.arange(extent[0],np.round(extent[1]+lat_delta,decimals=5),lat_delta)
+    longitudes[:] = np.arange(extent[2],np.round(extent[3]+lon_delta,decimals=5),lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -174,10 +174,10 @@ def save_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPEC
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
+    latitudes[:] = np.arange(extent[0],np.round(extent[1]+lat_delta,decimals=5),lat_delta)
+    longitudes[:] = np.arange(extent[2],np.round(extent[3]+lon_delta,decimals=5),lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -210,10 +210,10 @@ def save_ForcedSlopeUnity_final_map_data(final_data:np.array, YYYY:str, MM:str, 
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
+    latitudes[:] = np.arange(extent[0],np.round(extent[1]+lat_delta,decimals=5),lat_delta)
+    longitudes[:] = np.arange(extent[2],np.round(extent[3]+lon_delta,decimals=5),lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'
@@ -246,10 +246,10 @@ def save_combinedGeo_map_data(final_data:np.array, YYYY:str, MM:str, extent:list
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
     PM25 = MapData.createVariable(SPECIES,'f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
-    latitudes[:] = np.arange(extent[0],extent[1]+lat_delta,lat_delta)
-    longitudes[:] = np.arange(extent[2],extent[3]+lon_delta,lon_delta) 
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
+    latitudes[:] = np.arange(extent[0],np.round(extent[1]+lat_delta,decimals=5),lat_delta)
+    longitudes[:] = np.arange(extent[2],np.round(extent[3]+lon_delta,decimals=5),lon_delta) 
     latitudes.units = 'degrees north'
     longitudes.units = 'degrees east'
     latitudes.standard_name = 'latitude'

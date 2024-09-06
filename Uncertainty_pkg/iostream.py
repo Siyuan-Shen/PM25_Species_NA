@@ -33,8 +33,8 @@ def load_rRMSE_map_data( MM:str, version:str, special_name):
     infile = indir + 'rRMSE_Map_{}_{}_{}{}.nc'.format(species,version,MM,special_name)
     MapData = nc.Dataset(infile)
     SPECIES_Map = MapData.variables[species][:]
-    lat = MapData.variables['latitude'][:]
-    lon = MapData.variables['longitude'][:]
+    lat = MapData.variables['lat'][:]
+    lon = MapData.variables['lon'][:]
     SPECIES_Map = np.array(SPECIES_Map)
     print('Type of SPECIES_MAP: {}'.format(type(SPECIES_Map)))
     return SPECIES_Map, lat, lon
@@ -52,8 +52,8 @@ def load_absolute_uncertainty_map_data(YYYY:str, MM:str, version:str, special_na
     indir = Estimation_outdir + '{}/{}/Uncertainty_Results/Absolute-Uncertainty_Map/{}/'.format(species,version,YYYY)
     infile = indir + 'AbsoluteUncertainty_{}_{}_{}{}{}.nc'.format(species,version,YYYY,MM,special_name)
     MapData = nc.Dataset(infile)
-    lat = MapData.variables['latitude'][:]
-    lon = MapData.variables['longitude'][:]
+    lat = MapData.variables['lat'][:]
+    lon = MapData.variables['lon'][:]
     SPECIES_Map = MapData.variables[species][:]
     SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
@@ -87,8 +87,8 @@ def save_nearest_site_distances_forEachPixel(nearest_distance_map,extent_lat,ext
     lat = MapData.createDimension("lat",len(extent_lat))
     lon = MapData.createDimension("lon",len(extent_lon))
     Distance = MapData.createVariable('Distance','f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
     latitudes[:] = extent_lat
     longitudes[:] = extent_lon
     latitudes.units = 'degrees north'
@@ -121,8 +121,8 @@ def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
     rRMSE = MapData.createVariable(species,'f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
     latitudes[:] = np.arange(Extent[0],Extent[1],lat_delta)
     longitudes[:] = np.arange(Extent[2],Extent[3],lon_delta) 
     latitudes.units = 'degrees north'
@@ -157,8 +157,8 @@ def save_absolute_uncertainty_data(final_data:np.array, YYYY:str, MM:str):
     lat = MapData.createDimension("lat",lat_size)
     lon = MapData.createDimension("lon",lon_size)
     PM25 = MapData.createVariable(species,'f4',('lat','lon',))
-    latitudes = MapData.createVariable("latitude","f4",("lat",))
-    longitudes = MapData.createVariable("longitude","f4",("lon",))
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
     latitudes[:] = np.arange(Extent[0],Extent[1],lat_delta)
     longitudes[:] = np.arange(Extent[2],Extent[3],lon_delta) 
     latitudes.units = 'degrees north'
