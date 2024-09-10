@@ -127,10 +127,65 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     Season_MONTH = [['Mar', 'Apr', 'May'], ['Jun', 'Jul', 'Aug'], ['Sep', 'Oct', 'Nov'], ['Dec','Jan', 'Feb']]
     Seasons = ['MAM','JJA','SON','DJF']
+
+    All_points_obs_data_recording   = {}
+    All_points_geo_data_recording   = {}
+    All_points_final_data_recording = {}
+    All_points_train_final_data_recording = {}
+    All_points_train_obs_data_recording = {}
+    All_points_population_data_recording = {}
+
+    All_points_obs_data_recording['AllPoints']   = np.zeros([],dtype=np.float32)
+    All_points_geo_data_recording['AllPoints']   = np.zeros([],dtype=np.float32)
+    All_points_final_data_recording['AllPoints'] = np.zeros([],dtype=np.float32)
+    All_points_train_final_data_recording['AllPoints'] = np.zeros([],dtype=np.float32)
+    All_points_train_obs_data_recording['AllPoints'] = np.zeros([],dtype=np.float32)
+    All_points_population_data_recording['AllPoints'] = np.zeros([],dtype=np.float32)
+
+    All_points_obs_data_recording['Annual']   = np.zeros([],dtype=np.float32)
+    All_points_geo_data_recording['Annual']   = np.zeros([],dtype=np.float32)
+    All_points_final_data_recording['Annual'] = np.zeros([],dtype=np.float32)
+    All_points_train_final_data_recording['Annual'] = np.zeros([],dtype=np.float32)
+    All_points_train_obs_data_recording['Annual'] = np.zeros([],dtype=np.float32)
+    All_points_population_data_recording['Annual'] = np.zeros([],dtype=np.float32)
+        
+    for imonth in MONTH:
+        All_points_obs_data_recording[imonth]   = np.zeros([],dtype=np.float32)
+        All_points_geo_data_recording[imonth]   = np.zeros([],dtype=np.float32)
+        All_points_final_data_recording[imonth] = np.zeros([],dtype=np.float32)
+        All_points_train_final_data_recording[imonth] = np.zeros([],dtype=np.float32)
+        All_points_train_obs_data_recording[imonth] = np.zeros([],dtype=np.float32)
+        All_points_population_data_recording[imonth] = np.zeros([],dtype=np.float32)
+
+    for iseason in Seasons:
+        All_points_obs_data_recording[iseason]   = np.zeros([],dtype=np.float32)
+        All_points_geo_data_recording[iseason]   = np.zeros([],dtype=np.float32)
+        All_points_final_data_recording[iseason] = np.zeros([],dtype=np.float32)
+        All_points_train_final_data_recording[iseason] = np.zeros([],dtype=np.float32)
+        All_points_train_obs_data_recording[iseason] = np.zeros([],dtype=np.float32)
+        All_points_population_data_recording[iseason] = np.zeros([],dtype=np.float32)
+    
+                    
     test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE,slopes, PWAModel, PWAMonitors = initialize_AVD_CV_dict(test_beginyear=test_beginyear,test_endyear=test_endyear)
     if len(masked_array_index)!=0:
         for iyear in range(test_endyear-test_beginyear+1):
                 for imonth in MONTH:
+                    ### All Points and Monthly All Points Recording
+                    All_points_obs_data_recording['AllPoints']   = np.append(All_points_obs_data_recording['AllPoints'],obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_geo_data_recording['AllPoints']   = np.append(All_points_geo_data_recording['AllPoints'],geo_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_final_data_recording['AllPoints'] = np.append(All_points_final_data_recording['AllPoints'],final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_train_final_data_recording['AllPoints'] = np.append(All_points_train_final_data_recording['AllPoints'],training_final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_train_obs_data_recording['AllPoints'] = np.append(All_points_train_obs_data_recording['AllPoints'],training_obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_population_data_recording['AllPoints'] = np.append(All_points_population_data_recording['AllPoints'],testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    
+                    All_points_obs_data_recording[imonth]   = np.append(All_points_obs_data_recording[imonth],obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_geo_data_recording[imonth]   = np.append(All_points_geo_data_recording[imonth],geo_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_final_data_recording[imonth] = np.append(All_points_final_data_recording[imonth],final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_train_final_data_recording[imonth] = np.append(All_points_train_final_data_recording[imonth],training_final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_train_obs_data_recording[imonth] = np.append(All_points_train_obs_data_recording[imonth],training_obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+                    All_points_population_data_recording[imonth] = np.append(All_points_population_data_recording[imonth],testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+
+                    ### Monthly Statistics Calculation for AVD Spatial CV
                     print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, imonth))
                     test_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
                     train_CV_R2[str(test_beginyear+iyear)][imonth] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
@@ -144,6 +199,8 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                     slopes[str(test_beginyear+iyear)][imonth] = slope
                     PWAModel[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=final_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
                     PWAMonitors[str(test_beginyear+iyear)][imonth] = Calculate_PWA_PM25(Population_array=testing_population_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index],PM25_array=obs_data_recording[str(test_beginyear+iyear)][imonth][masked_array_index])
+
+                    #### Get Annual Average Data Recording
                     if imonth == 'Jan':
                         final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)][imonth].copy()
                         obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)][imonth].copy()
@@ -162,7 +219,7 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                         training_obs_data_recording[str(test_beginyear+iyear)]['Annual'] += training_obs_data_recording[str(test_beginyear+iyear)][imonth]
                         #PWAModel[str(test_beginyear+iyear)]['Annual']  += PWAModel[str(test_beginyear+iyear)][imonth]
                         #PWAMonitors[str(test_beginyear+iyear)]['Annual'] += PWAMonitors[str(test_beginyear+iyear)][imonth]
-                        
+                    
                 final_data_recording[str(test_beginyear+iyear)]['Annual'] = final_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
                 obs_data_recording[str(test_beginyear+iyear)]['Annual'] = obs_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
                 geo_data_recording[str(test_beginyear+iyear)]['Annual'] = geo_data_recording[str(test_beginyear+iyear)]['Annual']/12.0
@@ -172,6 +229,15 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 #PWAModel[str(test_beginyear+iyear)]['Annual'] = PWAModel[str(test_beginyear+iyear)]['Annual']/12.0
                 #PWAMonitors[str(test_beginyear+iyear)]['Annual'] = PWAMonitors[str(test_beginyear+iyear)]['Annual']/12.0
                 
+                #### Get Annaul All Points Recording
+                All_points_obs_data_recording['Annual']   = np.append(All_points_obs_data_recording['Annual'],obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                All_points_geo_data_recording['Annual']   = np.append(All_points_geo_data_recording['Annual'],geo_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                All_points_final_data_recording['Annual'] = np.append(All_points_final_data_recording['Annual'],final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                All_points_train_final_data_recording['Annual'] = np.append(All_points_train_final_data_recording['Annual'],training_final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                All_points_train_obs_data_recording['Annual'] = np.append(All_points_train_obs_data_recording['Annual'],training_obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+                All_points_population_data_recording['Annual'] = np.append(All_points_population_data_recording['Annual'],testing_population_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
+
+                #### Calculate Annual Statistics for AVD Spatial CV
                 print('Area: {}, Year: {}, Month: {}'.format('NA', test_beginyear+iyear, 'Annual'))
                 test_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
                 train_CV_R2[str(test_beginyear+iyear)]['Annual'] = linear_regression(training_final_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index], training_obs_data_recording[str(test_beginyear+iyear)]['Annual'][masked_array_index])
@@ -187,6 +253,7 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                 slopes[str(test_beginyear+iyear)]['Annual'] = slope
 
                 for iseason in range(len(Seasons)):
+                    ##### Get Seasonal Data Recording
                     temp_final_data_recording = np.zeros(len(final_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
                     temp_obs_data_recording   = np.zeros(len(obs_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
                     temp_geo_data_recording   = np.zeros(len(geo_data_recording[str(test_beginyear+iyear)]['Jan']),dtype=np.float32)
@@ -203,7 +270,14 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                         temp_training_final_data_recording += training_final_data_recording[str(test_beginyear+iyear)][imonth]/3.0
                         temp_training_obs_data_recording   += training_obs_data_recording[str(test_beginyear+iyear)][imonth]/3.0
                         temp_testing_population_data_recording += testing_population_data_recording[str(test_beginyear+iyear)][imonth]/3.0
-
+                    ### Seasonal All Points Recording
+                    All_points_obs_data_recording[Seasons[iseason]]   = np.append(All_points_obs_data_recording[Seasons[iseason]],temp_obs_data_recording[masked_array_index])
+                    All_points_geo_data_recording[Seasons[iseason]]   = np.append(All_points_geo_data_recording[Seasons[iseason]],temp_geo_data_recording[masked_array_index])
+                    All_points_final_data_recording[Seasons[iseason]] = np.append(All_points_final_data_recording[Seasons[iseason]],temp_final_data_recording[masked_array_index])
+                    All_points_train_final_data_recording[Seasons[iseason]] = np.append(All_points_train_final_data_recording[Seasons[iseason]],temp_training_final_data_recording[masked_array_index])
+                    All_points_train_obs_data_recording[Seasons[iseason]] = np.append(All_points_train_obs_data_recording[Seasons[iseason]],temp_training_obs_data_recording[masked_array_index])
+                    All_points_population_data_recording[Seasons[iseason]] = np.append(All_points_population_data_recording[Seasons[iseason]],temp_testing_population_data_recording[masked_array_index])
+                    ### Calculate Seasonal Statistics for AVD Spatial CV
                     print('Area: {}, Year: {}, Season: {}'.format('NA', test_beginyear+iyear, Seasons[iseason]))
                     test_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index])
                     train_CV_R2[str(test_beginyear+iyear)][Seasons[iseason]] = linear_regression(temp_training_final_data_recording[masked_array_index], temp_training_obs_data_recording[masked_array_index])
@@ -217,6 +291,21 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                     slopes[str(test_beginyear+iyear)][Seasons[iseason]] = slope
                     PWAModel[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_final_data_recording[masked_array_index])
                     PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_obs_data_recording[masked_array_index])
+        ###### Calculate All Points Statistics
+        AllPoints_TimePeriods = ['AllPoints','Annual','Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','MAM','JJA','SON','DJF']
+        for itime in AllPoints_TimePeriods:
+
+            test_CV_R2['AllPoints'][itime]  = linear_regression(All_points_obs_data_recording[itime],All_points_final_data_recording[itime])
+            train_CV_R2['AllPoints'][itime] = linear_regression(All_points_train_obs_data_recording[itime],All_points_train_final_data_recording[itime])
+            geo_CV_R2['AllPoints'][itime]   = linear_regression(All_points_geo_data_recording[itime],All_points_obs_data_recording[itime])
+            RMSE['AllPoints'][itime]        = Cal_RMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime])
+            NRMSE['AllPoints'][itime]       = Cal_NRMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime])
+            PWM_NRMSE['AllPoints'][itime]       = Cal_PWM_rRMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime], All_points_population_data_recording[itime])
+            regression_Dic = regress2(_x= All_points_obs_data_recording[itime],_y=All_points_final_data_recording[itime],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+            intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
+            slopes['AllPoints'][itime] = slope
+            PWAModel['AllPoints'][itime] = Calculate_PWA_PM25(Population_array=All_points_population_data_recording[itime],PM25_array=All_points_final_data_recording[itime])
+            PWAMonitors['AllPoints'][itime] = Calculate_PWA_PM25(Population_array=All_points_population_data_recording[itime],PM25_array=All_points_obs_data_recording[itime])
     else:
         for iyear in range(test_endyear-test_beginyear+1):
                 for imonth in MONTH:
@@ -249,7 +338,19 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
                     PWM_NRMSE[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Cal_PWM_rRMSE(temp_final_data_recording[masked_array_index], temp_obs_data_recording[masked_array_index], temp_testing_population_data_recording[masked_array_index])
                     PWAModel[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_final_data_recording[masked_array_index])
                     PWAMonitors[str(test_beginyear+iyear)][Seasons[iseason]] = 0#Calculate_PWA_PM25(Population_array=temp_testing_population_data_recording[masked_array_index],PM25_array=temp_obs_data_recording[masked_array_index])
+        AllPoints_TimePeriods = ['AllPoints','Annual','Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','MAM','JJA','SON','DJF']
+        for itime in AllPoints_TimePeriods:
 
+            test_CV_R2['AllPoints'][itime]  = 0#linear_regression(All_points_obs_data_recording[itime],All_points_final_data_recording[itime])
+            train_CV_R2['AllPoints'][itime] = 0#linear_regression(All_points_train_obs_data_recording[itime],All_points_train_final_data_recording[itime])
+            geo_CV_R2['AllPoints'][itime]   = 0#linear_regression(All_points_geo_data_recording[itime],All_points_obs_data_recording[itime])
+            RMSE['AllPoints'][itime]        = 0#Cal_RMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime])
+            NRMSE['AllPoints'][itime]       = 0#Cal_NRMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime])
+            regression_Dic = regress2(_x= All_points_obs_data_recording[itime],_y=All_points_final_data_recording[itime],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+            intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
+            slopes['AllPoints'][itime] = 0#slope
+            PWAModel['AllPoints'][itime] = 0#Calculate_PWA_PM25(Population_array=All_points_population_data_recording[itime],PM25_array=All_points_final_data_recording[itime])
+            PWAMonitors['AllPoints'][itime] = 0#Calculate_PWA_PM25(Population_array=All_points_population_data_recording[itime],PM25_array=All_points_obs_data_recording[itime])
                 
     
     return test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE, PWM_NRMSE, slopes, PWAModel, PWAMonitors, len(masked_array_index)

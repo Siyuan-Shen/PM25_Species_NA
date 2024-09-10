@@ -833,40 +833,113 @@ def AVD_output_text(outfile:str,status:str,Area,test_beginyears,test_endyears,
         writer.writerow(['Area: {} ; Time Period: {} - {}'.format(Area, test_beginyears, test_endyears), ' Total Site Number: {}'.format(regional_number)])
         
         for imonth in MONTH:
-            writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
-                            '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)),
+            if imonth == 'Annual':
+                writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
+                                '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)), 'AllPoints Test R2 - Annual Average: ',
+                                str(np.round(test_CV_R2['AllPoints']['Annual'],4)), 'AllPoints Test R2 - AllPoints: ',
+                                str(np.round(test_CV_R2['AllPoints']['AllPoints'],4)),
 
-                             '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)),
 
-                             '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)),
+                                '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)), 'AllPoints Slope - Annual Average: ',
+                                str(np.round(slope['AllPoints']['Annual'],4)), 'AllPoints Slope - AllPoints: ',
+                                str(np.round(slope['AllPoints']['AllPoints'],4)),
 
-                             '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)),
-                             
-                             '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)),
+                                '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints RMSE - Annual Average: ',
+                                str(np.round(RMSE['AllPoints']['Annual'],4)), 'AllPoints RMSE - AllPoints: ',
+                                str(np.round(RMSE['AllPoints']['AllPoints'],4)),
 
-                             '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),
+                                '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)),'AllPoints NRMSE - Annual Average: ',
+                                str(np.round(NRMSE['AllPoints']['Annual'],4)), 'AllPoints NRMSE - AllPoints: ',
+                                str(np.round(NRMSE['AllPoints']['AllPoints'],4)),
+                                
+                                '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)),'AllPoints PWM NRMSE - Annual Average: ',
+                                str(np.round(PMW_NRMSE['AllPoints']['Annual'],4)), 'AllPoints PWM NRMSE - AllPoints: ',
+                                str(np.round(PMW_NRMSE['AllPoints']['AllPoints'],4)),
 
-                             '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)),
-                             
-                             '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)),
+                                '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),'AllPoints Training R2 - Annual Average: ',
+                                str(np.round(train_CV_R2['AllPoints']['Annual'],4)), 'AllPoints Training R2 - AllPoints: ',
+                                str(np.round(train_CV_R2['AllPoints']['AllPoints'],4)),
 
-                             '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)),
-                             ])
-                
+
+                                '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)),'AllPoints Geophysical R2 - Annual Average: ',
+                                str(np.round(geo_CV_R2['AllPoints']['Annual'],4)), 'AllPoints Geophysical R2 - AllPoints: ',
+                                str(np.round(geo_CV_R2['AllPoints']['AllPoints'],4)),
+                                
+                                '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)),'AllPoints PWA Model - Annual Average: ',
+                                str(np.round(PWM_Model['AllPoints']['Annual'],4)), 'AllPoints PWA Model - AllPoints: ',
+                                str(np.round(PWM_Model['AllPoints']['AllPoints'],4)),
+
+                                '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)),'AllPoints PWA Monitors - Annual Average: ',
+                                str(np.round(PWM_Monitors['AllPoints']['Annual'],4)), 'AllPoints PWA Monitors - AllPoints: ',
+                                str(np.round(PWM_Monitors['AllPoints']['AllPoints'],4)),
+                                ])
+            else:
+                writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
+                                '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)), 'AllPoints Test R2 - AllPoints: ',
+                                str(np.round(test_CV_R2['AllPoints'][imonth],4)),
+
+
+                                '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)), 'AllPoints Slope - AllPoints: ',
+                                str(np.round(slope['AllPoints'][imonth],4)),
+
+                                '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints RMSE - AllPoints: ',
+                                str(np.round(RMSE['AllPoints'][imonth],4)),
+
+                                '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints NRMSE - AllPoints: ',
+                                str(np.round(NRMSE['AllPoints'][imonth],4)),
+                                
+                                '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints PWM NRMSE - AllPoints: ',
+                                str(np.round(PMW_NRMSE['AllPoints'][imonth],4)),
+
+                                '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),'AllPoints Training R2 - AllPoints: ',
+                                str(np.round(train_CV_R2['AllPoints'][imonth],4)),
+
+
+                                '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)), 'AllPoints Geophysical R2 - AllPoints: ',
+                                str(np.round(geo_CV_R2['AllPoints'][imonth],4)),
+                                
+                                '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)), 'AllPoints PWA Model - AllPoints: ',
+                                str(np.round(PWM_Model['AllPoints'][imonth],4)),
+
+                                '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)), 'AllPoints PWA Monitors - AllPoints: ',
+                                str(np.round(PWM_Monitors['AllPoints'][imonth],4)),
+                                ])
 
     return 
 
@@ -885,39 +958,113 @@ def SensitivityTests_output_text(outfile:str,status:str,Area,test_beginyears,tes
         writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {}'.format(Area, test_beginyears, test_endyears, Exclude_Variables), ' Total Site Number: {}'.format(regional_number)])
         
         for imonth in MONTH:
-            writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
-                            '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)),
+            if imonth == 'Annual':
+                writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
+                                '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)), 'AllPoints Test R2 - Annual Average: ',
+                                str(np.round(test_CV_R2['AllPoints']['Annual'],4)), 'AllPoints Test R2 - AllPoints: ',
+                                str(np.round(test_CV_R2['AllPoints']['AllPoints'],4)),
 
-                             '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)),
 
-                             '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)),
+                                '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)), 'AllPoints Slope - Annual Average: ',
+                                str(np.round(slope['AllPoints']['Annual'],4)), 'AllPoints Slope - AllPoints: ',
+                                str(np.round(slope['AllPoints']['AllPoints'],4)),
 
-                             '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)),
-                             
-                             '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
-                             str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
-                             'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)),
+                                '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints RMSE - Annual Average: ',
+                                str(np.round(RMSE['AllPoints']['Annual'],4)), 'AllPoints RMSE - AllPoints: ',
+                                str(np.round(RMSE['AllPoints']['AllPoints'],4)),
 
-                             '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),
+                                '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)),'AllPoints NRMSE - Annual Average: ',
+                                str(np.round(NRMSE['AllPoints']['Annual'],4)), 'AllPoints NRMSE - AllPoints: ',
+                                str(np.round(NRMSE['AllPoints']['AllPoints'],4)),
+                                
+                                '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)),'AllPoints PWM NRMSE - Annual Average: ',
+                                str(np.round(PMW_NRMSE['AllPoints']['Annual'],4)), 'AllPoints PWM NRMSE - AllPoints: ',
+                                str(np.round(PMW_NRMSE['AllPoints']['AllPoints'],4)),
 
-                             '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)),
-                             
-                             '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)),
+                                '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),'AllPoints Training R2 - Annual Average: ',
+                                str(np.round(train_CV_R2['AllPoints']['Annual'],4)), 'AllPoints Training R2 - AllPoints: ',
+                                str(np.round(train_CV_R2['AllPoints']['AllPoints'],4)),
 
-                             '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
-                             str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)),
-                             ])
+
+                                '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)),'AllPoints Geophysical R2 - Annual Average: ',
+                                str(np.round(geo_CV_R2['AllPoints']['Annual'],4)), 'AllPoints Geophysical R2 - AllPoints: ',
+                                str(np.round(geo_CV_R2['AllPoints']['AllPoints'],4)),
+                                
+                                '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)),'AllPoints PWA Model - Annual Average: ',
+                                str(np.round(PWM_Model['AllPoints']['Annual'],4)), 'AllPoints PWA Model - AllPoints: ',
+                                str(np.round(PWM_Model['AllPoints']['AllPoints'],4)),
+
+                                '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)),'AllPoints PWA Monitors - Annual Average: ',
+                                str(np.round(PWM_Monitors['AllPoints']['Annual'],4)), 'AllPoints PWA Monitors - AllPoints: ',
+                                str(np.round(PWM_Monitors['AllPoints']['AllPoints'],4)),
+                                ])
+            else:
+                writer.writerow([' -------------------------- {} ------------------------'.format(imonth), 
+                                '\n Test R2 - Avg: ', str(np.round(test_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(test_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(test_CV_R2_Alltime['Alltime'][imonth][3],4)), 'AllPoints Test R2 - AllPoints: ',
+                                str(np.round(test_CV_R2['AllPoints'][imonth],4)),
+
+
+                                '\n Slope - Avg: ', str(np.round(slope_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(slope_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(slope_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(slope_Alltime['Alltime'][imonth][3],4)), 'AllPoints Slope - AllPoints: ',
+                                str(np.round(slope['AllPoints'][imonth],4)),
+
+                                '\n RMSE -  Avg: ', str(np.round(RMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(RMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(RMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(RMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints RMSE - AllPoints: ',
+                                str(np.round(RMSE['AllPoints'][imonth],4)),
+
+                                '\n NRMSE -  Avg: ', str(np.round(NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(NRMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints NRMSE - AllPoints: ',
+                                str(np.round(NRMSE['AllPoints'][imonth],4)),
+                                
+                                '\n PWM NRMSE -  Avg: ', str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][0], 4)), 'Min: ',
+                                str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][1], 4)), 'Max: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(PWM_NRMSE_Alltime['Alltime'][imonth][3],4)), 'AllPoints PWM NRMSE - AllPoints: ',
+                                str(np.round(PMW_NRMSE['AllPoints'][imonth],4)),
+
+                                '\n Training R2 - Avg: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(train_CV_R2_Alltime['Alltime'][imonth][2],4)),
+                                'STD: ',str(np.round(train_CV_R2_Alltime['Alltime'][imonth][3],4)),'AllPoints Training R2 - AllPoints: ',
+                                str(np.round(train_CV_R2['AllPoints'][imonth],4)),
+
+
+                                '\n Geophysical R2 - Avg: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(geo_CV_R2_Alltime['Alltime'][imonth][3],4)), 'AllPoints Geophysical R2 - AllPoints: ',
+                                str(np.round(geo_CV_R2['AllPoints'][imonth],4)),
+                                
+                                '\n PWA Model - Avg: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAModel_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAModel_Alltime['Alltime'][imonth][3],4)), 'AllPoints PWA Model - AllPoints: ',
+                                str(np.round(PWM_Model['AllPoints'][imonth],4)),
+
+                                '\n PWA Monitors - Avg: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][0], 4)), 'Min: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][1], 4)), 'Max: ',
+                                str(np.round(PWAMonitors_Alltime['Alltime'][imonth][2],4)), 
+                                'STD: ',str(np.round(PWAMonitors_Alltime['Alltime'][imonth][3],4)), 'AllPoints PWA Monitors - AllPoints: ',
+                                str(np.round(PWM_Monitors['AllPoints'][imonth],4)),
+                                ])
                 
 
     return 

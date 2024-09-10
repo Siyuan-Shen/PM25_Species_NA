@@ -246,6 +246,36 @@ def initialize_AVD_CV_dict(test_beginyear:int,test_endyear:int):
     PWAModel     = {}
     PWAMonitors  = {}
     
+    ### 'AllPoints is not for AVD, but for all points Statistics
+    test_CV_R2['AllPoints']   = {}
+    train_CV_R2['AllPoints']   = {}
+    geo_CV_R2['AllPoints']   = {}
+    RMSE['AllPoints']   = {}
+    NRMSE['AllPoints']   = {}
+    PWM_NRMSE['AllPoints']   = {}
+    slope['AllPoints']   = {}
+    PWAModel['AllPoints']   = {}
+    PWAMonitors['AllPoints']   = {}
+
+    test_CV_R2['AllPoints']['AllPoints']    = -1.0
+    train_CV_R2['AllPoints']['AllPoints']   = -1.0
+    geo_CV_R2['AllPoints']['AllPoints']     = -1.0
+    RMSE['AllPoints']['AllPoints']          = -1.0
+    NRMSE['AllPoints']['AllPoints']         = -1.0
+    PWM_NRMSE['AllPoints']['AllPoints']     = -1.0
+    slope['AllPoints']['AllPoints']         = -1.0
+    PWAModel['AllPoints']['AllPoints']      = -1.0
+    PWAMonitors['AllPoints']['AllPoints']   = -1.0
+    for imonth in MONTH:
+        test_CV_R2['AllPoints'][imonth]    = -1.0
+        train_CV_R2['AllPoints'][imonth]   = -1.0
+        geo_CV_R2['AllPoints'][imonth]     = -1.0
+        RMSE['AllPoints'][imonth]          = -1.0
+        NRMSE['AllPoints'][imonth]         = -1.0
+        PWM_NRMSE['AllPoints'][imonth]     = -1.0
+        slope['AllPoints'][imonth]         = -1.0
+        PWAModel['AllPoints'][imonth]      = -1.0
+        PWAMonitors['AllPoints'][imonth]   = -1.0
     for iyear in range(test_endyear-test_beginyear+1):
             test_CV_R2[str(test_beginyear+iyear)]   = {}
             train_CV_R2[str(test_beginyear+iyear)]  = {}
