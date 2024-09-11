@@ -49,6 +49,7 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
     Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording = initialize_Loss_Accuracy_Recordings(kfolds=BLCO_kfold,n_models=len(beginyears)*len(training_months),epoch=epoch,batchsize=batchsize)
     lat_test_recording = np.array([],dtype=np.float32)
     lon_test_recording = np.array([],dtype=np.float32)
+    
 
     if utilize_self_isolated_sites:
         nearest_distances = np.array([],dtype=np.float32)
@@ -100,6 +101,7 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
     
     test_index_number = np.array([],dtype = int)
     train_index_number = np.array([],dtype=int)
+    testsites2trainsites_nearest_distances =  np.array([],dtype=np.float32)
     if not BLCO_Spatial_CV_test_only_Switch:
         for ifold in range(BLCO_kfold):
             count = ifold
@@ -110,6 +112,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
             train_index_number = np.append(train_index_number,len(train_index))
             lat_test_recording = np.append(lat_test_recording,lat[test_index])
             lon_test_recording = np.append(lon_test_recording,lon[test_index])
+            
+            for isite in range(len(test_index)):
+                site_distances = calculate_distance_forArray(site_lat=lat[test_index[isite]],site_lon=lon[test_index[isite]],SATLAT_MAP=lat[train_index],SATLON_MAP=lon[train_index])
+                testsites2trainsites_nearest_distances = np.append(testsites2trainsites_nearest_distances,np.min(site_distances[np.where(site_distances>0.1)]))
             print('Buffer Size: {} km,No.{}-fold, test_index #: {}, train_index #: {}, total # of sites: {}'.format(buffer_radius,ifold+1,len(test_index),len(train_index),len(lat)))
             for imodel_year in range(len(beginyears)):
                 Normalized_TrainingData = get_trainingdata_within_sart_end_YEAR(initial_array=Initial_Normalized_TrainingData, training_start_YYYY=beginyears[imodel_year],training_end_YYYY=endyears[imodel_year],start_YYYY=start_YYYY,sitesnumber=sitesnumber)
@@ -191,10 +197,10 @@ def BLCO_AVD_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width, height, s
                                             buffer_radius=buffer_radius,extent=[10.055,69.945,-169.945,-40.055],fig_outfile=fig_outfile)
         save_month_based_BLCO_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,geo_data_recording=geo_data_recording,training_final_data_recording=training_final_data_recording,
                                              training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,
-                                             lat_recording=lat_test_recording,lon_recording=lon_test_recording,train_index_number=train_index_number,test_index_number=test_index_number,
+                                             lat_recording=lat_test_recording,lon_recording=lon_test_recording,testsites2trainsites_nearest_distances=testsites2trainsites_nearest_distances,train_index_number=train_index_number,test_index_number=test_index_number,
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
 
-    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording,train_index_number, test_index_number = load_month_based_BLCO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
+    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording,testsites2trainsites_nearest_distances,train_index_number, test_index_number = load_month_based_BLCO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
     if utilize_self_isolated_sites:
         txtfile_outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCOCV/statistical_indicators/{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
     else:
