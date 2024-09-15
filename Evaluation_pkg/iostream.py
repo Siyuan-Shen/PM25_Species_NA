@@ -259,7 +259,7 @@ def save_month_based_BLOO_data_recording(obs_data,final_data,geo_data_recording,
     np.save(lon_data_outfile, lon_recording)
     return
 
-def save_month_based_BLCO_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,testsites2trainsites_nearest_distances, train_index_number,test_index_number,
+def save_month_based_BLCO_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,testsites2trainsites_nearest_distances, test_sites_index_recording, train_sites_index_recording , excluded_sites_index_recording, train_index_number,test_index_number,
 species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
     if utilize_self_isolated_sites:
         outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
@@ -285,6 +285,12 @@ species, version, typeName, beginyear, endyear, nchannel, special_name, width, h
                                                                                             ,width, height, nchannel,special_name)
     TestSites2TrainSites_nearest_distances_outfile =  outdir + '{}-{}-TestSites2TrainSites_nearest_distances-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
+    test_sites_index_recording_outfile =  outdir + '{}-{}-test_sites_index_recording-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    train_sites_index_recording_outfile =  outdir + '{}-{}-train_sites_index_recording-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
+    excluded_sites_index_recording_outfile =  outdir + '{}-{}-excluded_sites_index_recording-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
+                                                                                            ,width, height, nchannel,special_name)
     train_index_number_outfile = outdir + '{}-{}-train_index_number-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)
     test_index_number_outfile = outdir + '{}-{}-test_index_number-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
@@ -298,6 +304,9 @@ species, version, typeName, beginyear, endyear, nchannel, special_name, width, h
     np.save(lat_data_outfile, lat_recording)
     np.save(lon_data_outfile, lon_recording)
     np.save(TestSites2TrainSites_nearest_distances_outfile, testsites2trainsites_nearest_distances)
+    np.save(test_sites_index_recording_outfile,test_sites_index_recording)
+    np.save(train_sites_index_recording_outfile,train_sites_index_recording)
+    np.save(excluded_sites_index_recording_outfile,excluded_sites_index_recording)
     np.save(train_index_number_outfile, train_index_number)
     np.save(test_index_number_outfile,  test_index_number)
     return
@@ -544,28 +553,22 @@ def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, 
     else:
         indir = txt_outdir + '{}/{}/Results/results-BLCO_DataRecording/'.format(species, version)
 
-    obs_data_infile =  indir + '{}-{}-Obs-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    final_data_infile = indir + '{}-{}-Final-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    geo_data_infile = indir + '{}-{}-Geo-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
+    obs_data_infile =  indir + '{}-{}-Obs-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    final_data_infile = indir + '{}-{}-Final-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    geo_data_infile = indir + '{}-{}-Geo-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
     training_final_data_infile = indir + '{}-{}-training_final_data-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
                                                                                             ,width, height, nchannel,special_name)  
-    training_obs_data_infile = indir + '{}-{}-training_obs_data-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name) 
-    testing_population_data_infile = indir + '{}-{}-testing_population_data-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)  
-    lat_data_infile = indir + '{}-{}-lat-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    lon_data_infile = indir + '{}-{}-lon-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
+    training_obs_data_infile = indir + '{}-{}-training_obs_data-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name) 
+    testing_population_data_infile = indir + '{}-{}-testing_population_data-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)  
+    lat_data_infile = indir + '{}-{}-lat-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species,buffer_radius, BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    lon_data_infile = indir + '{}-{}-lon-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
     TestSites2TrainSites_nearest_distances_infile =  indir + '{}-{}-TestSites2TrainSites_nearest_distances-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    train_index_number_infile = indir + '{}-{}-train_index_number-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    test_index_number_infile = indir + '{}-{}-test_index_number-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
+     ,width, height, nchannel,special_name)
+    test_sites_index_recording_infile =  indir + '{}-{}-test_sites_index_recording-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    train_sites_index_recording_infile =  indir + '{}-{}-train_sites_index_recording-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    excluded_sites_index_recording_infile =  indir + '{}-{}-excluded_sites_index_recording-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    train_index_number_infile = indir + '{}-{}-train_index_number-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
+    test_index_number_infile = indir + '{}-{}-test_index_number-BLCODataRecording_{}km_{}-folds_{}-ClusterSeeds_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, buffer_radius,BLCO_kfold,BLCO_seeds_number, beginyear, endyear,width, height, nchannel,special_name)
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
     geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
@@ -575,9 +578,12 @@ def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, 
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
     testsites2trainsites_nearest_distances = np.load(TestSites2TrainSites_nearest_distances_infile)
+    test_sites_index_recording = np.load(test_sites_index_recording_infile, allow_pickle=True).item()
+    train_sites_index_recording = np.load(train_sites_index_recording_infile, allow_pickle=True).item()
+    excluded_sites_index_recording = np.load(excluded_sites_index_recording_infile, allow_pickle=True).item()
     train_index_number = np.load(train_index_number_infile)
     test_index_number  = np.load(test_index_number_infile)
-    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording,testsites2trainsites_nearest_distances, train_index_number, test_index_number
+    return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording,testsites2trainsites_nearest_distances,test_sites_index_recording,train_sites_index_recording,excluded_sites_index_recording, train_index_number, test_index_number
 
 
 def load_coMonitor_Population():

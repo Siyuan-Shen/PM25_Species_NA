@@ -94,3 +94,12 @@ Updates:
     1. The model can be divided by whichever variables in Two Combined Models Module. 
     2. Add seasonal statistical results.
 
+
+Version 1.7.0
+
+Siyuan Shen, Sep 10th, 2024 @ Washington University in St. Louis, MO. USA
+
+Updates:
+1. Add the Buffer Leave Isolated Sites and Clusters Out (BLISCO) CV.
+2. Index of test, train, and excluded sites are recorded.
+3. Improve the calculation of Great-Circle Distances.

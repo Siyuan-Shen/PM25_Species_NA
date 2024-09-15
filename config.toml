@@ -93,7 +93,7 @@ endyears                                              = [2001]#,2002,2003,2004,2
 training_months                                       = [[9,10,11,0,1,2],[3,4,5,6,7,8]] # [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] 
 test_beginyears                                       = [2000]
 test_endyears                                         = [2022]
-additional_test_regions                               = ['']
+additional_test_regions                               = []
 
 #########################################################################################################################################################
 
@@ -101,13 +101,13 @@ additional_test_regions                               = ['']
 
 BLCO_CrossValidation_Switch                           = true
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true
-Buffer_size                                           = [0]
+Buffer_size                                           = [80]
 
 [BLCO-CrossValidation.TrainingSettings]
 
 Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
-seeds_number                                          = 19
-kfold                                                 = 20 # larger than seeds number
+seeds_number                                          = 10
+kfold                                                 = 10 # larger than seeds number
 repeats                                               = 1
 beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
 endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
