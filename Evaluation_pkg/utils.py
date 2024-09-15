@@ -602,7 +602,7 @@ def get_nearest_test_distance(area_test_index,area_train_index, site_lon, site_l
         temp_lat, temp_lon = site_lat[area_test_index[index]], site_lon[area_test_index[index]]
         other_sites_distances = calculate_distance_forArray(site_lat=temp_lat,site_lon=temp_lon,
                                                             SATLAT_MAP=site_lat[area_train_index],SATLON_MAP=site_lon[area_train_index])
-        nearest_site_distance[index] = min(other_sites_distances[np.where(other_sites_distances>0.0)]) # We take 110 kilometers for one degree
+        nearest_site_distance[index] = min(other_sites_distances[np.where(other_sites_distances>0.01)]) # We take 110 kilometers for one degree
     
     return nearest_site_distance
 
