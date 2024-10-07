@@ -103,3 +103,4 @@ Updates:
 1. Add the Buffer Leave Isolated Sites and Clusters Out (BLISCO) CV.
 2. Index of test, train, and excluded sites are recorded.
 3. Improve the calculation of Great-Circle Distances.
+4. Add LOWESS Uncertainty Estimation.
