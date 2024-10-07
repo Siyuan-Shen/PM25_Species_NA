@@ -226,7 +226,7 @@ def save_ForcedSlopeUnity_final_map_data(final_data:np.array, YYYY:str, MM:str, 
     return
 
 def save_combinedGeo_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPECIES:str, version:str, special_name):
-    outdir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
+    outdir = Estimation_outdir + '{}/{}/Map_Estimation/Combined_withGeo/{}/'.format(SPECIES,version,YYYY)
     
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)

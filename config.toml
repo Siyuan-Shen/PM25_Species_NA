@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = 'v1.7.0/{}_monthly_biase
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.7.0/{}-cnn_TrainingData_59channels_11x11_199801-202212_BenchMark.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.7.0/{}-cnn_TrainingData_64channels_11x11_199801-202212_BenchMark.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -40,8 +40,8 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 
 [Spatial-CrossValidation]
 
-Spatial_CrossValidation_Switch                        = false
-Spatial_CV_LossAccuracy_plot_Switch                   = false
+Spatial_CrossValidation_Switch                        = true
+Spatial_CV_LossAccuracy_plot_Switch                   = true
 
 [Spatial-CrossValidation.Training_Settings]
 
@@ -58,7 +58,7 @@ additional_test_regions                               = ['Canada','Contiguous Un
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = false
+regression_plot_switch                                = true
 every_point_begin_years                               = 2000
 every_point_end_years                                 = 2022
 
@@ -99,7 +99,7 @@ additional_test_regions                               = []
 
 [BLCO-CrossValidation]
 
-BLCO_CrossValidation_Switch                           = true
+BLCO_CrossValidation_Switch                           = false
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true
 Buffer_size                                           = [80]
 
@@ -226,25 +226,39 @@ Analysis_MONTH                                        = [0,1,2,3,4,5,6,7,8,9,10,
 [Uncertainty-Settings]
 
 Uncertainty_Switch                                    = false
+Derive_BLISCO_LOWESS_Uncertainty_Switch               = false
 Derive_distances_map_Switch                           = false
-Derive_rRMSE_map_Switch                               = false
+Derive_rRMSE_map_Switch                               = true
 Derive_absolute_Uncertainty_map_Switch                = false
 Uncertainty_visualization_Switch                      = true
 
+[Uncertainty-Settings.BLISCO_LOWESS_Uncertainty_Settings]
+nearby_sites_distances_mode                            = 'mean' # 'mean' or 'median' 
+number_of_nearby_sites_forAverage                     = 5
+BLISCO_beginyear                                      = 2000 # Check the BLISCO results
+BLISCO_endyear                                        = 2022 # Check the BLISCO results
+BLISCO_kfolds                                         = 10
+BLISCO_seeds_numbers                                  = 10
+Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200] # For loading datasets from BLISCO 
+Max_distances_for_Bins                                = 500
+Number_of_Bins                                        = 101
+Low_percentile_remove                                 = 5
+High_percentile_remove                                = 95
+LOWESS_frac                                           = 0.3
 [Uncertainty-Settings.Map_Estimation_Settings]
 
 Estimation_years                                      = [2011,2012,2013,2014,2015,2016,2017]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Estiamtion_months                                     = ['01','02','03','04','05','06','07','08','09','10','11','12']
-Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200]
 
 [Uncertainty-Settings.Visualization_Settings]
 
-Uncertainty_Plot_Switch                               = true       # Switch for plotting the map of estimated concentration. 
+Uncertainty_Map_plot                                  = false
 Uncertainty_Plot_YEARS                                = [2011,2012,2013,2014,2015,2016,2017]#,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 Uncertainty_Plot_Extent                               = [10.055,69.945,-169.945,-50.055]
 Uncertainty_Plot_MONTHS                               = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Uncertainty_Plot_Area                                 = 'NA'
 
+Uncertainty_BLISCO_LOWESS_relationship_plot           = true
 
 
 
@@ -254,7 +268,7 @@ Uncertainty_Plot_Area                                 = 'NA'
 [Training-Settings.identity]
 
 version                                               = 'v1.7.0'
-special_name                                          = '_BenchMark' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
+special_name                                          = '_BenchMark_RoadDensity_withprimary' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
 
 [Training-Settings.learning-objective]
 
@@ -391,6 +405,7 @@ channel_names                                         =['EtaAOD_Bias', 'EtaCoast
                                                        'DST_offline_emi',# 'SSLT_offline_emi',
                                                        'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 
                                                        'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos','Permanent_Wetlands', 
+                                                       'primary',# 'secondary',#'unclassified',#'trunk',#'motorway', #
                                                        'Month_of_Year',
                                                         'Lat', 'Lon','elevation'#'S1','S2','S3',#'S1','S2','S3','  'Lon',
                                                         #'Population'

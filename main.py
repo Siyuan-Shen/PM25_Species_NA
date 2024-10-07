@@ -151,7 +151,7 @@ if __name__ == '__main__':
         f = open(cfg_outfile,'w')
         toml.dump(cfg, f)
         f.close()
-        Derive_Estimation_Uncertainty()
+        Derive_Estimation_Uncertainty(total_channel_names=total_channel_names,width=width,height=height)
         
         
 

@@ -260,7 +260,7 @@ def save_month_based_BLOO_data_recording(obs_data,final_data,geo_data_recording,
     return
 
 def save_month_based_BLCO_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,testsites2trainsites_nearest_distances, test_sites_index_recording, train_sites_index_recording , excluded_sites_index_recording, train_index_number,test_index_number,
-species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
+species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius,BLCO_kfold,BLCO_seeds_number):
     if utilize_self_isolated_sites:
         outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
     else:
@@ -547,7 +547,7 @@ def load_month_based_BLOO_data_recording(species, version, typeName, beginyear, 
     return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
 
 
-def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius):
+def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,buffer_radius,BLCO_kfold,BLCO_seeds_number):
     if utilize_self_isolated_sites:
          indir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCO_DataRecording/'.format(species, version)
     else:
