@@ -346,8 +346,8 @@ def calculate_Statistics_results(test_beginyear,test_endyear:int,final_data_reco
             geo_CV_R2['AllPoints'][itime]   = 0#linear_regression(All_points_geo_data_recording[itime],All_points_obs_data_recording[itime])
             RMSE['AllPoints'][itime]        = 0#Cal_RMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime])
             NRMSE['AllPoints'][itime]       = 0#Cal_NRMSE(All_points_final_data_recording[itime],All_points_obs_data_recording[itime])
-            regression_Dic = regress2(_x= All_points_obs_data_recording[itime],_y=All_points_final_data_recording[itime],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
-            intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
+            #regression_Dic = regress2(_x= All_points_obs_data_recording[itime],_y=All_points_final_data_recording[itime],_method_type_1='ordinary least square',_method_type_2='reduced major axis',)
+            #intercept,slope = regression_Dic['intercept'], regression_Dic['slope']
             slopes['AllPoints'][itime] = 0#slope
             PWAModel['AllPoints'][itime] = 0#Calculate_PWA_PM25(Population_array=All_points_population_data_recording[itime],PM25_array=All_points_final_data_recording[itime])
             PWAMonitors['AllPoints'][itime] = 0#Calculate_PWA_PM25(Population_array=All_points_population_data_recording[itime],PM25_array=All_points_obs_data_recording[itime])

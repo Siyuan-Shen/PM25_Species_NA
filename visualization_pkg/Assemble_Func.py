@@ -1,10 +1,10 @@
 import shap
 from Estimation_pkg.iostream import load_estimation_map_data,load_ForcedSlopeUnity_estimation_map_data
 from Uncertainty_pkg.iostream import load_absolute_uncertainty_map_data
-from visualization_pkg.iostream import load_monthly_obs_data_forEstimationMap,save_ForcedSlopeUnity_estimation_map_figure,save_shap_analysis_figures,save_loss_accuracy_figure, save_estimation_map_figure,load_Population_MapData,save_uncertainty_map_figure
+from visualization_pkg.iostream import save_BLISCO_LOWESS_distances_relationship_figure,load_monthly_obs_data_forEstimationMap,save_ForcedSlopeUnity_estimation_map_figure,save_shap_analysis_figures,save_loss_accuracy_figure, save_estimation_map_figure,load_Population_MapData,save_uncertainty_map_figure
 from visualization_pkg.Training_plot import plot_loss_accuracy_with_epoch, plot_valid_training_loss_accuracy_with_epoch_together
 from visualization_pkg.Estimation_plot import Plot_Species_Map_Figures
-from visualization_pkg.Uncertainty_plot import Plot_Species_Uncertainty_Map_Figures
+from visualization_pkg.Uncertainty_plot import Plot_Species_Uncertainty_Map_Figures,Plot_LOWESS_values_bins_Figure
 from visualization_pkg.Evaluation_plot import shap_value_plot
 from Estimation_pkg.utils import Map_Plot_Extent
 from Uncertainty_pkg.utils import *
@@ -73,4 +73,9 @@ def plot_save_uncertainty_map_figure(typeName:str,width:int,height:int,species:s
             Population_Map, Pop_lat, Pop_lon  = load_Population_MapData(YYYY=YEAR,MM=MM)
             Plot_Species_Uncertainty_Map_Figures(Uncertainty_Map=SPECIES_Uncertainty_Map,PM25_LAT=lat,PM25_LON=lon,Population_Map=Population_Map,population_Lat=Pop_lat,population_Lon=Pop_lon,extent=Uncertainty_Plot_Extent,outfile=Uncertainty_Map_Figure_outfile
                                          ,YYYY=YEAR,MM=MM)
+    return
+
+def plot_save_uncertainty_LOWESS_bins_relationship_figure(LOWESS_dic,rRMSE_dic,output_bins,nchannel,width:int,height:int,species:str,version:str,):
+    LOWESS_bins_relationship_figure_outfile = save_BLISCO_LOWESS_distances_relationship_figure(nchannel=nchannel,species=species,special_name=special_name,version=version,width=width,height=height)
+    Plot_LOWESS_values_bins_Figure(LOWESS_vallues_dic=LOWESS_dic,rRMSE_dic=rRMSE_dic,output_bins=output_bins,outfile=LOWESS_bins_relationship_figure_outfile)
     return

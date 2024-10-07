@@ -1,5 +1,6 @@
 import os
 import netCDF4 as nc
+from Uncertainty_pkg.utils import *
 from visualization_pkg.utils import *
 from Estimation_pkg.utils import *
 from Training_pkg.utils import *
@@ -41,6 +42,12 @@ def save_uncertainty_map_figure(typeName, species,version,Area,YYYY,MM,nchannel,
     uncertainty_map_fig_outfile =  fig_outdir + 'UncertaintyMap_{}_{}_{}_{}_{}{}_{}Channel_{}x{}{}.png'.format(typeName,species,version,Area,YYYY,MM,nchannel,width,height,special_name)
     return uncertainty_map_fig_outfile
 
+def save_BLISCO_LOWESS_distances_relationship_figure(nchannel, species,version,width,height,special_name ):
+    fig_outdir = Uncertainty_Map_outdir + '{}/{}/Figures/figures-BLISCO_LOWESS_distances_relationship/'.format(species, version)
+    if not os.path.isdir(fig_outdir):
+        os.makedirs(fig_outdir)
+    uncertainty_map_fig_outfile =  fig_outdir + 'BLISCO_LOWESS_distances_relationship_{}_{}_{}-folds_{}-SeedsNumbers_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}{}.png'.format(version,species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,Max_distances_for_Bins,Number_of_Bins,nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannel,width,height,special_name)
+    return uncertainty_map_fig_outfile
 
 def load_Population_MapData(YYYY,MM):
     inputfiles = inputfiles_table(YYYY=YYYY,MM=MM)
