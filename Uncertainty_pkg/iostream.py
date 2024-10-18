@@ -86,6 +86,14 @@ def load_pixels_nearest_sites_distances_map():
     Distance_Map = np.array(Distance_Map)
     return Distance_Map
 
+def load_pixels_nearby_sites_distances_map():
+    indir = '/my-projects/Projects/PM25_Speices_DL_2023/data/Pixels2sites_distances/'
+    infile = indir + '{}_nearby_site_distances_forEachPixel_{}-mode_{}Number.nc'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage)
+    MapData = nc.Dataset(infile)
+    Distance_Map = MapData.variables['Distance'][:]
+    Distance_Map = np.array(Distance_Map)
+    return Distance_Map
+
 def load_absolute_uncertainty_map_data(YYYY:str, MM:str, version:str, special_name):
     indir = Estimation_outdir + '{}/{}/Uncertainty_Results/Absolute-Uncertainty_Map/{}/'.format(species,version,YYYY)
     infile = indir + 'AbsoluteUncertainty_{}_{}_{}{}{}.nc'.format(species,version,YYYY,MM,special_name)
@@ -139,6 +147,34 @@ def save_nearest_site_distances_forEachPixel(nearest_distance_map,extent_lat,ext
     Distance.units = 'kilometer'
     Distance[:] = nearest_distance_map
     return
+
+def save_nearby_site_distances_forEachPixel(nearby_distance_map,extent_lat,extent_lon):
+    outdir = '/my-projects/Projects/PM25_Speices_DL_2023/data/Pixels2sites_distances/'
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
+    outfile = outdir + '{}_nearby_site_distances_forEachPixel_{}-mode_{}Number.nc'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage)
+    
+    MapData = nc.Dataset(outfile,'w',format='NETCDF4')
+    MapData.TITLE = 'Nearset distance for each pixel from {} sites under {} mode with {} Number'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage)
+    MapData.CONTACT = 'SIYUAN SHEN <s.siyuan@wustl.edu>'
+
+    lat = MapData.createDimension("lat",len(extent_lat))
+    lon = MapData.createDimension("lon",len(extent_lon))
+    Distance = MapData.createVariable('Distance','f4',('lat','lon',))
+    latitudes = MapData.createVariable("lat","f4",("lat",))
+    longitudes = MapData.createVariable("lon","f4",("lon",))
+    latitudes[:] = extent_lat
+    longitudes[:] = extent_lon
+    latitudes.units = 'degrees north'
+    longitudes.units = 'degrees east'
+    latitudes.standard_name = 'latitude'
+    latitudes.long_name = 'latitude'
+    longitudes.standard_name = 'longitude'
+    longitudes.long_name = 'longitude'
+    Distance.units = 'kilometer'
+    Distance[:] = nearby_distance_map
+    return
+
 def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
 
     outdir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/rRMSE_Map/'.format(species,version)

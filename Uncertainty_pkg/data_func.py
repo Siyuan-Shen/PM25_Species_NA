@@ -1,6 +1,7 @@
 import numpy as np 
 import os
 from scipy.interpolate import NearestNDInterpolator
+from sklearn.neighbors import BallTree
 from sklearn.metrics import mean_squared_error
 from statsmodels.nonparametric.smoothers_lowess import lowess
 import time
@@ -14,7 +15,7 @@ from Estimation_pkg.utils import *
 from Evaluation_pkg.utils import *
 from Evaluation_pkg.iostream import *
 
-from Uncertainty_pkg.iostream import load_NA_GeoLatLon,load_NA_GeoLatLon_Map,save_nearest_site_distances_forEachPixel
+from Uncertainty_pkg.iostream import load_NA_GeoLatLon,load_NA_GeoLatLon_Map,save_nearest_site_distances_forEachPixel,save_nearby_site_distances_forEachPixel
 from Uncertainty_pkg.utils import *
 
 
@@ -107,12 +108,12 @@ def Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height):
         
     return LOWESS_values,rRMSE,output_bins
 
-def Get_NearbySites_Distances_Info(test_lat,test_lon,train_lat_array,train_lon_array,number_of_nearby_sites_forAverage,nerby_sites_distances_mode='mean'):
+def Get_NearbySites_Distances_Info(test_lat,test_lon,train_lat_array,train_lon_array,number_of_nearby_sites_forAverage,nearby_sites_distances_mode='mean'):
     dist_map = calculate_distance_forArray(test_lat,test_lon,train_lat_array,train_lon_array)
     dist_map.sort()
-    if  nerby_sites_distances_mode == 'mean':
+    if  nearby_sites_distances_mode == 'mean':
         distance = np.mean(dist_map[0:number_of_nearby_sites_forAverage])
-    if nerby_sites_distances_mode == 'median':
+    if nearby_sites_distances_mode == 'median':
         if number_of_nearby_sites_forAverage%2 == 1:
             distance = dist_map[int((number_of_nearby_sites_forAverage-1)/2)]
         else:
@@ -203,3 +204,62 @@ def get_nearest_site_distance_for_each_pixel():
 
     save_nearest_site_distances_forEachPixel(nearest_distance_map=nearest_distance_map,extent_lat=SATLAT[lat_index],extent_lon=SATLON[lon_index])
     return 
+
+def get_nearby_sites_distances_for_each_pixel():
+    SATLAT,SATLON = load_NA_GeoLatLon()
+    lat_index, lon_index = get_extent_index(Extent)
+    extent_lat_map,extent_lon_map = get_extent_lat_lon_map(lat_index=lat_index,lon_index=lon_index,SATLAT=SATLAT,SATLON=SATLON)
+    SPECIES, sites_lat,sites_lon = load_monthly_obs_data(species=species)
+    sites_loc = np.array([sites_lat,sites_lon]).T
+    sites_loc = np.radians(sites_loc)
+    tree = BallTree(sites_loc, metric='haversine',leaf_size=2) # build ball tree
+    landtype = get_landtype(YYYY=2015,extent=Extent)
+    nearby_distance_map = np.full(extent_lat_map.shape,1000.0)
+    for ix in range(len(lat_index)):
+        land_index = np.where(landtype[ix,:] != 0)
+        print('It is procceding ' + str(np.round(100*(ix/len(lat_index)),2))+'%.' )
+        if len(land_index[0]) == 0:
+            print('No lands.')
+            None
+        else:
+            start_time = time.time()
+            temp_pixels_lat_lon = np.radians(np.array([extent_lat_map[ix,land_index[0]], extent_lon_map[ix,land_index[0]]]).T)
+            dist, ind = tree.query(temp_pixels_lat_lon,k=number_of_nearby_sites_forAverage)  # find sites nearby
+            dist = dist * 6371 # convert to km
+            if  nearby_sites_distances_mode == 'mean':
+                distances = np.mean(dist,axis=1)
+            if nearby_sites_distances_mode == 'median':
+                if number_of_nearby_sites_forAverage%2 == 1:
+                    distances = dist[:,int((number_of_nearby_sites_forAverage-1)/2)]
+                else:
+                    distances = np.mean(dist[:,int(number_of_nearby_sites_forAverage)/2-1:int(number_of_nearby_sites_forAverage/2)+1],axis=1)
+            nearby_distance_map[ix,land_index[0]] = distances
+            end_time = time.time()
+            Get_distance_forOneLatitude_time = end_time - start_time
+            print('Time for getting distance for one latitude', Get_distance_forOneLatitude_time, 's, the number of pixels is ', len(land_index[0]))
+    save_nearby_site_distances_forEachPixel(nearby_distance_map=nearby_distance_map,extent_lat=SATLAT[lat_index],extent_lon=SATLON[lon_index])
+    return
+
+def calculate_distances_for_ArraysAndArrays(lat_array_1,lon_array_1,lat_array_2,lon_array_2):
+    """_summary_
+
+    Args:
+        lat_array_1 (_type_): 1D
+        lon_array_1 (_type_): 1D
+        lat_array_2 (_type_): 1D
+        lon_array_2 (_type_): 1D
+    """
+    new_lat_array1 = lat_array_1[:,np.newaxis]
+    d_lat = new_lat_array1 - lat_array_2
+    dist_map = np.full(d_lat.shape,1000.0)
+    for i in range(len(lat_array_1)):
+        dist_map[i,:] = calculate_distance_forArray(site_lat=lat_array_1[i],site_lon=lon_array_1[i],SATLAT_MAP=lat_array_2,SATLON_MAP=lon_array_2)
+    dist_map = np.sort(dist_map,axis=1)
+    if  nearby_sites_distances_mode == 'mean':
+        distance = np.mean(dist_map[:,0:number_of_nearby_sites_forAverage],axis=1)
+    if nearby_sites_distances_mode == 'median':
+        if number_of_nearby_sites_forAverage%2 == 1:
+            distance = dist_map[:,int((number_of_nearby_sites_forAverage-1)/2)]
+        else:
+            distance = np.mean(dist_map[:,int(number_of_nearby_sites_forAverage)/2-1:int(number_of_nearby_sites_forAverage/2)+1],axis=1)
+    return distance
