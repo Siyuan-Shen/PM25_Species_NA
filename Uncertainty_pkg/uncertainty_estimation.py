@@ -23,13 +23,13 @@ def Derive_Estimation_Uncertainty(total_channel_names,width,height):
     #                                              '08':'Aug', '09':'Sep', '10':'Oct', '11':'Nov', '12':'Dec', 'MAM':'MAM','JJA':'JJA',
     #                                              'SON':'SON','DJF':'DJF', 'Annual':'Annual'}
     if Derive_distances_map_Switch:
-        get_nearest_site_distance_for_each_pixel()
+        get_nearby_sites_distances_for_each_pixel()
     
     if Derive_BLISCO_LOWESS_Uncertainty_Switch:
         LOWESS_values,bins_rRMSE,output_bins = Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height)
         save_LOWESS_values_bins(LOWESS_values_dic=LOWESS_values,rRMSE_dic=bins_rRMSE,bins=output_bins,nchannels=len(total_channel_names),width=width,height=height)
     if Derive_rRMSE_map_Switch:
-        distances_map = load_pixels_nearest_sites_distances_map()
+        distances_map = load_pixels_nearby_sites_distances_map()
         LOWESS_values,bins_rRMSE,output_bins = load_LOWESS_values_bins(nchannels=len(total_channel_names),width=width,height=height)
         for imonth in range(len(MONTH)):
             rRMSE_Map = convert_distance_to_rRMSE_uncertainty(distances_bins_array=output_bins,BLCO_rRMSE_LOWESS_values=LOWESS_values[MONTH[imonth]],map_distances=distances_map)
