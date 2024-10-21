@@ -28,7 +28,7 @@ def Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height):
     total_nearbysites_distances_data = {}
 
     init_bins = np.linspace(0,Max_distances_for_Bins,Number_of_Bins)
-    output_bins = (np.array(range(len(init_bins)-1))*round(Max_distances_for_Bins/Number_of_Bins))
+    output_bins = np.array(range(len(init_bins)-1))*round(Max_distances_for_Bins/Number_of_Bins)
     LOWESS_values = {}
     rRMSE         = {}
     Keys = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual','MAM','JJA','SON','DJF']
@@ -163,7 +163,9 @@ def convert_distance_to_rRMSE_uncertainty(distances_bins_array, BLCO_rRMSE_LOWES
         slope = abs(BLCO_rRMSE_LOWESS_values[-1]-BLCO_rRMSE_LOWESS_values[-2])/(distances_bins_array[-1]-distances_bins_array[-2])
         map_uncertainty[outrange_pixels_index] = slope*(map_distances[outrange_pixels_index]-distances_bins_array[-1])+BLCO_rRMSE_LOWESS_values[-1]
     else:
-        map_uncertainty[outrange_pixels_index] = rRMSE_right #(map_distances[outrange_pixels_index]-d_left)/(d_right-d_left) * (rRMSE_right - rRMSE_left) +rRMSE_left
+        slope = abs(BLCO_rRMSE_LOWESS_values[-1]-BLCO_rRMSE_LOWESS_values[0])/(distances_bins_array[-1]-distances_bins_array[0])
+        map_uncertainty[outrange_pixels_index] = slope*(map_distances[outrange_pixels_index]-distances_bins_array[-1])+BLCO_rRMSE_LOWESS_values[-1]
+        #map_uncertainty[outrange_pixels_index] = rRMSE_right #(map_distances[outrange_pixels_index]-d_left)/(d_right-d_left) * (rRMSE_right - rRMSE_left) +rRMSE_left
     
     return map_uncertainty
 
