@@ -64,8 +64,8 @@ def load_monthly_obs_data_forEstimationMap(species:str):
     SPECIES_OBS = data.variables[species][:]
     SPECIES_OBS = np.array(SPECIES_OBS)
 
-    lat = data.variables["lat"][:]
-    lon = data.variables["lon"][:]
+    lat = data.variables["latitude"][:]
+    lon = data.variables["longitude"][:]
     lat = np.array(lat)
     lon = np.array(lon)
 
