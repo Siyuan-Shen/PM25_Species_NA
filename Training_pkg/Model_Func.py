@@ -26,10 +26,15 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
     scheduler = lr_strategy_lookup_table(optimizer=optimizer)
 
     if species == 'NO3':
-        GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
+        try:
+            GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
+        except:
+            GeoSpecies_index = 0
     else:
-        GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
-    
+        try:
+            GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
+        except:
+            GeoSpecies_index = 0
     
 
     if TwoCombineModels_Settings:
@@ -592,9 +597,15 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
 def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channel_names,sidestream_channel_names):
     #output = np.zeros((), dtype = float)
     if species == 'NO3':
-        GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
+        try:
+            GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
+        except:
+            GeoSpecies_index = 0
     else:
-        GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
+        try:
+            GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))
+        except:
+            GeoSpecies_index = 0
     
     model.eval()
     final_output = []
@@ -678,7 +689,3 @@ def predict(inputarray, model, batchsize,initial_channel_names,mainstream_channe
     return final_output
 
 
-
-
-    
-    

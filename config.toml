@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = 'v1.7.0/{}_monthly_biase
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.7.0/{}-cnn_TrainingData_64channels_11x11_199801-202212_BenchMark.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.7.0/{}-cnn_TrainingData_85channels_11x11_199801-202212_BenchMark.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -41,11 +41,11 @@ Uncertainty_outdir                                    = '/my-projects/Projects/P
 [Spatial-CrossValidation]
 
 Spatial_CrossValidation_Switch                        = false
-Spatial_CV_LossAccuracy_plot_Switch                   = true
+Spatial_CV_LossAccuracy_plot_Switch                   = false
 
 [Spatial-CrossValidation.Training_Settings]
 
-Spatial_CV_test_only_Switch                           = true  #False ==> Default. This Switch is for only run specific test time coverage. Have to train first.
+Spatial_CV_test_only_Switch                           = false  #False ==> Default. This Switch is for only run specific test time coverage. Have to train first.
 kfold                                                 = 10
 repeats                                               = 1
 beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]#[2000,2002,2004,2006,2008,2010,2012,2014]#,2017,2018,2019,2020,2021,2022]
@@ -70,7 +70,7 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 [Spatial-CrossValidation.SHAP_Analysis_Settings]
 
 SHAP_Analysis_switch                                  = false
-SHAP_Analysis_Calculation_Switch                      = false
+SHAP_Analysis_Calculation_Switch                      = true
 SHAP_Analysis_visualization_Switch                    = true
 SHAP_Analysis_background_number                       = 7353 # Typical 100-1000, do not feed all data in it.
 SHAP_Analysis_test_number                             = 7353
@@ -100,8 +100,8 @@ additional_test_regions                               = []
 [BLCO-CrossValidation]
 
 BLCO_CrossValidation_Switch                           = false
-Utilize_SelfIsolated_Sites_BLCO_Switch                = true
-Buffer_size                                           = [80]
+Utilize_SelfIsolated_Sites_BLCO_Switch                = true # Also controls the loading in Uncertainty
+Buffer_size                                           = [200]
 
 [BLCO-CrossValidation.TrainingSettings]
 
@@ -177,23 +177,23 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 
 Estimation_Switch                                     = false
 Train_model_Switch                                    = false
-Map_estimation_Switch                                 = false
+Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = false
 Estimation_PWMPM_Cal_Switch                           = false
 Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2006,2007]
-endyears                                              = [2006,2007]
+beginyears                                            = [2013,2014,2015,2016,2017]
+endyears                                              = [2013,2014,2015,2016,2017]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2006,2007]
-Estiamtion_trained_endyears                           = [2006,2007]
+Estiamtion_trained_beginyears                         = [2013,2014,2015,2016,2017]
+Estiamtion_trained_endyears                           = [2013,2014,2015,2016,2017]
 Estiamtion_trained_months                             = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] # Must be same order of Estimation-Settings.Training_Settings.training_months
-Estimation_years                                      = [[2006],[2007]]
+Estimation_years                                      = [[2013],[2014],[2015],[2016],[2017]]
 Estiamtion_months                                     = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 Estimation_ForcedSlopeUnity                           = true
@@ -202,7 +202,7 @@ Estimation_ForcedSlopeUnity                           = true
 
 Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
 ForcedSlopeUnity_Map_Plot_Switch                      = true
-Map_Plot_YEARS                                        = [2006,2007]
+Map_Plot_YEARS                                        = [2013,2014,2015,2016,2017]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
 Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
@@ -230,7 +230,7 @@ Derive_BLISCO_LOWESS_Uncertainty_Switch               = true
 Derive_distances_map_Switch                           = true
 Derive_rRMSE_map_Switch                               = true
 Derive_absolute_Uncertainty_map_Switch                = false
-Uncertainty_visualization_Switch                      = true
+Uncertainty_visualization_Switch                      = false
 
 [Uncertainty-Settings.BLISCO_LOWESS_Uncertainty_Settings]
 nearby_sites_distances_mode                           = 'mean' # 'mean' or 'median' 
@@ -325,7 +325,7 @@ ResNet_MultiHeadNet.classifcation_portion             = 0.5
 LateFusion.Settings                                   = false
 LateFusion.Blocks                                     = 'Bottleneck'
 LateFusion.blocks_num                                 = [1,1,1,1]
-LateFusion.initial_channels                           = ['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias', 'AOD',  'GeoPM25','ETA',
+LateFusion.initial_channels                           = ['AOD', 'EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias', 'EtaSGTOPO_Bias',  'GeoPM25','ETA',
                                                        'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        'NA_CNN_PM25',#'GL_CNN_PM25',#
                                                        'GC_PM25', 'GC_NH4', 'GC_SO4', 'GC_NIT', 'GC_SOA', 'GC_OC', 'GC_OM', 'GC_BC', 'GC_DST','GC_SSLT',
@@ -398,10 +398,12 @@ Sigmoid.Settings                                      = false
 epoch                                                 = 51
 batchsize                                             = 128
 
-channel_names                                         =['EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias',  'AOD',  'GeoPM25','ETA','EtaSGTOPO_Bias',
+channel_names                                         =['ETA_GCHP','AOD_GCHP', 'GeoPM25_GCHP','ttETAAODBIAS_GCHP','ttETACOASTAL_GCHP','ttETAMIXING_GCHP','ttETASGAODBIAS_GCHP','ttETASGTOPOBIAS_GCHP','ttETACONSTEXTTOPO_GCHP','ttETAPROFILE_GCHP','ttETARHSENS_GCHP',
+                                                       #'AOD', 'EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias',  'ETA','EtaSGTOPO_Bias','GeoPM25',
                                                        #'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        #'NA_CNN_PM25',#'GL_CNN_PM25',#
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4',  'GC_SOA', 'GC_OC', 'GC_BC', 'GC_DST','GC_SSLT',#'GC_NIT', 'GC_OM',
+                                                       #'GC_PM25', 'GC_NH4', 'GC_SO4',  'GC_SOA', 'GC_OC', 'GC_BC', 'GC_DST','GC_SSLT',#'GC_NIT', 'GC_OM',
+                                                        'GCHP_PM25', 'GCHP_NH4', 'GCHP_SO4', 'GCHP_SOA', 'GCHP_OC',  'GCHP_BC', 'GCHP_DST', 'GCHP_SSLT',#'GCHP_NIT', 'GCHP_OM',
                                                        'NH3_anthro_emi','NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi','N2O_anthro_emi','NMVOC_anthro_emi',# 'SO2_anthro_emi',
                                                        'DST_offline_emi',# 'SSLT_offline_emi',
                                                        'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 

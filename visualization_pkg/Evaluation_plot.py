@@ -1,13 +1,14 @@
 import os
 import shap
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import cartopy.crs as ccrs
 from sklearn.metrics import mean_squared_error,r2_score
 from Training_pkg.Statistic_Func import regress2, linear_regression
 from Training_pkg.utils import species
-from visualization_pkg.utils import Loss_Accuracy_outdir
+from visualization_pkg.utils import Loss_Accuracy_outdir,species_plot_tag_Name
 
 nrows = 2
 ncols = 2
@@ -32,8 +33,21 @@ figheight = height*2 + vmargin*2
 
 def shap_value_plot(shap_values_with_feature_names:shap._explanation.Explanation,plot_type:str,outfile:str):
     if plot_type == 'beeswarm':
+        tag_name = species_plot_tag_Name(species)
         shap.plots.beeswarm(shap_values_with_feature_names, show=False)
-        plt.xlabel('Impact on {} bias (ug/m3)'.format(species))
+
+        # Get the current figure and axes for customization
+        fig = plt.gcf()
+
+        #cbar = fig.axes[-1]  # The colorbar is usually the last axis in the figure
+        #cbar.set_ylim(-1,1)
+        
+
+        cbar = fig.get_axes()[-1]  # Retrieve the colorbar axis
+        cbar.set_yticks([ 0, 1.0])
+        cbar.set_yticklabels(["0","1"])
+        plt.xlabel('Impact on {} bias (ug/m3)'.format(tag_name))
+        cbar.set_ylabel('Predictor variables values')
         plt.savefig(outfile,format='png',dpi=1000, bbox_inches='tight')
         plt.close()
     return
