@@ -75,6 +75,11 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
         if SHAP_Analysis_plot_type == 'beeswarm':
             shap_values_values = np.sum(shap_values_values, axis=(2,3))
             shap_values_data   = np.sum(shap_values_data, axis=(2,3))
+            shap_values_data_min = np.min(shap_values_data,axis=0)
+            shap_values_data_max = np.max(shap_values_data,axis=0)
+            print('shap_values_data.shape: ', shap_values_data.shape)
+            shap_values_data = (shap_values_data - shap_values_data_min) / (shap_values_data_max-shap_values_data_min)
+            print(np.min(shap_values_data,axis=0),np.max(shap_values_data,axis=0))
             shap_values_with_feature_names = shap.Explanation(values=shap_values_values,data=shap_values_data,feature_names=total_channel_names)
         SHAPvalues_Analysis_figure(shap_values_with_feature_names=shap_values_with_feature_names,plot_type=SHAP_Analysis_plot_type,typeName=typeName,
                                    species=species,version=version,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,width=width,height=height,special_name=special_name)

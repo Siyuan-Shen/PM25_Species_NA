@@ -17,3 +17,16 @@ def crop_map_data(MapData, lat, lon, Extent):
     lon_end_index = round((right_lon - lon[0])*100)
     cropped_mapdata = MapData[lat_start_index:lat_end_index+1,lon_start_index:lon_end_index+1]
     return cropped_mapdata
+
+def species_plot_tag_Name(species):
+    plot_tag_name_dic = {
+        'PM25':'PM$_{2.5}$',
+        'SO4' : 'SO$_4^{2-}$',
+        'NO3' : 'NO$_3^-$',
+        'NH4' : 'NH$_4^+$',
+        'OM'  : 'OM',
+        'BC'  : 'BC',
+        'DUST': 'DUST',
+        'SS'  : 'SS'
+    }
+    return plot_tag_name_dic[species]
