@@ -30,6 +30,14 @@ def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,heig
             GeoSpecies_index = initial_channel_names.index('Geo{}'.format('NIT'))
         except:
             GeoSpecies_index = 0
+    elif species == 'PM25':
+        try:
+            GeoSpecies_index = initial_channel_names.index('GeoPM25_GCHP')
+        except:
+            try:
+                GeoSpecies_index = initial_channel_names.index('GeoPM25')
+            except:
+                GeoSpecies_index = 0
     else:
         try:
             GeoSpecies_index = initial_channel_names.index('Geo{}'.format(species))

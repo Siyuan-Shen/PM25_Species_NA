@@ -8,8 +8,8 @@ ground_observation_data_dir                           = '/my-projects/Projects/P
 geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/'
 geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/'
 ground_observation_data_infile                        = '{}_monthly_observations.nc'
-geophysical_species_data_infile                       = 'v1.7.0/{}_monthly_geophysical_concentration_BenchMark.nc'
-geophysical_biases_data_infile                        = 'v1.7.0/{}_monthly_biases_concentration_BenchMark.nc'
+geophysical_species_data_infile                       = 'v1.7.0/{}_monthly_geophysical_GCHP_concentration_BenchMark.nc'
+geophysical_biases_data_infile                        = 'v1.7.0/{}_monthly_biases_GCHP_concentration_BenchMark.nc'
 
 [Pathway.TrainingModule-dir]
 
@@ -99,9 +99,9 @@ additional_test_regions                               = []
 
 [BLCO-CrossValidation]
 
-BLCO_CrossValidation_Switch                           = false
+BLCO_CrossValidation_Switch                           = true
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true # Also controls the loading in Uncertainty
-Buffer_size                                           = [200]
+Buffer_size                                           = [160,170,180,190,200]
 
 [BLCO-CrossValidation.TrainingSettings]
 
@@ -176,24 +176,24 @@ Sensitivity_Test_Variables                            = [['EtaAOD_Bias']]#, ['Et
 [Estimation-Settings]
 
 Estimation_Switch                                     = false
-Train_model_Switch                                    = false
+Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
-Estimation_visualization_Switch                       = false
+Estimation_visualization_Switch                       = true
 Estimation_PWMPM_Cal_Switch                           = false
 Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2013,2014,2015,2016,2017]
-endyears                                              = [2013,2014,2015,2016,2017]
+beginyears                                            = [2018,2019,2020,2021,2022]
+endyears                                              = [2018,2019,2020,2021,2022]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2013,2014,2015,2016,2017]
-Estiamtion_trained_endyears                           = [2013,2014,2015,2016,2017]
+Estiamtion_trained_beginyears                         = [2018,2019,2020,2021,2022]
+Estiamtion_trained_endyears                           = [2018,2019,2020,2021,2022]
 Estiamtion_trained_months                             = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] # Must be same order of Estimation-Settings.Training_Settings.training_months
-Estimation_years                                      = [[2013],[2014],[2015],[2016],[2017]]
+Estimation_years                                      = [[2018],[2019],[2020],[2021],[2022]]
 Estiamtion_months                                     = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 Estimation_ForcedSlopeUnity                           = true
@@ -202,7 +202,7 @@ Estimation_ForcedSlopeUnity                           = true
 
 Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
 ForcedSlopeUnity_Map_Plot_Switch                      = true
-Map_Plot_YEARS                                        = [2013,2014,2015,2016,2017]
+Map_Plot_YEARS                                        = [2018,2019,2020,2021,2022]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
 Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
@@ -225,7 +225,7 @@ Analysis_MONTH                                        = [0,1,2,3,4,5,6,7,8,9,10,
 
 [Uncertainty-Settings]
 
-Uncertainty_Switch                                    = true
+Uncertainty_Switch                                    = false
 Derive_BLISCO_LOWESS_Uncertainty_Switch               = true
 Derive_distances_map_Switch                           = true
 Derive_rRMSE_map_Switch                               = true
@@ -268,8 +268,8 @@ Uncertainty_BLISCO_LOWESS_relationship_plot           = true
 
 [Training-Settings.identity]
 
-version                                               = 'v1.7.0'
-special_name                                          = '_BenchMark' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
+version                                               = 'v1.7.1'
+special_name                                          = '_GCHP_BenchMark' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
 
 [Training-Settings.learning-objective]
 
@@ -398,7 +398,7 @@ Sigmoid.Settings                                      = false
 epoch                                                 = 51
 batchsize                                             = 128
 
-channel_names                                         =['ETA_GCHP','AOD_GCHP', 'GeoPM25_GCHP','ttETAAODBIAS_GCHP','ttETACOASTAL_GCHP','ttETAMIXING_GCHP','ttETASGAODBIAS_GCHP','ttETASGTOPOBIAS_GCHP','ttETACONSTEXTTOPO_GCHP','ttETAPROFILE_GCHP','ttETARHSENS_GCHP',
+channel_names                                         =['ETA_GCHP','AOD_GCHP', 'GeoPM25_GCHP','ttETAAODBIAS_GCHP','ttETACOASTAL_GCHP','ttETAMIXING_GCHP','ttETASGAODBIAS_GCHP','ttETASGTOPOBIAS_GCHP',#'ttETACONSTEXTTOPO_GCHP','ttETAPROFILE_GCHP','ttETARHSENS_GCHP',
                                                        #'AOD', 'EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias',  'ETA','EtaSGTOPO_Bias','GeoPM25',
                                                        #'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        #'NA_CNN_PM25',#'GL_CNN_PM25',#

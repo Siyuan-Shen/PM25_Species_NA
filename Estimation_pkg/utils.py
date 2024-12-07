@@ -86,6 +86,7 @@ Global_CNN_PM25_input_indir         = '/my-projects/Projects/PM25_Speices_DL_202
 NA_CNN_PM25_input_indir             = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/NorthAmerica_CNN_PM25/v1.0.0/'
 GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GFED4_Emissions_input/'
 Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
+Month_of_Year_input_indir           = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Month_of_Year_input/'
 
 def inputfiles_table(YYYY, MM):
     inputfiles_dic = {
@@ -191,5 +192,9 @@ def inputfiles_table(YYYY, MM):
 
         ###################### [Population Information] ####################
         'Population'         : Population_input_indir + 'WorldPopGrid-{}-0.01.npy'.format(YYYY),
+        
+        ###################### [Temporal Information] ####################
+
+        'Month_of_Year'      : Month_of_Year_input_indir + '/Month_of_Year_{}.npy'.format(MM),
     }
     return inputfiles_dic
