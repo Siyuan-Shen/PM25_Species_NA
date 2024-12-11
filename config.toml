@@ -32,8 +32,10 @@ Uncertainty_Map_outdir                                = '/my-projects/Projects/P
 SHAP_Analysis_outdir                                  = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 [Pathway.Estimation-dir]
 
-NorthAmerica_PM25_version                             = 'v1.7.0'
-NorthAmerica_PM25_special_name                        = '_BenchMark'
+NorthAmerica_PM25_version                             = 'v1.7.1'
+NorthAmerica_PM25_special_name                        = '_GCHP_BenchMark'
+BC_NorthAmerica_PM25_version                          = 'v1.7.1'
+BC_NorthAmerica_PM25_special_name                     = '_GCHP_MSE'
 Estimation_outdir                                     = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 Uncertainty_outdir                                    = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 #########################################################################################################################################################
