@@ -9,6 +9,8 @@ cfg = toml.load('./config.toml')
 Estimation_outdir = cfg['Pathway']['Estimation-dir']['Estimation_outdir']
 NorthAmerica_PM25_version =  cfg['Pathway']['Estimation-dir']['NorthAmerica_PM25_version']
 NorthAmerica_PM25_special_name  = cfg['Pathway']['Estimation-dir']['NorthAmerica_PM25_special_name']
+BC_NorthAmerica_PM25_version =  cfg['Pathway']['Estimation-dir']['BC_NorthAmerica_PM25_version']
+BC_NorthAmerica_PM25_special_name  = cfg['Pathway']['Estimation-dir']['BC_NorthAmerica_PM25_special_name']
 #######################################################################################
 # Estimation Switch
 
@@ -87,6 +89,7 @@ NA_CNN_PM25_input_indir             = '/my-projects/Projects/PM25_Speices_DL_202
 GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GFED4_Emissions_input/'
 Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
 Month_of_Year_input_indir           = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Month_of_Year_input/'
+OpenStreetMap_road_density_indir    = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/OpenStreetMap_RoadDensity_input/'
 
 def inputfiles_table(YYYY, MM):
     inputfiles_dic = {
@@ -117,10 +120,11 @@ def inputfiles_table(YYYY, MM):
         'GeoNIT'             : GeoSpecies_input_indir + '{}/{}/Geophysical_NO3_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
         'GeoNH4'             : GeoSpecies_input_indir + '{}/{}/Geophysical_NH4_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
         'GeoSO4'             : GeoSpecies_input_indir + '{}/{}/Geophysical_SO4_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
-        'GeoBC'              : GeoSpecies_input_indir + '{}/{}/Geophysical_BC_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
+        'GeoBC'              : GeoSpecies_input_indir + '{}/{}/Geophysical_BC_001x001_NA_map_{}{}{}.npy'.format(YYYY,BC_NorthAmerica_PM25_version,YYYY,MM,BC_NorthAmerica_PM25_special_name),
         'GeoOM'              : GeoSpecies_input_indir + '{}/{}/Geophysical_OM_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
         'GeoDUST'            : GeoSpecies_input_indir + '{}/{}/Geophysical_DUST_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
         'GeoSS'              : GeoSpecies_input_indir + '{}/{}/Geophysical_SS_001x001_NA_map_{}{}{}.npy'.format(YYYY,NorthAmerica_PM25_version,YYYY,MM,NorthAmerica_PM25_special_name),
+
 
         ##################### [Variables from GEOS-Chem] ###################
         'GC_PM25'            : GEOS_Chem_input_indir + '{}/PM25_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
@@ -181,7 +185,14 @@ def inputfiles_table(YYYY, MM):
         'Permanent_Wetlands' : LandCover_input_indir + 'Permanent-Wetlands/Permanent-Wetlands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         'Croplands'          : LandCover_input_indir + 'Croplands/Croplands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         'Urban_Builtup_Lands': LandCover_input_indir + 'Urban-Builtup-Lands/Urban-Builtup-Lands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
-
+        ##################### [Open Street Map Road Density] ###################
+        'motorway'           : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-motorway-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        'primary'            : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-primary-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        'secondary'          : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-secondary-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        'trunk'              : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-trunk-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        'unclassified'       : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-unclassified-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        'residential'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-residential-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        
         ##################### [Geographical Information] ###################
         'S1'                 : Geographical_Variables_input_indir + 'Spherical_Coordinates/Spherical_Coordinates_1.npy',
         'S2'                 : Geographical_Variables_input_indir + 'Spherical_Coordinates/Spherical_Coordinates_2.npy',
