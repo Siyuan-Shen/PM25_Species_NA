@@ -8,7 +8,7 @@ ground_observation_data_dir                           = '/my-projects/Projects/P
 geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/nonan_GCHPfilted_observations/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/'
 geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/nonan_GCHPfilted_observations/Observations_from_CompileSPECGM-NA-20231118-BiWeekly_ALLFILLPM25_NoDuplicates/'
 ground_observation_data_infile                        = '{}_nonan_GCHPfilted_monthly_observations.nc'
-geophysical_species_data_infile                       = 'v1.7.1/{}_monthly_geophysical_GCHP_concentration_BenchMark.nc'
+geophysical_species_data_infile                       = 'v1.7.1/{}_monthly_nonan_GCHPfilted_geophysical_concentration_GCHP_BenchMark.nc'
 geophysical_biases_data_infile                        = 'v1.7.1/{}_monthly_nonan_GCHPfilted_biases_concentration_GCHP_BenchMark.nc'
 
 [Pathway.TrainingModule-dir]
