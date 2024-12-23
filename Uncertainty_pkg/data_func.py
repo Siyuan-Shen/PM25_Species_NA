@@ -163,7 +163,7 @@ def convert_distance_to_rRMSE_uncertainty(distances_bins_array, BLCO_rRMSE_LOWES
         slope = abs(BLCO_rRMSE_LOWESS_values[-1]-BLCO_rRMSE_LOWESS_values[-2])/(distances_bins_array[-1]-distances_bins_array[-2])
         map_uncertainty[outrange_pixels_index] = slope*(map_distances[outrange_pixels_index]-distances_bins_array[-1])+BLCO_rRMSE_LOWESS_values[-1]
     else:
-        slope = abs(BLCO_rRMSE_LOWESS_values[-1]-BLCO_rRMSE_LOWESS_values[0])/(distances_bins_array[-1]-distances_bins_array[0])
+        slope,intercept = m, b = np.polyfit(distances_bins_array,BLCO_rRMSE_LOWESS_values,1)#abs(BLCO_rRMSE_LOWESS_values[-1]-BLCO_rRMSE_LOWESS_values[0])/(distances_bins_array[-1]-distances_bins_array[0])
         map_uncertainty[outrange_pixels_index] = slope*(map_distances[outrange_pixels_index]-distances_bins_array[-1])+BLCO_rRMSE_LOWESS_values[-1]
         #map_uncertainty[outrange_pixels_index] = rRMSE_right #(map_distances[outrange_pixels_index]-d_left)/(d_right-d_left) * (rRMSE_right - rRMSE_left) +rRMSE_left
     
