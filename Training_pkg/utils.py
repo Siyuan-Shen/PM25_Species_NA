@@ -265,3 +265,65 @@ def Get_channel_names(channels_to_exclude:list):
                     print('{} is not in the side channel list.'.format(channels_to_exclude[ichannel]))
 
     return total_channel_names, main_stream_channel_names, side_channel_names
+
+def Add_channel_names(channels_to_add:list):
+    if ResNet_setting or ResNet_MLP_setting or ResNet_Classification_Settings or ResNet_MultiHeadNet_Settings:
+        if len(channels_to_add) == 0:
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = channel_names.copy()
+            side_channel_names = []
+        else:
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = channel_names.copy()
+            side_channel_names = []
+            for ichannel in range(len(channels_to_add)):
+                if channels_to_add[ichannel] in total_channel_names:
+                    print('{} is in the initial channel list.'.format(channels_to_add[ichannel]))
+                else:
+                    total_channel_names.append(channels_to_add[ichannel])
+                if channels_to_add[ichannel] in main_stream_channel_names:
+                    print('{} is in the main channel list.'.format(channels_to_add[ichannel]))
+                else:
+                    main_stream_channel_names.append(channels_to_add[ichannel])
+                    
+    elif LateFusion_setting:
+        if len(channels_to_add) == 0:
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = LateFusion_initial_channels.copy()
+            side_channel_names = LateFusion_latefusion_channels.copy()
+        else:
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = LateFusion_initial_channels.copy()
+            side_channel_names = LateFusion_latefusion_channels.copy()
+            for ichannel in range(len(channels_to_add)):
+                if channels_to_add[ichannel] in total_channel_names:
+                    print('{} is in the total channel list.'.format(channels_to_add[ichannel]))
+                    
+                else:
+                    total_channel_names.append(channels_to_add[ichannel])
+                if channels_to_add[ichannel] in main_stream_channel_names:
+                    print('{} is in the main channel list.'.format(channels_to_add[ichannel]))
+                else:
+                    main_stream_channel_names.append(channels_to_add[ichannel])
+    elif MultiHeadLateFusion_settings:
+        if len(channels_to_add) == 0:
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = MultiHeadLateFusion_initial_channels.copy()
+            side_channel_names = MultiHeadLateFusion_LateFusion_channels.copy()
+        else:
+            total_channel_names = channel_names.copy()
+            main_stream_channel_names = MultiHeadLateFusion_initial_channels.copy()
+            side_channel_names = MultiHeadLateFusion_LateFusion_channels.copy()
+            for ichannel in range(len(channels_to_add)):
+                if channels_to_add[ichannel] in total_channel_names:
+                    print('{} is in the total channel list.'.format(channels_to_add[ichannel]))
+                else:
+                    total_channel_names.append(channels_to_add[ichannel])
+                    
+                if channels_to_add[ichannel] in main_stream_channel_names:
+                    print('{} is in the main channel list.'.format(channels_to_add[ichannel]))
+                else:
+                    main_stream_channel_names.remove(channels_to_add[ichannel])
+                    
+
+    return total_channel_names, main_stream_channel_names, side_channel_names

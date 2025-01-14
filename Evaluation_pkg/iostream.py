@@ -89,23 +89,30 @@ def save_trained_month_based_BLCO_model(cnn_model, model_outdir, typeName, begin
     torch.save(cnn_model, model_outfile)
     return
 
-def save_sensitivity_test_trained_month_based_model(cnn_model, model_outdir, typeName, beginyear,endyear,month_index, version, species, nchannel, special_name, count, width, height,exclude_names_suffix):
+def save_sensitivity_test_trained_month_based_model(cnn_model, model_outdir, typeName, beginyear,endyear,month_index, version, species, nchannel, special_name, count, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     Selected_MONTHS_list = [MONTH[i] for i in month_index]
     Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-    model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count,exclude_names_suffix)
+    if sensitivity_test_type == 'exclusion':
+        model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count,sensitivity_variables_names_suffix)
+    else:
+         model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}_include{}.pt'.format(typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count,sensitivity_variables_names_suffix)
     torch.save(cnn_model, model_outfile)
     return
 
 
-def save_sensitivity_test_trained_model(cnn_model, model_outdir, typeName, version, species, nchannel, special_name, count, width, height, exclude_names_suffix):
+def save_sensitivity_test_trained_model(cnn_model, model_outdir, typeName, version, species, nchannel, special_name, count, width, height, sensitivity_variables_names_suffix,sensitivity_test_type):
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, nchannel,special_name, count,exclude_names_suffix)
+    if sensitivity_test_type == 'exclusion':
+        model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, nchannel,special_name, count,sensitivity_variables_names_suffix)
+    else:
+        model_outfile = outdir +  'SpatialCV_{}_{}_{}x{}_{}Channel{}_No{}_include{}.pt'.format(typeName, species, width,height, nchannel,special_name, count,sensitivity_variables_names_suffix)
+    
     torch.save(cnn_model, model_outfile)
 
 def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height):
@@ -123,15 +130,22 @@ def save_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy,
     np.save(valid_accuracy_outfile, valid_accuracy)
     return
 
-def save_sensitivity_test_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height, exclude_names_suffix):
+def save_sensitivity_test_loss_accuracy(model_outdir, loss, accuracy, valid_loss, valid_accuracy, typeName, version, species, nchannel, special_name, width, height, sensitivity_variables_names_suffix,sensitivity_test_type):
 
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    loss_outfile = outdir + 'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
-    accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
-    valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
-    valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    if sensitivity_test_type == 'exclusion':
+        loss_outfile = outdir + 'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+    else:
+        loss_outfile = outdir + 'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        
     np.save(loss_outfile, loss)
     np.save(accuracy_outfile, accuracy)
     np.save(valid_loss_outfile, valid_loss)
@@ -198,27 +212,46 @@ def save_Fixnumber_month_based_data_recording(obs_data,final_data,geo_data_recor
     np.save(lon_data_outfile, lon_recording)
     return
 
-def save_sensitivity_test_month_based_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,exclude_names_suffix):
+def save_sensitivity_test_month_based_data_recording(obs_data,final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_recording,lon_recording,species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
-    obs_data_outfile =  outdir + '{}-{}-Obs-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    final_data_outfile = outdir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    geo_data_outfile = outdir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    training_final_data_outfile = outdir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)  
-    training_obs_data_outfile = outdir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name) 
-    testing_population_data_outfile = outdir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)  
-    
-    lat_data_outfile = outdir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    lon_data_outfile = outdir + '{}-{}-lon-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
+    if sensitivity_test_type == 'exclusion':
+        obs_data_outfile =  outdir + '{}-{}-Obs-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_outfile = outdir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        geo_data_outfile = outdir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)
+        training_final_data_outfile = outdir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)  
+        training_obs_data_outfile = outdir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name) 
+        testing_population_data_outfile = outdir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)  
+        
+        lat_data_outfile = outdir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        lon_data_outfile = outdir + '{}-{}-lon-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                              ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+    else:
+        obs_data_outfile =  outdir + '{}-{}-Obs-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_outfile = outdir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        geo_data_outfile = outdir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)
+        training_final_data_outfile = outdir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)  
+        training_obs_data_outfile = outdir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name) 
+        testing_population_data_outfile = outdir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)  
+        
+        lat_data_outfile = outdir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        lon_data_outfile = outdir + '{}-{}-lon-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
     np.save(geo_data_outfile, geo_data_recording)
@@ -324,15 +357,20 @@ def save_data_recording(obs_data, final_data,species, version, typeName, beginye
     np.save(final_data_outfile, final_data)
     return
 
-def save_sensitivity_test_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,exclude_names_suffix):
+def save_sensitivity_test_data_recording(obs_data, final_data,species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
     outdir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
     if not os.path.isdir(outdir):
         os.makedirs(outdir) 
-    obs_data_outfile   = outdir + '{}-{}-Obs-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    final_data_outfile = outdir + '{}-{}-Final-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    
+    if sensitivity_test_type == 'exclusion':
+        obs_data_outfile   = outdir + '{}-{}-Obs-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_outfile = outdir + '{}-{}-Final-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+    else:
+        obs_data_outfile   = outdir + '{}-{}-Obs-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_outfile = outdir + '{}-{}-Final-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
     np.save(obs_data_outfile, obs_data)
     np.save(final_data_outfile, final_data)
     return
@@ -488,24 +526,44 @@ def load_Fixnumber_month_based_data_recording(species, version, typeName, beginy
     return obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording
 
 
-def load_sensitivity_test_month_based_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,exclude_names_suffix):
-    indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
-    obs_data_infile =  indir + '{}-{}-Obs-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    final_data_infile = indir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    geo_data_infile = indir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)
-    training_final_data_infile = indir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name)  
-    training_obs_data_infile = indir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name) 
-    testing_population_data_infile = indir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name) 
-    lat_data_infile = indir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    lon_data_infile = indir + '{}-{}-lon-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
+def load_sensitivity_test_month_based_data_recording(species, version, typeName, beginyear, endyear, nchannel, special_name, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
+    if sensitivity_test_type == 'exclusion':
+        indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
+        obs_data_infile =  indir + '{}-{}-Obs-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_infile = indir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        geo_data_infile = indir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)
+        training_final_data_infile = indir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)  
+        training_obs_data_infile = indir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name) 
+        testing_population_data_infile = indir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name) 
+        lat_data_infile = indir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        lon_data_infile = indir + '{}-{}-lon-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+    else:
+        indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
+        obs_data_infile =  indir + '{}-{}-Obs-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_infile = indir + '{}-{}-Final-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        geo_data_infile = indir + '{}-{}-Geo-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)
+        training_final_data_infile = indir + '{}-{}-training_final_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name)  
+        training_obs_data_infile = indir + '{}-{}-training_obs_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name) 
+        testing_population_data_infile = indir + '{}-{}-testing_population_data-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name) 
+        lat_data_infile = indir + '{}-{}-lat-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        lon_data_infile = indir + '{}-{}-lon-sensitivity_test-DataRecording_{}-{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, endyear
+                                                                                                ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        
     obs_data = np.load(obs_data_infile,allow_pickle=True).item()
     final_data = np.load(final_data_infile,allow_pickle=True).item()
     geo_data_recording = np.load(geo_data_infile, allow_pickle=True).item()
@@ -656,25 +714,34 @@ def load_trained_month_based_BLCO_model(model_indir, typeName, beginyear,endyear
     return model
 
 
-def load_sensitivity_test_trained_month_based_model( model_indir, typeName, beginyear,endyear,month_index, version, species, nchannel, special_name, count, width, height,exclude_names_suffix):
+def load_sensitivity_test_trained_month_based_model( model_indir, typeName, beginyear,endyear,month_index, version, species, nchannel, special_name, count, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     Selected_MONTHS_list = [MONTH[i] for i in month_index]
     Selected_MONTHS_str = '-'.join(Selected_MONTHS_list)
     indir = model_indir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
-    PATH  = indir +  'SpatialCV_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count,exclude_names_suffix)
+    if sensitivity_test_type == 'exclusion':
+        PATH  = indir +  'SpatialCV_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}_exclude{}.pt'.format(typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count,sensitivity_variables_names_suffix)
+    else:
+        PATH  = indir +  'SpatialCV_{}_{}_{}x{}_{}-{}_{}_{}Channel{}_No{}_include{}.pt'.format(typeName, species, width,height, beginyear,endyear,Selected_MONTHS_str,nchannel,special_name, count,sensitivity_variables_names_suffix)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model  = torch.load(PATH, map_location=torch.device(device)).eval()
     model.to(device)
     return model
 
 
-def load_sensitivity_test_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,exclude_names_suffix):
+def load_sensitivity_test_data_recording(species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
     indir = txt_outdir + '{}/{}/Results/results-DataRecording/'.format(species, version)
-    obs_data_infile   = indir + '{}-{}-Obs-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    final_data_infile = indir + '{}-{}-Final-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
-                                                                                            ,width, height, nchannel,special_name,exclude_names_suffix)
-    
+    if sensitivity_test_type == 'exclusion':
+        obs_data_infile   = indir + '{}-{}-Obs-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_infile = indir + '{}-{}-Final-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+    else:
+        obs_data_infile   = indir + '{}-{}-Obs-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        final_data_infile = indir + '{}-{}-Final-DataRecording_longterm_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, beginyear, MONTH
+                                                                                            ,width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+         
     obs_data = np.load(obs_data_infile)
     final_data = np.load(final_data_infile)
 
@@ -696,15 +763,21 @@ def load_loss_accuracy(model_outdir, typeName, version, species, nchannel, speci
     valid_accuracy = np.load(valid_accuracy_outfile )
     return loss, accuracy, valid_loss, valid_accuracy
 
-def load_sensitivity_test_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height,exclude_names_suffix):
+def load_sensitivity_test_loss_accuracy(model_outdir, typeName, version, species, nchannel, special_name, width, height,sensitivity_variables_names_suffix,sensitivity_test_type):
 
     outdir = model_outdir + '{}/{}/Results/results-Trained_Models/'.format(species, version)
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    loss_outfile = outdir +'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
-    accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
-    valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
-    valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,exclude_names_suffix)
+    if sensitivity_test_type == 'exclusion':
+        loss_outfile = outdir +'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_exclude{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+    else:
+        loss_outfile = outdir +'SpatialCV_loss_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        accuracy_outfile = outdir + 'SpatialCV_accuracy_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_loss_outfile = outdir + 'SpatialCV_valid_loss_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
+        valid_accuracy_outfile = outdir + 'SpatialCV_valid_accuracy_{}_{}_{}x{}_{}Channel{}_include{}.npy'.format(typeName, species, width, height, nchannel,special_name,sensitivity_variables_names_suffix)
     loss = np.load(loss_outfile)
     accuracy = np.load(accuracy_outfile)
     valid_loss = np.load(valid_loss_outfile )
@@ -955,17 +1028,20 @@ def AVD_output_text(outfile:str,status:str,Area,test_beginyears,test_endyears,
 
 
 def SensitivityTests_output_text(outfile:str,status:str,Area,test_beginyears,test_endyears,
-                test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors,regional_number,exclude_channels_names):
+                test_CV_R2, train_CV_R2, geo_CV_R2, RMSE, NRMSE,PMW_NRMSE,slope,PWM_Model, PWM_Monitors,regional_number,sensitivity_variables_names,sensitivity_test_type):
     
     MONTH = ['Annual','MAM','JJA','SON','DJF','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime,RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime,PWAModel_Alltime,PWAMonitors_Alltime = calculate_Alltime_Statistics_results(test_beginyears,test_endyears,test_CV_R2, train_CV_R2, geo_CV_R2, RMSE,NRMSE,PMW_NRMSE, slope,PWM_Model,PWM_Monitors,Area)
     Exclude_Variables = ''
-    for iname in exclude_channels_names:
+    for iname in sensitivity_variables_names:
          Exclude_Variables += ' '+iname
 
     with open(outfile,status) as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {}'.format(Area, test_beginyears, test_endyears, Exclude_Variables), ' Total Site Number: {}'.format(regional_number)])
+        if sensitivity_test_type == 'exclusion':
+            writer.writerow(['Area: {} ; Time Period: {} - {}; Exclude Variables: {}'.format(Area, test_beginyears, test_endyears, Exclude_Variables), ' Total Site Number: {}'.format(regional_number)])
+        else:
+            writer.writerow(['Area: {} ; Time Period: {} - {}; Include Variables: {}'.format(Area, test_beginyears, test_endyears, Exclude_Variables), ' Total Site Number: {}'.format(regional_number)])
         
         for imonth in MONTH:
             if imonth == 'Annual':
