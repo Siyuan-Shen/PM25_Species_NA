@@ -128,7 +128,11 @@ Sensitivity_Test_training_months   = Sensitivity_Test_Training_Settings['trainin
 Sensitivity_Test_test_beginyears   = Sensitivity_Test_Training_Settings['test_beginyears']
 Sensitivity_Test_test_endyears     = Sensitivity_Test_Training_Settings['test_endyears']
 Sensitivity_Test_additional_test_regions = Sensitivity_Test_Training_Settings['additional_test_regions']
-Sensitivity_Test_Sensitivity_Test_Variables = Sensitivity_Test_Training_Settings['Sensitivity_Test_Variables']
+Exclude_Variables_Sensitivity_Test_Switch             = Sensitivity_Test_Training_Settings['Exclude_Variables_Sensitivity_Test_Switch']
+Exclude_Variables_Sensitivity_Test_Variables          = Sensitivity_Test_Training_Settings['Exclude_Variables_Sensitivity_Test_Variables']
+Include_Variables_Sensitivity_Test_Switch             = Sensitivity_Test_Training_Settings['Include_Variables_Sensitivity_Test_Switch']
+Include_Variables_Sensitivity_Test_Variables          = Sensitivity_Test_Training_Settings['Include_Variables_Sensitivity_Test_Variables']
+
 
 PROVMASK_lists = ['Alberta','British Columbia','Manitoba','New Brunswick','Newfoundland  & Labrador','Northwest Territories','Nova Scotia','Nunavut',
                  'Ontario','Prince Edward Island','Quebec','Saskatchewan','Yukon Territory']
