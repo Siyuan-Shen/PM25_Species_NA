@@ -163,7 +163,16 @@ if __name__ == '__main__':
                 width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
                 Sensitivity_Test_AVD_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
                                                     total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names,
-                                                    exclude_channel_names=Exclude_Variables_Sensitivity_Test_Variables[igroup])
+                                                    sensitivity_test_channel_names=Exclude_Variables_Sensitivity_Test_Variables[igroup],sensitivity_test_type='exclusion')
+        if Include_Variables_Sensitivity_Test_Switch:
+            for igroup in range(len(Include_Variables_Sensitivity_Test_Variables)):
+                total_channel_names, main_stream_channel_names, side_channel_names = Add_channel_names(channels_to_exclude=Include_Variables_Sensitivity_Test_Variables[igroup])
+                print('Include Variables: {} \nTotal Channel Names: {}'.format(Include_Variables_Sensitivity_Test_Variables[igroup],total_channel_names))
+                width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
+                Sensitivity_Test_AVD_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+                                                    total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names,
+                                                    sensitivity_test_channel_names=Include_Variables_Sensitivity_Test_Variables[igroup],sensitivity_test_type='inclusion')
+            
         
         cfg_outdir = Config_outdir + '{}/{}/Results/results-Sensitivity_Tests/configuration-files/'.format(species, version)
         if not os.path.isdir(cfg_outdir):
