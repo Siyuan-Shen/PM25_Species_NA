@@ -128,7 +128,7 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
         save_sensitivity_test_month_based_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,geo_data_recording=geo_data_recording,training_final_data_recording=training_final_data_recording,
                                                          training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,lat_recording=lat_test_recording,lon_recording=lon_test_recording,
                                         species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names_suffix=sensitivity_test_names_suffix)
-    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording = load_sensitivity_test_month_based_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,ensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix)
+    obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording = load_sensitivity_test_month_based_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names_suffix=sensitivity_test_names_suffix)
     txtfile_outdir = txt_outdir + '{}/{}/Results/results-Sensitivity_Tests/statistical_indicators/'.format(species, version)
     if not os.path.isdir(txtfile_outdir):
         os.makedirs(txtfile_outdir)
@@ -159,20 +159,20 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
                                                                                                                 geo_data_recording=geo_data_recording, training_final_data_recording=training_final_data_recording,
                                                                                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,masked_array_index=masked_array_index,Area=iregion)
         
-            txt_outfile =  txtfile_outdir + 'Sensitivity_Tests_{}-{}_{}_{}_{}_{}Channel_{}x{}{}_Exclude{}.csv'.format(Sensitivity_Test_test_beginyear,Sensitivity_Test_test_endyear,typeName,species,version,nchannel,width,height,special_name,ensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix,)
+            txt_outfile =  txtfile_outdir + 'Sensitivity_Tests_{}-{}_{}_{}_{}_{}Channel_{}x{}{}_Exclude{}.csv'.format(Sensitivity_Test_test_beginyear,Sensitivity_Test_test_endyear,typeName,species,version,nchannel,width,height,special_name,sensitivity_test_type,sensitivity_test_names_suffix,)
             SensitivityTests_output_text(outfile=txt_outfile,status='a',Area=iregion, test_beginyears=Sensitivity_Test_test_beginyear,test_endyears=Sensitivity_Test_test_endyear,test_CV_R2=test_CV_R2, train_CV_R2=train_CV_R2, geo_CV_R2=geo_CV_R2, RMSE=RMSE, NRMSE=NRMSE,PMW_NRMSE=PWM_NRMSE,
-                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,ensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix,regional_number=regional_number)
+                        slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix,regional_number=regional_number)
     
     save_sensitivity_test_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
-                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,ensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix,)
+                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_test_names_suffix=sensitivity_test_names_suffix,)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=Sensitivity_Test_test_beginyear, endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
-                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,ensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix,)
+                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_test_names_suffix=sensitivity_test_names_suffix,)
            
     for imonth in range(len(MONTH)):
         final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=Sensitivity_Test_test_beginyear, imonth=imonth,endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
         save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
-                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,ensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix)
+                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_test_names_suffix=sensitivity_test_names_suffix)
       
     return
 
