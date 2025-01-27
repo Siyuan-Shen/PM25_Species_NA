@@ -164,15 +164,15 @@ def Sensitivity_Test_AVD_CrossValidation(width, height, sitesnumber,start_YYYY, 
                         slope=slope,PWM_Model=PWAModel,PWM_Monitors=PWAMonitors,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names=sensitivity_test_names_suffix,regional_number=regional_number)
     
     save_sensitivity_test_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
-                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_test_names_suffix=sensitivity_test_names_suffix,)
+                       version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names_suffix=sensitivity_test_names_suffix,)
     final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=Sensitivity_Test_test_beginyear, endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
     save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
-                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_test_names_suffix=sensitivity_test_names_suffix,)
+                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names_suffix=sensitivity_test_names_suffix,)
            
     for imonth in range(len(MONTH)):
         final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=Sensitivity_Test_test_beginyear, imonth=imonth,endyear=Sensitivity_Test_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
         save_sensitivity_test_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
-                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_test_names_suffix=sensitivity_test_names_suffix)
+                                species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,sensitivity_test_type=sensitivity_test_type,sensitivity_variables_names_suffix=sensitivity_test_names_suffix)
       
     return
 
