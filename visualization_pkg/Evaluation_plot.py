@@ -94,7 +94,7 @@ def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
     b0 = round(b0, 2)
     b1 = round(b1, 2)
 
-    extentlim = 2*np.mean(every_point_plot_obs_pm25)
+    extentlim = 6*np.mean(every_point_plot_obs_pm25)
     # im = ax.imshow(
     #    H, extent=extent,
     #    cmap= 'gist_rainbow',
@@ -164,7 +164,7 @@ def regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
     b0 = round(b0, 2)
     b1 = round(b1, 2)
 
-    extentlim = 2*np.mean(plot_obs_pm25)
+    extentlim = 6*np.mean(plot_obs_pm25)
     # im = ax.imshow(
     #    H, extent=extent,
     #    cmap= 'gist_rainbow',
