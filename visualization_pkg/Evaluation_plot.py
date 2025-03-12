@@ -74,6 +74,9 @@ def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
     fig_outfile =  fig_output_dir +  '{}-{}-EverypointRegression_Figure_{}-{}_{}_{}x{}_{}Channel{}.png'.format(typeName, species, plot_beginyear, plot_endyear, MONTH
                                                                                             ,width, height, nchannel,special_name)
     
+    mask = ~np.isnan(every_point_plot_obs_pm25) & ~np.isnan(every_point_plot_pre_pm25)
+    every_point_plot_obs_pm25 = every_point_plot_obs_pm25[mask]
+    every_point_plot_pre_pm25 = every_point_plot_pre_pm25[mask]
 
     H, xedges, yedges = np.histogram2d(every_point_plot_obs_pm25, every_point_plot_pre_pm25, bins=100)
     fig = plt.figure(figsize=(10, 10))
@@ -143,7 +146,10 @@ def regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
     fig_outfile =  fig_output_dir +  '{}-{}-LongtermRegression_Figure_{}_{}_{}x{}_{}Channel{}.png'.format(typeName, species, beginyear, MONTH
                                                                                             ,width, height, nchannel,special_name)
     
-
+    mask = ~np.isnan(plot_obs_pm25) & ~np.isnan(plot_pre_pm25)
+    plot_obs_pm25 = plot_obs_pm25[mask]
+    plot_pre_pm25 = plot_pre_pm25[mask]
+    
     H, xedges, yedges = np.histogram2d(plot_obs_pm25, plot_pre_pm25, bins=100)
     fig = plt.figure(figsize=(10, 10))
     #fig = plt.figure(figsize=(figwidth, figheight))

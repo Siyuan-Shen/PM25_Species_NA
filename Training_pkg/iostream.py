@@ -30,6 +30,7 @@ def load_monthly_obs_data(species:str):
 
     return SPECIES_OBS, lat, lon 
 
+
 def load_geophysical_species_data(species:str):
     infile = geophysical_species_data_dir + geophysical_species_data_infile
     species_monthly_data = nc.Dataset(infile)
@@ -64,14 +65,14 @@ def Learning_Object_Datasets(bias:bool,Normalized_bias:bool,Normlized_Speices:bo
         return true_input, mean, std
     elif Normalized_bias == True:
         bias_data, lat, lon  = load_geophysical_biases_data(species=species)
-        bias_mean = np.mean(bias_data)
-        bias_std = np.std(bias_data)
+        bias_mean = np.nanmean(bias_data)
+        bias_std = np.nanstd(bias_data)
         true_input = (bias_data - bias_mean) / bias_std
         return true_input, bias_mean, bias_std
     elif Normlized_Speices == True:
         obs_data, lat, lon  = load_monthly_obs_data(species=species)
-        obs_mean = np.mean(obs_data)
-        obs_std = np.std(obs_data)
+        obs_mean = np.nanmean(obs_data)
+        obs_std = np.nanstd(obs_data)
         true_input = (obs_data - obs_mean) / obs_std
         return true_input, obs_mean, obs_std
     elif Absolute_Species == True:

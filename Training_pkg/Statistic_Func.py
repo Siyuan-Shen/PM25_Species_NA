@@ -6,7 +6,22 @@ from sklearn.metrics import mean_squared_error
 
 
 
+
 def linear_regression(x, y):
+    # Convert to numpy arrays if they are not already
+    x = np.array(x)
+    y = np.array(y)
+    
+    # Filter out NaN values
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    x = x[mask]
+    y = y[mask]
+    
+    # Check if there are enough data points after filtering
+    if len(x) == 0 or len(y) == 0:
+        print("No valid data points after removing NaN values.")
+        return -999.0
+    
     N = len(x)
     sumx = sum(x)
     sumy = sum(y)
@@ -33,18 +48,59 @@ def linear_regression(x, y):
         rsquared = (SSR / SST) ** 2
     return rsquared
 
+
 def Cal_RMSE(x,y):
+    # Convert to numpy arrays if they are not already
+    x = np.array(x)
+    y = np.array(y)
+    
+    # Filter out NaN values
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    x = x[mask]
+    y = y[mask]
+    
+    # Check if there are enough data points after filtering
+    if len(x) == 0 or len(y) == 0:
+        print("No valid data points after removing NaN values.")
+        return -999.0
     RMSE = np.sqrt(mean_squared_error(x, y))
     RMSE = round(RMSE, 2)
     print('RMSE: {}'.format(RMSE))
     return RMSE
 
 def Cal_NRMSE(final_data,obs_data):
+    # Convert to numpy arrays if they are not already
+    final_data = np.array(final_data)
+    obs_data = np.array(obs_data)
+    
+    # Filter out NaN values
+    mask = ~np.isnan(final_data) & ~np.isnan(obs_data)
+    final_data = final_data[mask]
+    obs_data = obs_data[mask]
+    
+    # Check if there are enough data points after filtering
+    if len(final_data) == 0 or len(obs_data) == 0:
+        print("No valid data points after removing NaN values.")
+        return -999.0
     RMSE = np.sqrt(mean_squared_error(final_data, obs_data))
     RMSE = round(RMSE, 2)
     NRMSE = RMSE/np.mean(obs_data)
     return NRMSE
+
 def Cal_PWM_rRMSE(x,y,population):
+    # Convert to numpy arrays if they are not already
+    x = np.array(x)
+    y = np.array(y)
+    
+    # Filter out NaN values
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    x = x[mask]
+    y = y[mask]
+    population = population[mask]
+    # Check if there are enough data points after filtering
+    if len(x) == 0 or len(y) == 0:
+        print("No valid data points after removing NaN values.")
+        return -999.0
     Total_Population = np.sum(population)
     Weighted_RMSE = np.sum(population*np.square(x-y)) 
     PWA_RMSE = np.sqrt(Weighted_RMSE/Total_Population)
@@ -62,7 +118,10 @@ def Calculate_PWA_PM25(Population_array:np.array, PM25_array:np.array):
     Returns:
         _type_: _description_
     """
-    
+    mask = ~np.isnan(PM25_array)
+    PM25_array = PM25_array[mask]
+    Population_array = Population_array[mask]
+
     if Population_array.shape == PM25_array.shape:
         index = np.where(PM25_array>0)
         Total_Population = np.sum(Population_array[index])
@@ -74,6 +133,20 @@ def Calculate_PWA_PM25(Population_array:np.array, PM25_array:np.array):
     return PWA_PM25
 
 def linear_slope(x, y):
+    # Convert to numpy arrays if they are not already
+    x = np.array(x)
+    y = np.array(y)
+    
+    # Filter out NaN values
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    x = x[mask]
+    y = y[mask]
+    
+    # Check if there are enough data points after filtering
+    if len(x) == 0 or len(y) == 0:
+        print("No valid data points after removing NaN values.")
+        return -999.0
+    
     N = len(x)
     sumx = sum(x)
     sumy = sum(y)
@@ -141,7 +214,21 @@ def regress2(_x, _y, _method_type_1 = "ordinary least square",
     # The code is based on the matlab function of MBARI.
     # AUTHOR: Nils Haentjens
     # REFERENCE: https://www.mbari.org/products/research-software/matlab-scripts-linear-regressions/
-
+    # Convert to numpy arrays if they are not already
+    _x = np.array(_x)
+    _y = np.array(_y)
+    
+    # Filter out NaN values
+    mask = ~np.isnan(_x) & ~np.isnan(_y)
+    _x = _x[mask]
+    _y = _y[mask]
+    
+    # Check if there are enough data points after filtering
+    if len(_x) <= 1 or len(_y) <= 1:
+        print("No valid data points after removing NaN values.")
+        return {"slope": float(-999.0), "intercept": -999.0, "r": -999.0, 'r_square': -999.0,
+            "std_slope": -999.0, "std_intercept": -999.0,
+            "predict": -999.0}
     # Check input
     if _method_type_2 != "reduced major axis" and _method_type_1 != "ordinary least square":
         raise ValueError("'" + _method_type_2 + "' only supports '" + _method_type_1 + "' method as type 1.")
@@ -156,6 +243,7 @@ def regress2(_x, _y, _method_type_1 = "ordinary least square",
         _method_type_2 == "geometric mean"):
         if _method_type_1 == "OLS" or _method_type_1 == "ordinary least square":
             if _need_intercept:
+                
                 [intercept_a, slope_a] = sm.OLS(_y, x_intercept).fit().params
                 [intercept_b, slope_b] = sm.OLS(_x, y_intercept).fit().params
             else:
