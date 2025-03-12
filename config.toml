@@ -4,16 +4,16 @@
 
 [Pathway.observations-dir]
 
-ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/Observations_from_CompileSPECGM-NA-20241015-BiWeekly_ALLFILLPM25_NoDuplicates/' 
-geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/Observations_from_CompileSPECGM-NA-20241015-BiWeekly_ALLFILLPM25_NoDuplicates/'
-geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/Observations_from_CompileSPECGM-NA-20241015-BiWeekly_ALLFILLPM25_NoDuplicates/'
+ground_observation_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_observation/RawData-20241015/' 
+geophysical_species_data_dir                          = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_geophysical/RawData-20241015/'
+geophysical_biases_data_dir                           = '/my-projects/Projects/PM25_Speices_DL_2023/data/monthly_biases/RawData-20241015/'
 ground_observation_data_infile                        = '{}_monthly_observations.nc'
-geophysical_species_data_infile                       = 'v1.7.2/{}_monthly_geophysical_concentration_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
-geophysical_biases_data_infile                        = 'v1.7.2/{}_monthly_biases_concentration_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
+geophysical_species_data_infile                       = 'gPM25-20240604/v1.7.2/{}_monthly_geophysical_concentration_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
+geophysical_biases_data_infile                        = 'gPM25-20240604/v1.7.2/{}_monthly_biases_concentration_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/Observations_from_CompileSPECGM-NA-20241015-BiWeekly_ALLFILLPM25_NoDuplicates/NA_PM25-v1.7.2/{}-cnn_TrainingData_52channels_11x11_199801-202312_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/PM25/RawData-20241015/gPM25-20240604/NA_PM25-v1.7.2/{}-cnn_TrainingData_52channels_11x11_199801-202312_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
@@ -152,7 +152,7 @@ Sensitivity_plot_Switch                               = true
 [Sensitivity_Test-Settings.Training_Settings]
 
 Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
-kfold                                                 = 2
+kfold                                                 = 10
 repeats                                               = 1
 beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
 endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
@@ -161,11 +161,11 @@ test_beginyears                                       = [2000]
 test_endyears                                         = [2023]
 additional_test_regions                               = []
 
-Exclude_Variables_Sensitivity_Test_Switch             = true
-Exclude_Variables_Sensitivity_Test_Variables          = [['GC_PM25'], ['GC_NH4'], ['GC_SO4'], ['GC_SOA'],  ['GC_OM'], ['GC_BC'], ['GC_DST'],['GC_SSLT'],
-                                                         ['NH3_anthro_emi'],['NO_anthro_emi'], ['OC_anthro_emi'], ['BC_anthro_emi'], 
-                                                         ['DST_offline_emi'],['PBLH'], ['RH'], ['T2M'], ['U10M'], ['V10M'],['PRECTOT'],
-                                                         ['Urban_Builtup_Lands'],['Lat'], ['Lon'],['elevation'],['Population']]
+Exclude_Variables_Sensitivity_Test_Switch             =true
+Exclude_Variables_Sensitivity_Test_Variables          =[["BC_anthro_emi"]]
+                                                         #['NH3_anthro_emi'],['NO_anthro_emi'], ['OC_anthro_emi'], ['BC_anthro_emi'], 
+                                                         #['DST_offline_emi'],['PBLH'], ['RH'], ['T2M'], ['U10M'], ['V10M'],['PRECTOT'],
+                                                         #['Urban_Builtup_Lands'],['Lat'], ['Lon'],['elevation'],['Population']]
                                                        #['EtaAOD_Bias'], ['EtaCoastal'], ['EtaMixing'], ['EtaSGAOD_Bias'], ['EtaSGTOPO_Bias'], ['AOD'], ['ETA'], ['GeoPM25'],
                                                        #['GeoNH4'],['GeoNIT'],['GeoSO4'],['GeoBC'],['GeoOM'],['GeoDUST'],['GeoSS'],
                                                        #['NA_CNN_PM25'],#'GL_CNN_PM25'
@@ -291,7 +291,7 @@ Uncertainty_BLISCO_LOWESS_relationship_plot           = true
 
 [Training-Settings.identity]
 
-version                                               = 'v1.7.3'
+version                                               = 'v1.8.0'
 special_name                                          = '_BenchMark' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
 
 [Training-Settings.learning-objective]
@@ -420,7 +420,6 @@ Sigmoid.Settings                                      = false
 
 epoch                                                 = 51
 batchsize                                             = 128
-
 channel_names                                         =[#'ETA_GCHP','AOD_GCHP', 'GeoPM25_GCHP','ttETAAODBIAS_GCHP','ttETACOASTAL_GCHP','ttETAMIXING_GCHP','ttETASGAODBIAS_GCHP','ttETASGTOPOBIAS_GCHP',#'ttETACONSTEXTTOPO_GCHP','ttETAPROFILE_GCHP','ttETARHSENS_GCHP',
                                                        'AOD', 'EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias',  'ETA','EtaSGTOPO_Bias','GeoPM25',
                                                        #'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',

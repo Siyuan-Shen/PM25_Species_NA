@@ -5,7 +5,7 @@ from Training_pkg.utils import *
 from Training_pkg.iostream import load_TrainingVariables
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure, plot_save_estimation_map_figure
 from visualization_pkg.Evaluation_plot import regression_plot,every_point_regression_plot
-from Evaluation_pkg.Spatial_CrossValidation import Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
+from Evaluation_pkg.Spatial_CrossValidation import AVD_RawDataObs_CrossValidation,Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
 from Evaluation_pkg.Sensitivity_Spatial_CrossValidation import Sensitivity_Test_AVD_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
 from Evaluation_pkg.BLCO_CrossValidation import BLCO_AVD_Spatial_CrossValidation
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         f = open(cfg_outfile,'w')
         toml.dump(cfg, f)
         f.close()
-        AVD_Spatial_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+        AVD_RawDataObs_CrossValidation(width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
                                     total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_nchannel_names=side_channel_names)
 
     if Spatial_CV_LossAccuracy_plot_Switch:
