@@ -73,6 +73,13 @@ Analysis_MONTH                                        = PWM_PM_Calculation_Setti
 #######################################################################################################################
 #######################################################################################################################
 
+NorthAmerica_PM25_version           = 'v1.7.2'#'v1.5.0'#
+NorthAmerica_PM25_special_name      = '_BenchMark_exclude_N2O_NMVOC_EMI_add_Population' #'_MSE_forBC_add_Population'#'_BenchMark'# #  
+BC_NorthAmerica_PM25_version           = 'v1.7.2'#'v1.5.0' #'v1.7.2'
+BC_NorthAmerica_PM25_special_name      = '_MSE_forBC_add_Population' #  '_MSE_forBC_add_Population'#'_BenchMark' #  
+
+GeoPM25_AOD_ETA_version             = 'gPM25-20240604'
+GCC_version                         = 'MERRASPEC-GCV11.GLandNested-20240607-RH35-199801-202312-wSA'
 
 GeoPM25_AOD_ETA_input_indir         = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GeoPM25_AOD_ETA_input/'
 GCHP_GeoPM25_AOD_ETA_input_indir    = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GCHP_GeoPM25_AOD_ETA_input/'
@@ -90,18 +97,19 @@ GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_202
 Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
 Month_of_Year_input_indir           = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Month_of_Year_input/'
 OpenStreetMap_road_density_indir    = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/OpenStreetMap_RoadDensity_input/'
+OpenStreetMap_nearest_dist_indir    = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/OpenStreetMap_RoadDensity_NearestDistances_forEachPixels_input/'
 
 def inputfiles_table(YYYY, MM):
     inputfiles_dic = {
         #####################[Variables from Satellite and GCC] ###################
-        'EtaAOD_Bias'        : GeoPM25_AOD_ETA_input_indir + '{}/ttETAAODBIAS_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'EtaCoastal'         : GeoPM25_AOD_ETA_input_indir + '{}/ttETACOASTAL_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'EtaMixing'          : GeoPM25_AOD_ETA_input_indir + '{}/ttETAMIXING_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'EtaSGAOD_Bias'      : GeoPM25_AOD_ETA_input_indir + '{}/ttETASGAODBIAS_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'EtaSGTOPO_Bias'     : GeoPM25_AOD_ETA_input_indir + '{}/ttETASGTOPOBIAS_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'AOD'                : GeoPM25_AOD_ETA_input_indir + '{}/AOD_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'ETA'                : GeoPM25_AOD_ETA_input_indir + '{}/ETA_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GeoPM25'            : GeoPM25_AOD_ETA_input_indir + '{}/geophysical_PM25_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'EtaAOD_Bias'        : GeoPM25_AOD_ETA_input_indir + '{}/{}/ttETAAODBIAS_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'EtaCoastal'         : GeoPM25_AOD_ETA_input_indir + '{}/{}/ttETACOASTAL_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'EtaMixing'          : GeoPM25_AOD_ETA_input_indir + '{}/{}/ttETAMIXING_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'EtaSGAOD_Bias'      : GeoPM25_AOD_ETA_input_indir + '{}/{}/ttETASGAODBIAS_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'EtaSGTOPO_Bias'     : GeoPM25_AOD_ETA_input_indir + '{}/{}/ttETASGTOPOBIAS_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'AOD'                : GeoPM25_AOD_ETA_input_indir + '{}/{}/AOD_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'ETA'                : GeoPM25_AOD_ETA_input_indir + '{}/{}/ETA_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
+        'GeoPM25'            : GeoPM25_AOD_ETA_input_indir + '{}/{}/geophysical_PM25_001x001_NA_map_{}{}.npy'.format(GeoPM25_AOD_ETA_version,YYYY,YYYY,MM),
         
         #####################[Variables from Satellite and GCHP] ###################
         'ETA_GCHP'              : GCHP_GeoPM25_AOD_ETA_input_indir + '{}/ETA_GCHP_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
@@ -127,16 +135,16 @@ def inputfiles_table(YYYY, MM):
 
 
         ##################### [Variables from GEOS-Chem] ###################
-        'GC_PM25'            : GEOS_Chem_input_indir + '{}/PM25_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_NH4'             : GEOS_Chem_input_indir + '{}/NH4_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_SO4'             : GEOS_Chem_input_indir + '{}/SO4_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_NIT'             : GEOS_Chem_input_indir + '{}/NIT_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_SOA'             : GEOS_Chem_input_indir + '{}/SOA_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_OC'              : GEOS_Chem_input_indir + '{}/OC_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_OM'              : GEOS_Chem_input_indir + '{}/OM_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_BC'              : GEOS_Chem_input_indir + '{}/BC_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_DST'             : GEOS_Chem_input_indir + '{}/DST_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
-        'GC_SSLT'            : GEOS_Chem_input_indir + '{}/SSLT_001x001_NA_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GC_PM25'            : GEOS_Chem_input_indir + '{}/{}/PM25_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_NH4'             : GEOS_Chem_input_indir + '{}/{}/NH4_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_SO4'             : GEOS_Chem_input_indir + '{}/{}/SO4_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_NIT'             : GEOS_Chem_input_indir + '{}/{}/NIT_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_SOA'             : GEOS_Chem_input_indir + '{}/{}/SOA_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_OC'              : GEOS_Chem_input_indir + '{}/{}/OC_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_OM'              : GEOS_Chem_input_indir + '{}/{}/OM_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_BC'              : GEOS_Chem_input_indir + '{}/{}/BC_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_DST'             : GEOS_Chem_input_indir + '{}/{}/DST_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
+        'GC_SSLT'            : GEOS_Chem_input_indir + '{}/{}/SSLT_001x001_NA_map_{}{}.npy'.format(GCC_version,YYYY,YYYY,MM),
 
 
         ##################### [Variables from GEOS-Chem] ###################
@@ -179,7 +187,8 @@ def inputfiles_table(YYYY, MM):
         'T2M'                : Meteorology_input_indir + '{}/T2M_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
         'U10M'               : Meteorology_input_indir + '{}/U10M_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
         'V10M'               : Meteorology_input_indir + '{}/V10M_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
-
+        'USTAR'              : Meteorology_input_indir + '{}/USTAR_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
+        'GWETTOP'            : Meteorology_input_indir + '{}/GWETTOP_001x001_GL_map_{}{}.npy'.format(YYYY,YYYY,MM),
         ##################### [Variables from Land Cover] ###################
         'Crop_Nat_Vege_Mos'  : LandCover_input_indir + 'Cropland-Natural-Vegetation-Mosaics/Cropland-Natural-Vegetation-Mosaics-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         'Permanent_Wetlands' : LandCover_input_indir + 'Permanent-Wetlands/Permanent-Wetlands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
@@ -192,6 +201,13 @@ def inputfiles_table(YYYY, MM):
         'trunk'              : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-trunk-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         'unclassified'       : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-unclassified-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         'residential'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-residential-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        
+        ##################### [Open Street Map Road Density nearest distances] ###################
+        'motorway_dist'      : OpenStreetMap_nearest_dist_indir + 'motorway_NearestDistances/OpenStreetMap-motorway_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
+        'primary_dist'       : OpenStreetMap_nearest_dist_indir + 'primary_NearestDistances/OpenStreetMap-primary_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
+        'secondary_dist'     : OpenStreetMap_nearest_dist_indir + 'secondary_NearestDistances/OpenStreetMap-secondary_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
+        'trunk_dist'         : OpenStreetMap_nearest_dist_indir + 'trunk_NearestDistances/OpenStreetMap-trunk_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
+        'unclassified_dist'  : OpenStreetMap_nearest_dist_indir + 'unclassified_NearestDistances/OpenStreetMap-unclassified_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
         
         ##################### [Geographical Information] ###################
         'S1'                 : Geographical_Variables_input_indir + 'Spherical_Coordinates/Spherical_Coordinates_1.npy',

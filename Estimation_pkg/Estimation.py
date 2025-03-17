@@ -10,7 +10,7 @@ from Estimation_pkg.predict_func import map_predict,map_final_output
 from Estimation_pkg.iostream import save_ForcedSlopeUnity_final_map_data,load_ForcedSlope_forEstimation,load_map_data, load_trained_model_forEstimation,load_trained_month_based_model_forEstimation,save_final_map_data, load_estimation_map_data,save_combinedGeo_map_data
 
 from Training_pkg.iostream import load_TrainingVariables
-from Training_pkg.iostream import Learning_Object_Datasets
+from Training_pkg.iostream import Learning_Object_Datasets, load_monthly_obs_data
 from Training_pkg.data_func import normalize_Func
 from Training_pkg.utils import *
 
@@ -28,8 +28,9 @@ def Estimation_Func(total_channel_names,mainstream_channel_names,side_channel_na
         gc.collect()
     
     if Map_estimation_Switch:
+        SPECIES_OBS, lat, lon = load_monthly_obs_data(species=species)
         width, height, sitesnumber,start_YYYY, TrainingDatasets = load_TrainingVariables(nametags=total_channel_names)
-        Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets)
+        Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets,observation_data=SPECIES_OBS)
         true_input, mean, std = Learning_Object_Datasets(bias=bias,Normalized_bias=normalize_bias,Normlized_Speices=normalize_species,Absolute_Species=absolute_species,Log_PM25=log_species,species=species)
     
         gc.collect()
