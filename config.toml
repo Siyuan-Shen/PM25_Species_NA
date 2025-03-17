@@ -74,8 +74,8 @@ EachMonthForcedSlopeUnity                             = true # True: force the s
 SHAP_Analysis_switch                                  = false
 SHAP_Analysis_Calculation_Switch                      = true
 SHAP_Analysis_visualization_Switch                    = true
-SHAP_Analysis_background_number                       = 7353 # Typical 100-1000, do not feed all data in it.
-SHAP_Analysis_test_number                             = 7353
+SHAP_Analysis_background_number                       = 1000 # Typical 100-1000, do not feed all data in it.
+SHAP_Analysis_test_number                             = 200
 SHAP_Analysis_plot_type                               = 'beeswarm' # 'beeswarm'; 
 
 #########################################################################################################################################################
@@ -101,9 +101,9 @@ additional_test_regions                               = []
 
 [BLCO-CrossValidation]
 
-BLCO_CrossValidation_Switch                           = false
+BLCO_CrossValidation_Switch                           = true
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true # Also controls the loading in Uncertainty
-Buffer_size                                           = [160,170,180,190,200]
+Buffer_size                                           = [120]
 
 [BLCO-CrossValidation.TrainingSettings]
 
@@ -111,11 +111,11 @@ Spatial_CV_test_only_Switch                           = false  #This Switch is f
 seeds_number                                          = 10
 kfold                                                 = 10 # larger than seeds number
 repeats                                               = 1
-beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
-endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
+beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
 training_months                                       = [[8,9,10,11,0,1,2,3,4,5,6,7]]#[[9,10,11,0,1,2],[3,4,5,6,7,8]]# [[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
-test_beginyears                                       = [2000,2000]
-test_endyears                                         = [2016,2022]
+test_beginyears                                       = [2000,2000,2000]
+test_endyears                                         = [2016,2022,2023]
 additional_test_regions                               = ['Canada','Contiguous United States','Midwestern United States','Northeastern United States',
                                                         'Northern North America','Northwestern United States','Southern United States','Southwestern United States']
 
@@ -146,8 +146,8 @@ fixednumber_train_sites                               = []
 
 [Sensitivity_Test-Settings]
 
-Sensitivity_Test_Switch                               = true
-Sensitivity_plot_Switch                               = true
+Sensitivity_Test_Switch                               = false
+Sensitivity_plot_Switch                               = false
 
 [Sensitivity_Test-Settings.Training_Settings]
 
@@ -161,8 +161,8 @@ test_beginyears                                       = [2000]
 test_endyears                                         = [2023]
 additional_test_regions                               = []
 
-Exclude_Variables_Sensitivity_Test_Switch             =true
-Exclude_Variables_Sensitivity_Test_Variables          =[["BC_anthro_emi"]]
+Exclude_Variables_Sensitivity_Test_Switch             =false
+Exclude_Variables_Sensitivity_Test_Variables          =[["Population"]]
                                                          #['NH3_anthro_emi'],['NO_anthro_emi'], ['OC_anthro_emi'], ['BC_anthro_emi'], 
                                                          #['DST_offline_emi'],['PBLH'], ['RH'], ['T2M'], ['U10M'], ['V10M'],['PRECTOT'],
                                                          #['Urban_Builtup_Lands'],['Lat'], ['Lon'],['elevation'],['Population']]
@@ -178,10 +178,11 @@ Exclude_Variables_Sensitivity_Test_Variables          =[["BC_anthro_emi"]]
                                                        #['Lat'], ['Lon'],['elevation'], #'S1','S2','S3',#'S1','S2','S3','  'Lat', 'Lon',
                                                         #['Population']
                                                        # ]
-Include_Variables_Sensitivity_Test_Switch             = false
-Include_Variables_Sensitivity_Test_Variables          = [['GC_NIT'],['SO2_anthro_emi'],['Crop_Nat_Vege_Mos'], ['Permanent_Wetlands'], ['Croplands'],
-                                                        ['USTAR'],['GWETTOP'],['motorway'],['primary'],['secondary'],['trunk'],['unclassified'],
-                                                        ['motorway_dist'],['primary_dist'],['secondary_dist'],['trunk_dist'],['unclassified_dist']]#, ['EtaCoastal'], ['EtaMixing'], ['EtaSGAOD_Bias'], ['EtaSGTOPO_Bias'], ['AOD'], ['ETA'], ['GeoPM25'],
+Include_Variables_Sensitivity_Test_Switch             = true
+Include_Variables_Sensitivity_Test_Variables          =[["elevation"]]
+                                                        #,['SO2_anthro_emi'],['Crop_Nat_Vege_Mos'], ['Permanent_Wetlands'], ['Croplands'],
+                                                        #['USTAR'],['GWETTOP'],['motorway'],['primary'],['secondary'],['trunk'],['unclassified'],
+                                                        #['motorway_dist'],['primary_dist'],['secondary_dist'],['trunk_dist'],['unclassified_dist']]#, ['EtaCoastal'], ['EtaMixing'], ['EtaSGAOD_Bias'], ['EtaSGTOPO_Bias'], ['AOD'], ['ETA'], ['GeoPM25'],
                                                        #['GeoNH4'],['GeoNIT'],['GeoSO4'],['GeoBC'],['GeoOM'],['GeoDUST'],['GeoSS'],
                                                        #['NA_CNN_PM25'],#'GL_CNN_PM25'
                                                        #['GC_PM25'], ['GC_NH4'], ['GC_SO4'], ['GC_NIT'], ['GC_SOA'], ['GC_OC'], ['GC_OM'], ['GC_BC'], ['GC_DST'],['GC_SSLT'],
@@ -198,7 +199,7 @@ Include_Variables_Sensitivity_Test_Variables          = [['GC_NIT'],['SO2_anthro
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = false
+Estimation_Switch                                     = true
 Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
@@ -207,25 +208,25 @@ Derive_combinedGeo_MapData_Switch                     = false
 
 [Estimation-Settings.Training_Settings]
 
-beginyears                                            = [2018,2019,2020,2021,2022]
-endyears                                              = [2018,2019,2020,2021,2022]
+beginyears                                            = [2021]
+endyears                                              = [2021]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]]
 
 [Estimation-Settings.Map_Estimation_Settings]
 
-Estiamtion_trained_beginyears                         = [2018,2019,2020,2021,2022]
-Estiamtion_trained_endyears                           = [2018,2019,2020,2021,2022]
+Estiamtion_trained_beginyears                         = [2021]
+Estiamtion_trained_endyears                           = [2021]
 Estiamtion_trained_months                             = [[9,10,11,0,1,2,3,4,5,6,7,8]]  #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] # Must be same order of Estimation-Settings.Training_Settings.training_months
-Estimation_years                                      = [[2018],[2019],[2020],[2021],[2022]]
+Estimation_years                                      = [[2021]]
 Estiamtion_months                                     = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,11],[2,3,4],[5,6,7],[8,9,10]]
 Extent                                                = [10.055,69.945,-169.945,-40.055]
 Estimation_ForcedSlopeUnity                           = true
 
 [Estimation-Settings.Visualization_Settings]
 
-Map_Plot_Switch                                       = true       # Switch for plotting the map of estimated concentration. 
+Map_Plot_Switch                                       = false       # Switch for plotting the map of estimated concentration. 
 ForcedSlopeUnity_Map_Plot_Switch                      = true
-Map_Plot_YEARS                                        = [2018,2019,2020,2021,2022]
+Map_Plot_YEARS                                        = [2021]
 Map_Plot_MONTHS                                       = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Map_Plot_Area                                         = 'NA'
 Map_Plot_Extent                                       = [10.055,69.945,-169.945,-50.055]
@@ -268,6 +269,9 @@ Number_of_Bins                                        = 101
 Low_percentile_remove                                 = 5
 High_percentile_remove                                = 95
 LOWESS_frac                                           = 0.3
+Initial_Estimation_Map_trained_beginyears             = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+Initial_Estimation_Map_trained_endyears               = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+Initial_Estimation_Map_trained_months                 = [[9,10,11,0,1,2,3,4,5,6,7,8]]
 
 [Uncertainty-Settings.Map_Estimation_Settings]
 
@@ -424,9 +428,9 @@ channel_names                                         =[#'ETA_GCHP','AOD_GCHP', 
                                                        'AOD', 'EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias',  'ETA','EtaSGTOPO_Bias','GeoPM25',
                                                        #'GeoNH4','GeoNIT','GeoSO4','GeoBC','GeoOM','GeoDUST','GeoSS',
                                                        #'NA_CNN_PM25',#'GL_CNN_PM25',#
-                                                       'GC_PM25', 'GC_NH4', 'GC_SO4',  'GC_SOA',  'GC_BC', 'GC_DST','GC_SSLT','GC_OM',#'GC_OC','GC_NIT', 
+                                                       'GC_PM25', 'GC_NH4', 'GC_SO4',  'GC_SOA',  'GC_BC', 'GC_DST','GC_SSLT','GC_OM',#'GC_NIT', #'GC_OC',
                                                        # 'GCHP_PM25', 'GCHP_NH4', 'GCHP_SO4', 'GCHP_SOA', 'GCHP_OC',  'GCHP_BC', 'GCHP_DST', 'GCHP_SSLT',#'GCHP_NIT', 'GCHP_OM',
-                                                       'NH3_anthro_emi','NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',#'SO2_anthro_emi',#'NMVOC_anthro_emi',#'N2O_anthro_emi',,# 
+                                                       'NH3_anthro_emi','NO_anthro_emi', 'OC_anthro_emi', 'BC_anthro_emi',#'SO2_anthro_emi',##'NMVOC_anthro_emi',#'N2O_anthro_emi',,# 
                                                        'DST_offline_emi',#'SSLT_offline_emi',
                                                        'RH', 'T2M', 'U10M', 'V10M','PRECTOT','PBLH', 
                                                        'Urban_Builtup_Lands',#'Croplands','Crop_Nat_Vege_Mos','Permanent_Wetlands', 
