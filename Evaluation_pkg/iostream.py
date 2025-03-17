@@ -635,7 +635,7 @@ def load_month_based_BLCO_data_recording(species, version, typeName, beginyear, 
     testing_population_data_recording = np.load(testing_population_data_infile, allow_pickle=True).item()
     lat_recording = np.load(lat_data_infile)
     lon_recording = np.load(lon_data_infile)
-    testsites2trainsites_nearest_distances = np.load(TestSites2TrainSites_nearest_distances_infile)
+    testsites2trainsites_nearest_distances = np.load(TestSites2TrainSites_nearest_distances_infile, allow_pickle=True).item()
     test_sites_index_recording = np.load(test_sites_index_recording_infile, allow_pickle=True).item()
     train_sites_index_recording = np.load(train_sites_index_recording_infile, allow_pickle=True).item()
     excluded_sites_index_recording = np.load(excluded_sites_index_recording_infile, allow_pickle=True).item()

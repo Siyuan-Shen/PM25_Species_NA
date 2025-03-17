@@ -195,6 +195,24 @@ def initialize_AVD_SHAPValues_DataRecording(beginyear:int,endyear:int):
         #    shap_values_data[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
     return shap_values_values,shap_values_base,shap_values_data
 
+def initialize_BLCO_SitesFoldsRecording(beginyear:int,endyear:int):
+    test_sites_index_recording = {}
+    train_sites_index_recording = {}
+    excluded_sites_index_recording = {}
+    testsites2trainsites_nearest_distances = {}
+    MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual']
+    for iyear in range(endyear-beginyear+1):
+        test_sites_index_recording[str(beginyear+iyear)] = {}
+        train_sites_index_recording[str(beginyear+iyear)] = {}
+        excluded_sites_index_recording[str(beginyear+iyear)] = {}
+        testsites2trainsites_nearest_distances[str(beginyear+iyear)] = {}
+        for imonth in MONTH:
+            test_sites_index_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+            train_sites_index_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+            excluded_sites_index_recording[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+            testsites2trainsites_nearest_distances[str(beginyear+iyear)][imonth] = np.array([],dtype=np.float64)
+    return test_sites_index_recording, train_sites_index_recording, excluded_sites_index_recording, testsites2trainsites_nearest_distances
+
 def initialize_AVD_DataRecording(beginyear:int,endyear:int):
     """This is used to return data recording dict. dict = {  {Year : {Month : np.array() }}}
 
@@ -331,39 +349,56 @@ def initialize_AVD_CV_Alltime_dict():
     return test_CV_R2_Alltime, train_CV_R2_Alltime, geo_CV_R2_Alltime, RMSE_Alltime, NRMSE_Alltime, PWM_NRMSE_Alltime,slope_Alltime, PWAModel_Alltime, PWAMonitors_Alltime
 
 def initialize_Loss_Accuracy_Recordings(kfolds,n_models,epoch,batchsize):
-    Training_losses_recording = np.zeros((kfolds,n_models,epoch*2000))
-    Training_acc_recording    = np.zeros((kfolds,n_models,epoch*10))
-    valid_losses_recording    = np.zeros((kfolds,n_models,epoch*2000))
-    valid_acc_recording       = np.zeros((kfolds,n_models,epoch*10))
+    Training_losses_recording = np.zeros((kfolds,n_models,epoch*4000))
+    Training_acc_recording    = np.zeros((kfolds,n_models,epoch*40))
+    valid_losses_recording    = np.zeros((kfolds,n_models,epoch*4000))
+    valid_acc_recording       = np.zeros((kfolds,n_models,epoch*40))
     print('Training_losses_recording.shape: '.format(Training_losses_recording.shape) + '----------------------')
     return Training_losses_recording, Training_acc_recording, valid_losses_recording, valid_acc_recording
 
-def get_annual_longterm_array(beginyear, endyear, final_data_recording,obs_data_recording):
+def combine_kfolds_test_results(test_results_recording,kfold,sitesnumber):
+    # Reshape the kfold_array to (kfold, sitesnumber)
+    reshaped_array = test_results_recording.reshape(kfold, sitesnumber)
+
+    # Create a mask for elements that are NaN in all kfold arrays
+    nan_mask = np.all(np.isnan(reshaped_array), axis=0)
+    
+    # Replace NaN values with 0 for the purpose of addition
+    reshaped_array_no_nan = np.nan_to_num(reshaped_array, nan=0.0)
+
+    # Sum the arrays along the kfold axis
+    result = np.sum(reshaped_array_no_nan, axis=0)
+    
+    # Restore NaN values where all kfold arrays had NaN
+    result[nan_mask] = np.nan
+
+    return result
+
+def get_annual_longterm_array(beginyear, endyear, final_data_recording,obs_data_recording,sitesnumber,kfold):
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    final_longterm_data = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
-    obs_longterm_data   = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
-    count = 0
+    final_longterm_data = np.full((len(MONTH)*(endyear-beginyear+1),sitesnumber), np.nan, dtype=np.float64)
+    obs_longterm_data   = np.full((len(MONTH)*(endyear-beginyear+1),sitesnumber), np.nan, dtype=np.float64)
+    
     for iyear in range(endyear-beginyear+1):
         for imonth in range(len(MONTH)):
-            final_longterm_data += final_data_recording[str(beginyear+iyear)][MONTH[imonth]]
-            obs_longterm_data   += obs_data_recording[str(beginyear+iyear)][MONTH[imonth]]
-            count += 1
-    final_longterm_data = final_longterm_data/count
-    obs_longterm_data   = obs_longterm_data/count
+            final_longterm_data[len(MONTH)*iyear+imonth,:] = combine_kfolds_test_results(final_data_recording[str(beginyear+iyear)][MONTH[imonth]],kfold,sitesnumber)
+            obs_longterm_data[len(MONTH)*iyear+imonth,:]   = combine_kfolds_test_results(obs_data_recording[str(beginyear+iyear)][MONTH[imonth]],kfold,sitesnumber)
+            
+    final_longterm_data = np.nanmean(final_longterm_data,axis=0)
+    obs_longterm_data   = np.nanmean(obs_longterm_data,axis=0)
     return final_longterm_data, obs_longterm_data
 
-def get_monthly_longterm_array(beginyear, imonth, endyear, final_data_recording,obs_data_recording):
+def get_monthly_longterm_array(beginyear, imonth, endyear, final_data_recording,obs_data_recording,sitesnumber,kfold):   
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    final_longterm_data = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
-    obs_longterm_data   = np.zeros(final_data_recording[str(beginyear)]['Jan'].shape, dtype=np.float64)
-    count = 0
-    for iyear in range(endyear-beginyear+1):
+    final_longterm_data = np.full(((endyear-beginyear+1),sitesnumber), np.nan, dtype=np.float64)
+    obs_longterm_data   = np.full(((endyear-beginyear+1),sitesnumber), np.nan, dtype=np.float64)
     
-        final_longterm_data += final_data_recording[str(beginyear+iyear)][MONTH[imonth]]
-        obs_longterm_data   += obs_data_recording[str(beginyear+iyear)][MONTH[imonth]]
-        count += 1
-    final_longterm_data = final_longterm_data/count
-    obs_longterm_data   = obs_longterm_data/count
+    for iyear in range(endyear-beginyear+1):
+        final_longterm_data[iyear,:] = combine_kfolds_test_results(final_data_recording[str(beginyear+iyear)][MONTH[imonth]],kfold,sitesnumber)
+        obs_longterm_data[iyear,:]   = combine_kfolds_test_results(obs_data_recording[str(beginyear+iyear)][MONTH[imonth]],kfold,sitesnumber)
+        
+    final_longterm_data = np.nanmean(final_longterm_data,axis=0)
+    obs_longterm_data   = np.nanmean(obs_longterm_data,axis=0)
     return final_longterm_data, obs_longterm_data
 
 def initialize_multimodels_CV_Dic(kfold:int, repeats:int, beginyears:list,):
@@ -624,7 +659,7 @@ def get_coefficients(nearest_site_distance,cutoff_size,beginyear,endyear,months)
     coefficient = (nearest_site_distance - cutoff_size)/(nearest_site_distance+0.0000001)
     coefficient[np.where(coefficient<0.0)]=0.0
     coefficient = np.square(coefficient)
-    coefficients = np.zeros((len(months) * (endyear - beginyear + 1) * len(nearest_site_distance)), dtype=int)  
+    coefficients = np.zeros((len(months) * (endyear - beginyear + 1) * len(nearest_site_distance)), dtype=np.float64)  
     for i in range(len(months) * (endyear - beginyear + 1)):  
         coefficients[i * len(nearest_site_distance):(i + 1) * len(nearest_site_distance)] = coefficient
     
