@@ -101,7 +101,7 @@ additional_test_regions                               = []
 
 [BLCO-CrossValidation]
 
-BLCO_CrossValidation_Switch                           = true
+BLCO_CrossValidation_Switch                           = false
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true # Also controls the loading in Uncertainty
 Buffer_size                                           = [120]
 
