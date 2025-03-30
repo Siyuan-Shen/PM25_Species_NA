@@ -15,11 +15,10 @@ from Estimation_pkg.utils import *
 from Evaluation_pkg.utils import *
 from Evaluation_pkg.iostream import *
 
-from Uncertainty_pkg.iostream import load_NA_GeoLatLon,load_NA_GeoLatLon_Map,save_nearest_site_distances_forEachPixel,save_nearby_site_distances_forEachPixel
+from Uncertainty_pkg.iostream import save_data_for_LOWESS_calculation,load_data_for_LOWESS_calculation,load_NA_GeoLatLon,load_NA_GeoLatLon_Map,save_nearest_site_distances_forEachPixel,save_nearby_site_distances_forEachPixel
 from Uncertainty_pkg.utils import *
 
-
-def Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height):
+def Get_datasets_for_LOWESS_Calculation(total_channel_names,width,height,total_sites):
     nchannel = len(total_channel_names)
     SPECIES_OBS, sitelat, sitelon  = load_monthly_obs_data(species)
     total_obs_data = {}
@@ -29,8 +28,7 @@ def Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height):
 
     init_bins = np.linspace(0,Max_distances_for_Bins,Number_of_Bins)
     output_bins = np.array(range(len(init_bins)-1))*round(Max_distances_for_Bins/Number_of_Bins)
-    LOWESS_values = {}
-    rRMSE         = {}
+    
     Keys = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual','MAM','JJA','SON','DJF']
     MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     SEASONS = ['MAM','JJA','SON','DJF']
@@ -38,56 +36,134 @@ def Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height):
 
     YEARS = [str(iyear) for iyear in range(Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear+1)]
     typeName = Get_typeName(bias=bias,normalize_bias=normalize_bias,normalize_species=normalize_species,absolute_species=absolute_species,log_species=log_species,species=species)
+
     for ikey in Keys:
-        LOWESS_values[ikey] = np.array([],dtype=np.float64)
-        rRMSE[ikey] = np.array([],dtype=np.float64)
+        print('Processing the month/season: {}'.format(ikey))
         total_obs_data[ikey] = np.array([],dtype=np.float64)
         total_final_data[ikey] = np.array([],dtype=np.float64)
         total_nearest_distances_data[ikey] = np.array([],dtype=np.float64)
         total_nearbysites_distances_data[ikey] = np.array([],dtype=np.float64)
+
     for radius in Uncertainty_Buffer_radii_forUncertainty:
-        temp_distances_recording = np.array([],dtype=np.float64)
+        print('Processing the radius: {}'.format(radius))
+        
         obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording,testsites2trainsites_nearest_distances,test_sites_index_recording,train_sites_index_recording,excluded_sites_index_recording, train_index_number, test_index_number=load_month_based_BLCO_data_recording(species, version, typeName, Uncertainty_BLISCO_beginyear, Uncertainty_BLISCO_endyear, nchannel, special_name, width, height,radius,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers)
-        for ifold in range(Uncertainty_BLISCO_kfolds):
-            for isite in range(len(test_sites_index_recording[str(ifold)])):
-                test_index =  test_sites_index_recording[str(ifold)][isite]
-                train_index = train_sites_index_recording[str(ifold)]
-                temp_nearbysites_distance =  Get_NearbySites_Distances_Info(sitelat[test_index],sitelon[test_index],sitelat[train_index],sitelon[train_index],number_of_nearby_sites_forAverage,nearby_sites_distances_mode)
-                temp_distances_recording = np.append(temp_distances_recording,temp_nearbysites_distance)
+        
         for iyear in YEARS:
-            for imonth in MONTHS:
-                if imonth == 'Jan':
-                    obs_data[iyear]['Annual'] = obs_data[iyear][imonth].copy()
-                    final_data[iyear]['Annual'] = final_data[iyear][imonth].copy()
-                else:
-                    obs_data[iyear]['Annual'] += obs_data[iyear][imonth].copy()
-                    final_data[iyear]['Annual'] += final_data[iyear][imonth].copy()
-                total_obs_data[imonth] = np.append(total_obs_data[imonth],obs_data[iyear][imonth])
-                total_final_data[imonth] = np.append(total_final_data[imonth],final_data[iyear][imonth])
-                total_nearbysites_distances_data[imonth] = np.append(total_nearbysites_distances_data[imonth],temp_distances_recording)
-                total_nearest_distances_data[imonth] = np.append(total_nearest_distances_data[imonth],testsites2trainsites_nearest_distances)
+            print('Processing the year: {}'.format(iyear))
+            obs_data[iyear]['Annual'] = np.full((12,total_sites),np.nan)
+            final_data[iyear]['Annual'] = np.full((12,total_sites),np.nan)
+            testsites2trainsites_nearest_distances[iyear]['Annual'] = np.full((12,total_sites),np.nan)
+            annual_nearby_distances = np.full((12,total_sites),np.nan)
+            for im, imonth in enumerate(MONTHS):
+                print('Processing the month: {}'.format(imonth))
+                temp_month_distances_recording = np.array([],dtype=np.float64)
+                for ifold in range(Uncertainty_BLISCO_kfolds):
+                    print('Processing the kfold: {}/{}'.format(ifold+1,Uncertainty_BLISCO_kfolds))
+                    temp_ifold_distances_recording = np.full(total_sites,np.nan,dtype=np.float64)
+                    ifold_test_sites_index = test_sites_index_recording[iyear][imonth][ifold*total_sites:(ifold+1)*total_sites]
+                    ifold_train_sites_index = train_sites_index_recording[iyear][imonth][ifold*total_sites:(ifold+1)*total_sites]
+                    nonan_ifold_test_index = np.where(~np.isnan(ifold_test_sites_index))[0]
+                    nonan_ifold_train_index = np.where(~np.isnan(ifold_train_sites_index))[0]
+                    for isite in range(len(nonan_ifold_test_index)):
+                        temp_nearbysites_distance =  Get_NearbySites_Distances_Info(sitelat[nonan_ifold_test_index[isite]],sitelon[nonan_ifold_test_index[isite]],sitelat[nonan_ifold_train_index],sitelon[nonan_ifold_train_index],number_of_nearby_sites_forAverage,nearby_sites_distances_mode)
+                        temp_ifold_distances_recording[nonan_ifold_test_index[isite]] = temp_nearbysites_distance
+                    temp_month_distances_recording = np.append(temp_month_distances_recording,temp_ifold_distances_recording)
+                temp_obs_data = combine_kfolds_test_results(obs_data[iyear][imonth],Uncertainty_BLISCO_kfolds,total_sites)
+                temp_final_data = combine_kfolds_test_results(final_data[iyear][imonth],Uncertainty_BLISCO_kfolds,total_sites)
+                temp_testsites2trainsites_nearest_distances = combine_kfolds_test_results(testsites2trainsites_nearest_distances[iyear][imonth],Uncertainty_BLISCO_kfolds,total_sites)
+                temp_nearby_distances = combine_kfolds_test_results(temp_month_distances_recording,Uncertainty_BLISCO_kfolds,total_sites)
+
+                obs_data[iyear]['Annual'][im,:] = temp_obs_data
+                final_data[iyear]['Annual'][im,:] = temp_final_data
+                testsites2trainsites_nearest_distances[iyear]['Annual'][im,:] = temp_testsites2trainsites_nearest_distances
+                annual_nearby_distances[im,:] = temp_nearby_distances
+
+                total_obs_data[imonth] = np.append(total_obs_data[imonth],temp_obs_data)
+                total_final_data[imonth] = np.append(total_final_data[imonth],temp_final_data)
+                total_nearbysites_distances_data[imonth] = np.append(total_nearbysites_distances_data[imonth],temp_nearby_distances)
+                total_nearest_distances_data[imonth] = np.append(total_nearest_distances_data[imonth],temp_testsites2trainsites_nearest_distances)
+            obs_data[iyear]['Annual'] = np.nanmean(obs_data[iyear]['Annual'],axis=0)
+            final_data[iyear]['Annual'] = np.nanmean(final_data[iyear]['Annual'],axis=0)
+            testsites2trainsites_nearest_distances[iyear]['Annual'] = np.nanmean(testsites2trainsites_nearest_distances[iyear]['Annual'],axis=0)
+            annual_nearby_distances = np.nanmean(annual_nearby_distances,axis=0)
+            
+
             for iseason in range(len(SEASONS)):
+                season_nearby_distances = np.full((3,total_sites),np.nan)
+                obs_data[iyear][SEASONS[iseason]] = np.full((3,total_sites),np.nan)
+                final_data[iyear][SEASONS[iseason]] = np.full((3,total_sites),np.nan)
+                testsites2trainsites_nearest_distances[iyear][SEASONS[iseason]] = np.full((3,total_sites),np.nan)
+
                 for imonth in range(len(MONTHS_inSEASONS[iseason])):
-                    if imonth == 0:
-                        obs_data[iyear][SEASONS[iseason]]   = obs_data[iyear][MONTHS_inSEASONS[iseason][imonth]].copy()
-                        final_data[iyear][SEASONS[iseason]] = final_data[iyear][MONTHS_inSEASONS[iseason][imonth]].copy()
-                    else:
-                        obs_data[iyear][SEASONS[iseason]]   += obs_data[iyear][MONTHS_inSEASONS[iseason][imonth]].copy()
-                        final_data[iyear][SEASONS[iseason]] += final_data[iyear][MONTHS_inSEASONS[iseason][imonth]].copy()
-                obs_data[iyear][SEASONS[iseason]] = obs_data[iyear][SEASONS[iseason]]/3.0
-                final_data[iyear][SEASONS[iseason]] = final_data[iyear][SEASONS[iseason]] /3.0
+                    temp_month_distances_recording = np.array([],dtype=np.float64)
+                    for ifold in range(Uncertainty_BLISCO_kfolds):
+                        temp_ifold_distances_recording = np.full(total_sites,np.nan,dtype=np.float64)
+                        ifold_test_sites_index = test_sites_index_recording[iyear][MONTHS_inSEASONS[iseason][imonth]][ifold*total_sites:(ifold+1)*total_sites]
+                        ifold_train_sites_index = train_sites_index_recording[iyear][MONTHS_inSEASONS[iseason][imonth]][ifold*total_sites:(ifold+1)*total_sites]
+                        nonan_ifold_test_index = np.where(~np.isnan(ifold_test_sites_index))[0]
+                        nonan_ifold_train_index = np.where(~np.isnan(ifold_train_sites_index))[0]
+                        for isite in range(len(nonan_ifold_test_index)):
+                            temp_nearbysites_distance =  Get_NearbySites_Distances_Info(sitelat[nonan_ifold_test_index[isite]],sitelon[nonan_ifold_test_index[isite]],sitelat[nonan_ifold_train_index],sitelon[nonan_ifold_train_index],number_of_nearby_sites_forAverage,nearby_sites_distances_mode)
+                            temp_ifold_distances_recording[nonan_ifold_test_index[isite]] = temp_nearbysites_distance
+                        temp_month_distances_recording = np.append(temp_month_distances_recording,temp_ifold_distances_recording)
+                    temp_obs_data = combine_kfolds_test_results(obs_data[iyear][MONTHS_inSEASONS[iseason][imonth]],Uncertainty_BLISCO_kfolds,total_sites)
+                    temp_final_data = combine_kfolds_test_results(final_data[iyear][MONTHS_inSEASONS[iseason][imonth]],Uncertainty_BLISCO_kfolds,total_sites)
+                    temp_testsites2trainsites_nearest_distances = combine_kfolds_test_results(testsites2trainsites_nearest_distances[iyear][MONTHS_inSEASONS[iseason][imonth]],Uncertainty_BLISCO_kfolds,total_sites)
+                    temp_nearby_distances = combine_kfolds_test_results(temp_month_distances_recording,Uncertainty_BLISCO_kfolds,total_sites)
+
+                    obs_data[iyear][SEASONS[iseason]][imonth,:] = temp_obs_data
+                    final_data[iyear][SEASONS[iseason]][imonth,:] = temp_final_data
+                    testsites2trainsites_nearest_distances[iyear][SEASONS[iseason]][imonth,:] = temp_testsites2trainsites_nearest_distances
+                    season_nearby_distances[imonth,:] = temp_nearby_distances
+
+                    total_obs_data[SEASONS[iseason]] = np.append(total_obs_data[SEASONS[iseason]],temp_obs_data)
+                    total_final_data[SEASONS[iseason]] = np.append(total_final_data[SEASONS[iseason]],temp_final_data)
+                    total_nearbysites_distances_data[SEASONS[iseason]] = np.append(total_nearbysites_distances_data[SEASONS[iseason]],temp_nearby_distances)
+                    total_nearest_distances_data[SEASONS[iseason]] = np.append(total_nearest_distances_data[SEASONS[iseason]],temp_testsites2trainsites_nearest_distances)
+                obs_data[iyear][SEASONS[iseason]] = np.nanmean(obs_data[iyear][SEASONS[iseason]],axis=0)
+                final_data[iyear][SEASONS[iseason]] = np.nanmean(final_data[iyear][SEASONS[iseason]],axis=0)
+                testsites2trainsites_nearest_distances[iyear][SEASONS[iseason]] = np.nanmean(testsites2trainsites_nearest_distances[iyear][SEASONS[iseason]],axis=0)
+                season_nearby_distances = np.nanmean(season_nearby_distances,axis=0)
+                
                 total_obs_data[SEASONS[iseason]] = np.append(total_obs_data[SEASONS[iseason]],obs_data[iyear][SEASONS[iseason]])
                 total_final_data[SEASONS[iseason]] = np.append(total_final_data[SEASONS[iseason]],final_data[iyear][SEASONS[iseason]])
-                total_nearbysites_distances_data[SEASONS[iseason]] = np.append(total_nearbysites_distances_data[SEASONS[iseason]],temp_distances_recording)
+                total_nearbysites_distances_data[SEASONS[iseason]] = np.append(total_nearbysites_distances_data[SEASONS[iseason]],season_nearby_distances)
                 total_nearest_distances_data[SEASONS[iseason]] = np.append(total_nearest_distances_data[SEASONS[iseason]],testsites2trainsites_nearest_distances)
-
-            obs_data[iyear]['Annual'] = obs_data[iyear]['Annual']/12.0
-            final_data[iyear]['Annual'] =  final_data[iyear]['Annual']/12.0
+        
+        
             total_obs_data['Annual'] = np.append(total_obs_data['Annual'],obs_data[iyear]['Annual'])
             total_final_data['Annual'] = np.append(total_final_data['Annual'],final_data[iyear]['Annual'])
-            total_nearbysites_distances_data['Annual'] = np.append(total_nearbysites_distances_data['Annual'],temp_distances_recording)
-            total_nearest_distances_data['Annual'] = np.append(total_nearest_distances_data['Annual'],testsites2trainsites_nearest_distances)
-    
+            total_nearbysites_distances_data['Annual'] = np.append(total_nearbysites_distances_data['Annual'],annual_nearby_distances)
+            total_nearest_distances_data['Annual'] = np.append(total_nearest_distances_data['Annual'],testsites2trainsites_nearest_distances[iyear]['Annual'])
+        save_data_for_LOWESS_calculation(total_obs_data,total_final_data,total_nearbysites_distances_data,total_nearest_distances_data,radius,nchannel,width,height)
+    return
+
+def Get_LOWESS_values_for_Uncertainty(total_channel_names,width,height,total_sites):
+    Keys = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Annual','MAM','JJA','SON','DJF']
+    nchannel = len(total_channel_names)
+    SPECIES_OBS, sitelat, sitelon  = load_monthly_obs_data(species)
+    init_bins = np.linspace(0,Max_distances_for_Bins,Number_of_Bins)
+    output_bins = np.array(range(len(init_bins)-1))*round(Max_distances_for_Bins/Number_of_Bins)
+    LOWESS_values = {}
+    rRMSE         = {}
+
+    for ikey in Keys:
+        print('Processing the month/season: {}'.format(ikey))
+        LOWESS_values[ikey] = np.array([],dtype=np.float64)
+        rRMSE[ikey] = np.array([],dtype=np.float64)
+    for index, radius in enumerate(Uncertainty_Buffer_radii_forUncertainty):
+        if index == 0:
+            print('Get into the first radius: {}'.format(radius))
+            total_obs_data,total_final_data,total_nearbysites_distances_data,total_nearest_distances_data = load_data_for_LOWESS_calculation(radius,nchannel,width,height)
+        else:
+            print('Get into the next radius: {}'.format(radius))
+            temp_obs_data,temp_final_data,temp_nearbysites_distances_data,temp_nearest_distances_data = load_data_for_LOWESS_calculation(radius,nchannel,width,height)
+            for ikey in Keys:
+                total_obs_data[ikey] = np.append(total_obs_data[ikey],temp_obs_data[ikey])
+                total_final_data[ikey] = np.append(total_final_data[ikey],temp_final_data[ikey])
+                total_nearbysites_distances_data[ikey] = np.append(total_nearbysites_distances_data[ikey],temp_nearbysites_distances_data[ikey])
+                total_nearest_distances_data[ikey] = np.append(total_nearest_distances_data[ikey],temp_nearest_distances_data[ikey])
     for imonth in Keys:
         distances = total_nearbysites_distances_data[imonth].copy()
         temp_obs  = total_obs_data[imonth].copy()
@@ -120,7 +196,10 @@ def Get_NearbySites_Distances_Info(test_lat,test_lon,train_lat_array,train_lon_a
             distance = np.mean(dist_map[int(number_of_nearby_sites_forAverage)/2-1:int(number_of_nearby_sites_forAverage/2)+1])
     return distance
     
-def Cal_NRMSE_forUncertainty_Bins(final_data,obs_data,low_percentile,high_percentile):
+def Cal_NRMSE_forUncertainty_Bins(init_final_data,init_obs_data,low_percentile,high_percentile):
+    nonnan_index = np.where(~np.isnan(init_obs_data))
+    final_data = init_final_data[nonnan_index].copy()
+    obs_data = init_obs_data[nonnan_index].copy()
     ratio = final_data/obs_data
     percentage_array = np.array(range(21))*5
     low_percentile_index = int(low_percentile/5.0)
@@ -212,34 +291,58 @@ def get_nearby_sites_distances_for_each_pixel():
     lat_index, lon_index = get_extent_index(Extent)
     extent_lat_map,extent_lon_map = get_extent_lat_lon_map(lat_index=lat_index,lon_index=lon_index,SATLAT=SATLAT,SATLON=SATLON)
     SPECIES, sites_lat,sites_lon = load_monthly_obs_data(species=species)
-    sites_loc = np.array([sites_lat,sites_lon]).T
-    sites_loc = np.radians(sites_loc)
-    tree = BallTree(sites_loc, metric='haversine',leaf_size=2) # build ball tree
-    landtype = get_landtype(YYYY=2015,extent=Extent)
-    nearby_distance_map = np.full(extent_lat_map.shape,1000.0)
-    for ix in range(len(lat_index)):
-        land_index = np.where(landtype[ix,:] != 0)
-        print('It is procceding ' + str(np.round(100*(ix/len(lat_index)),2))+'%.' )
-        if len(land_index[0]) == 0:
-            print('No lands.')
-            None
-        else:
-            start_time = time.time()
-            temp_pixels_lat_lon = np.radians(np.array([extent_lat_map[ix,land_index[0]], extent_lon_map[ix,land_index[0]]]).T)
-            dist, ind = tree.query(temp_pixels_lat_lon,k=number_of_nearby_sites_forAverage)  # find sites nearby
-            dist = dist * 6371 # convert to km
-            if  nearby_sites_distances_mode == 'mean':
-                distances = np.mean(dist,axis=1)
-            if nearby_sites_distances_mode == 'median':
-                if number_of_nearby_sites_forAverage%2 == 1:
-                    distances = dist[:,int((number_of_nearby_sites_forAverage-1)/2)]
+    sitesnumber = len(sites_lat)
+    site_index = np.array(range(sitesnumber))
+    MM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    SEASONS = ['MAM','JJA','SON','DJF']
+    MONTHS_inSEASONS = [[2, 3, 4],[ 5, 6, 7],[8, 9, 10],[11,0,1]]
+    for imodel_year in range(len(Initial_Estimation_Map_trained_beginyears)):
+        Yearly_nearby_distance_map = np.full((12,extent_lat_map.shape[0],extent_lat_map.shape[1]),np.nan,dtype=np.float64)
+        for imodel_month in range(len(Initial_Estimation_Map_trained_months)):
+            valid_sites_index, temp_index_of_initial_array = Get_valid_index_for_temporal_periods(SPECIES_OBS=SPECIES,beginyear=beginyears[imodel_year],endyear=endyears[imodel_year],month_range=training_months[imodel_month],sitesnumber=sitesnumber)
+            imodel_siteindex = site_index[valid_sites_index] # This is equivalent to the temp_index_of_initial_array.
+
+            sites_loc = np.array([sites_lat[imodel_siteindex],sites_lon[imodel_siteindex]]).T
+            sites_loc = np.radians(sites_loc)
+            tree = BallTree(sites_loc, metric='haversine',leaf_size=2) # build ball tree
+            landtype = get_landtype(YYYY=2015,extent=Extent)
+            nearby_distance_map = np.full(extent_lat_map.shape,np.nan,dtype=np.float64)
+            for ix in range(len(lat_index)):
+                land_index = np.where(landtype[ix,:] != 0)
+                print('It is procceding ' + str(np.round(100*(ix/len(lat_index)),2))+'%.' )
+                if len(land_index[0]) == 0:
+                    print('No lands.')
+                    None
                 else:
-                    distances = np.mean(dist[:,int(number_of_nearby_sites_forAverage)/2-1:int(number_of_nearby_sites_forAverage/2)+1],axis=1)
-            nearby_distance_map[ix,land_index[0]] = distances
-            end_time = time.time()
-            Get_distance_forOneLatitude_time = end_time - start_time
-            print('Time for getting distance for one latitude', Get_distance_forOneLatitude_time, 's, the number of pixels is ', len(land_index[0]))
-    save_nearby_site_distances_forEachPixel(nearby_distance_map=nearby_distance_map,extent_lat=SATLAT[lat_index],extent_lon=SATLON[lon_index])
+                    start_time = time.time()
+                    temp_pixels_lat_lon = np.radians(np.array([extent_lat_map[ix,land_index[0]], extent_lon_map[ix,land_index[0]]]).T)
+                    dist, ind = tree.query(temp_pixels_lat_lon,k=number_of_nearby_sites_forAverage)  # find sites nearby
+                    dist = dist * 6371 # convert to km
+                    if  nearby_sites_distances_mode == 'mean':
+                        distances = np.mean(dist,axis=1)
+                    if nearby_sites_distances_mode == 'median':
+                        if number_of_nearby_sites_forAverage%2 == 1:
+                            distances = dist[:,int((number_of_nearby_sites_forAverage-1)/2)]
+                        else:
+                            distances = np.mean(dist[:,int(number_of_nearby_sites_forAverage)/2-1:int(number_of_nearby_sites_forAverage/2)+1],axis=1)
+                    nearby_distance_map[ix,land_index[0]] = distances
+                    end_time = time.time()
+                    Get_distance_forOneLatitude_time = end_time - start_time
+                    print('Time for getting distance for one latitude', Get_distance_forOneLatitude_time, 's, the number of pixels is ', len(land_index[0]))
+            for imonth in range(len(Initial_Estimation_Map_trained_months[imodel_month])):
+                Yearly_nearby_distance_map[Initial_Estimation_Map_trained_months[imodel_month][imonth],:] = nearby_distance_map
+
+        for iyear in range((Initial_Estimation_Map_trained_beginyears[imodel_year]-Initial_Estimation_Map_trained_endyears[imodel_year]+1)):
+            annual_average_nearby_distance = np.nanmean(Yearly_nearby_distance_map,axis=0)
+            save_nearby_site_distances_forEachPixel(nearby_distance_map=annual_average_nearby_distance,extent_lat=SATLAT[lat_index],extent_lon=SATLON[lon_index],YYYY=Initial_Estimation_Map_trained_beginyears[imodel_year]+iyear,MM='Annual')
+            for iseason in range(len(SEASONS)):
+                seasonal_nearby_distance = np.full((3,extent_lat_map.shape[0],extent_lat_map.shape[1]),np.nan,dtype=np.float64)
+                for imonth in range(len(MONTHS_inSEASONS[iseason])):
+                    seasonal_nearby_distance[imonth,:] = np.nanmean(Yearly_nearby_distance_map[MONTHS_inSEASONS[iseason][imonth],:],axis=0)
+                seasonal_average_nearby_distance = np.nanmean(seasonal_nearby_distance,axis=0)
+                save_nearby_site_distances_forEachPixel(nearby_distance_map=seasonal_average_nearby_distance,extent_lat=SATLAT[lat_index],extent_lon=SATLON[lon_index],YYYY=Initial_Estimation_Map_trained_beginyears[imodel_year]+iyear,MM=SEASONS[iseason])
+            for imonth in range(len(Initial_Estimation_Map_trained_months[imodel_month])):
+                save_nearby_site_distances_forEachPixel(nearby_distance_map=Yearly_nearby_distance_map[Initial_Estimation_Map_trained_months[imodel_month][imonth],:],extent_lat=SATLAT[lat_index],extent_lon=SATLON[lon_index],YYYY=Initial_Estimation_Map_trained_beginyears[imodel_year]+iyear,MM=MM[Initial_Estimation_Map_trained_months[imodel_month][imonth]])
     return
 
 def calculate_distances_for_ArraysAndArrays(lat_array_1,lon_array_1,lat_array_2,lon_array_2):

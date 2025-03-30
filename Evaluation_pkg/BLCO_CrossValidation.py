@@ -270,6 +270,17 @@ def BLCO_AVD_forRawData_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width
                                 train_sites_index_recording[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]]      = np.append(train_sites_index_recording[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]], temp_train_sites_index)
                                 excluded_sites_index_recording[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]]   = np.append(excluded_sites_index_recording[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]], temp_excluded_sites_index)
                                 testsites2trainsites_nearest_distances[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]] = np.append(testsites2trainsites_nearest_distances[str(beginyears[imodel_year]+iyear)][MONTH[training_months[imodel_month][imonth]]], temp_testsites2trainsites_nearest_distances)
+                        if Test_Train_Buffers_Distributions_plot:
+                            if utilize_self_isolated_sites:
+                                fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-SelfIsolated_BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
+                            else:
+                                fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
+                            if not os.path.isdir(fig_outdir):
+                                os.makedirs(fig_outdir)
+                            fig_outfile = fig_outdir + 'Buffer-{}km_Total-{}folds_Total-{}ClustersSeeds-No.{}-fold_BLCO_Sites-Buffers-Distributions.png'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,ifold)
+                            plot_BLCO_test_train_buffers(train_index=train_index,test_index=test_index,excluded_index=excluded_index,sitelat=lat,sitelon=lon,
+                                                        buffer_radius=buffer_radius,extent=[10.055,69.945,-169.945,-40.055],fig_outfile=fig_outfile)
+        
         save_month_based_BLCO_data_recording(obs_data=obs_data_recording,final_data=final_data_recording,geo_data_recording=geo_data_recording,training_final_data_recording=training_final_data_recording,
                                                 training_obs_data_recording=training_obs_data_recording,testing_population_data_recording=testing_population_data_recording,
                                                 lat_recording=lat,lon_recording=lon,testsites2trainsites_nearest_distances=testsites2trainsites_nearest_distances,
@@ -277,17 +288,7 @@ def BLCO_AVD_forRawData_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width
                                             species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,BLCO_seeds_number=BLCO_seeds_number)
 
                 
-    if Test_Train_Buffers_Distributions_plot:
-        if utilize_self_isolated_sites:
-            fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-SelfIsolated_BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
-        else:
-            fig_outdir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-BLCO_Sites-Buffers-Distributions/Buffer-{}km/'.format(species, version,buffer_radius)
-        if not os.path.isdir(fig_outdir):
-            os.makedirs(fig_outdir)
-        fig_outfile = fig_outdir + 'Buffer-{}km_Total-{}folds_Total-{}ClustersSeeds-No.{}-fold_BLCO_Sites-Buffers-Distributions.png'.format(buffer_radius,BLCO_kfold,BLCO_seeds_number,ifold)
-        plot_BLCO_test_train_buffers(train_index=train_index,test_index=test_index,excluded_index=excluded_index,sitelat=lat,sitelon=lon,
-                                    buffer_radius=buffer_radius,extent=[10.055,69.945,-169.945,-40.055],fig_outfile=fig_outfile)
-        
+                        
     obs_data_recording, final_data_recording, geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording,lat_test_recording, lon_test_recording,testsites2trainsites_nearest_distances,test_sites_index_recording,train_sites_index_recording,excluded_sites_index_recording,train_index_number, test_index_number = load_month_based_BLCO_data_recording(species=species,version=version,typeName=typeName,beginyear=beginyears[0],endyear=endyears[-1],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,BLCO_seeds_number=BLCO_seeds_number)
     if utilize_self_isolated_sites:
         txtfile_outdir = txt_outdir + '{}/{}/Results/results-SelfIsolated_BLCOCV/statistical_indicators/{}km-{}fold-{}ClusterSeeds-SpatialCV_{}_{}_{}_{}Channel_{}x{}{}/'.format(species, version,buffer_radius,BLCO_kfold,BLCO_seeds_number,typeName,species,version,nchannel,width,height,special_name)
@@ -334,12 +335,12 @@ def BLCO_AVD_forRawData_Spatial_CrossValidation(buffer_radius, BLCO_kfold, width
 
     save_BLCO_loss_accuracy(model_outdir=model_outdir,loss=Training_losses_recording, accuracy=Training_acc_recording,valid_loss=valid_losses_recording, valid_accuracy=valid_acc_recording,typeName=typeName,
                        version=version,species=species, nchannel=nchannel,special_name=special_name, width=width, height=height,buffer_radius=buffer_radius)
-    final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=BLCO_test_beginyear, endyear=BLCO_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
+    final_longterm_data, obs_longterm_data = get_annual_longterm_array(beginyear=BLCO_test_beginyear, endyear=BLCO_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording,sitesnumber=sitesnumber,kfold=BLCO_kfold)
     save_BLCO_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH='Annual',nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
            
     for imonth in range(len(MONTH)):
-        final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=BLCO_test_beginyear, imonth=imonth,endyear=BLCO_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording)
+        final_longterm_data, obs_longterm_data = get_monthly_longterm_array(beginyear=BLCO_test_beginyear, imonth=imonth,endyear=BLCO_test_endyear, final_data_recording=final_data_recording,obs_data_recording=obs_data_recording,sitesnumber=sitesnumber,kfold=BLCO_kfold)
         save_BLCO_data_recording(obs_data=obs_longterm_data,final_data=final_longterm_data,
                                 species=species,version=version,typeName=typeName, beginyear='Alltime',MONTH=MONTH[imonth],nchannel=nchannel,special_name=special_name,width=width,height=height,buffer_radius=buffer_radius)
       

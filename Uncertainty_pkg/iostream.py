@@ -7,6 +7,56 @@ from Estimation_pkg.utils import *
 from Evaluation_pkg.utils import *
 from Uncertainty_pkg.utils import *
 
+def save_data_for_LOWESS_calculation(total_obs_data,total_final_data,total_nearbysites_distances_data,total_nearest_distances_data,radius,nchannels,width,height):
+    outdir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/Data_for_LOWESS_calculation/'.format(species,version) 
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
+    obs_data_outfile = outdir + 'BLISCO_obs_data_{}_{}_{}-folds_{}-SeedsNumbers_radius-{}km_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,radius,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)  
+    final_data_outfile = outdir + 'BLISCO_final_data_{}_{}_{}-folds_{}-SeedsNumbers_radius-{}km_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,radius,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)
+    nearby_distances_outfile = outdir + 'BLISCO_nearby_distances_data_{}_{}_{}-folds_{}-SeedsNumbers_radius-{}km_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,radius,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                   width,height)
+    nearest_distances_outfile = outdir + 'BLISCO_nearest_distances_data_{}_{}_{}-folds_{}-SeedsNumbers_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)
+    np.save(obs_data_outfile,total_obs_data)
+    np.save(final_data_outfile,total_final_data)
+    np.save(nearby_distances_outfile,total_nearbysites_distances_data)
+    np.save(nearest_distances_outfile,total_nearest_distances_data)
+    return
+
+def load_data_for_LOWESS_calculation(radius,nchannels,width,height):
+    indir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/Data_for_LOWESS_calculation/'.format(species,version) 
+    obs_data_infile = indir + 'BLISCO_obs_data_{}_{}_{}-folds_{}-SeedsNumbers_radius-{}km_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,radius,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)  
+    final_data_infile = indir + 'BLISCO_final_data_{}_{}_{}-folds_{}-SeedsNumbers_radius-{}km_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,radius,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)
+    nearby_distances_infile = indir + 'BLISCO_nearby_distances_data_{}_{}_{}-folds_{}-SeedsNumbers_radius-{}km_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,radius,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)
+    nearest_distances_infile = indir + 'BLISCO_nearest_distances_data_{}_{}_{}-folds_{}-SeedsNumbers_0-{}km-{}bins_{}-Mode_{}-NearbySites_{}-{}_{}channels_{}x{}.npy'.format(
+                                    version, species,Uncertainty_BLISCO_kfolds,Uncertainty_BLISCO_seeds_numbers,Max_distances_for_Bins,Number_of_Bins,
+                                    nearby_sites_distances_mode,number_of_nearby_sites_forAverage,Uncertainty_BLISCO_beginyear,Uncertainty_BLISCO_endyear,nchannels,
+                                    width,height)
+    total_obs_data = np.load(obs_data_infile,allow_pickle=True).item()
+    total_final_data = np.load(final_data_infile,allow_pickle=True).item()
+    total_nearbysites_distances_data = np.load(nearby_distances_infile,allow_pickle=True).item()
+    total_nearest_distances_data = np.load(nearest_distances_infile,allow_pickle=True).item()
+    return total_obs_data,total_final_data,total_nearbysites_distances_data,total_nearest_distances_data
+
 def save_LOWESS_values_bins(LOWESS_values_dic, rRMSE_dic, bins, nchannels,width,height):
     outdir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/LOWESS_values_bins/'.format(species,version)
     if not os.path.isdir(outdir):
@@ -67,9 +117,9 @@ def load_BLCO_rRMSE(nchannel,width,height,Number_ClusterSeeds):
                 count += 1
     return rRMSE,rRMSE_std, R2,R2_std, GeoR2
 
-def load_rRMSE_map_data( MM:str, version:str, special_name):
-    indir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/rRMSE_Map/'.format(species,version)
-    infile = indir + 'rRMSE_Map_{}_{}_{}{}.nc'.format(species,version,MM,special_name)
+def load_rRMSE_map_data( YYYY, MM:str, version:str, special_name):
+    indir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/rRMSE_Map/{}/'.format(species,version,YYYY)
+    infile = indir + 'rRMSE_Map_{}_{}_{}{}{}.nc'.format(species,version,YYYY,MM,special_name)
     MapData = nc.Dataset(infile)
     SPECIES_Map = MapData.variables[species][:]
     lat = MapData.variables['lat'][:]
@@ -79,16 +129,16 @@ def load_rRMSE_map_data( MM:str, version:str, special_name):
     return SPECIES_Map, lat, lon
 
 def load_pixels_nearest_sites_distances_map():
-    indir = '/my-projects/Projects/PM25_Speices_DL_2023/data/Pixels2sites_distances/'
+    indir =  '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/Pixels2sites_distances/{}/'.format(species,version,YYYY)
     infile = indir + '{}_nearest_site_distances_forEachPixel.nc'.format(species)
     MapData = nc.Dataset(infile)
     Distance_Map = MapData.variables['Distance'][:]
     Distance_Map = np.array(Distance_Map)
     return Distance_Map
 
-def load_pixels_nearby_sites_distances_map():
-    indir = '/my-projects/Projects/PM25_Speices_DL_2023/data/Pixels2sites_distances/'
-    infile = indir + '{}_nearby_site_distances_forEachPixel_{}-mode_{}Number.nc'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage)
+def load_pixels_nearby_sites_distances_map(YYYY,MM):
+    indir =  '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/Pixels2sites_distances/{}/'.format(species,version,YYYY)
+    infile = indir + '{}_nearby_site_distances_forEachPixel_{}-mode_{}Number_{}{}.nc'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage,YYYY,MM)
     MapData = nc.Dataset(infile)
     Distance_Map = MapData.variables['Distance'][:]
     Distance_Map = np.array(Distance_Map)
@@ -122,7 +172,7 @@ def load_NA_GeoLatLon_Map():
 
 
 def save_nearest_site_distances_forEachPixel(nearest_distance_map,extent_lat,extent_lon):
-    outdir = '/my-projects/Projects/PM25_Speices_DL_2023/data/Pixels2sites_distances/'
+    outdir = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/Pixels2sites_distances/{}/'.format(species,version,YYYY)
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
     outfile = outdir + '{}_nearest_site_distances_forEachPixel.nc'.format(species)
@@ -148,11 +198,11 @@ def save_nearest_site_distances_forEachPixel(nearest_distance_map,extent_lat,ext
     Distance[:] = nearest_distance_map
     return
 
-def save_nearby_site_distances_forEachPixel(nearby_distance_map,extent_lat,extent_lon):
-    outdir = '/my-projects/Projects/PM25_Speices_DL_2023/data/Pixels2sites_distances/'
+def save_nearby_site_distances_forEachPixel(nearby_distance_map,extent_lat,extent_lon,YYYY,MM):
+    outdir = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/{}/{}/Results/Pixels2sites_distances/{}/'.format(species,version,YYYY)
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-    outfile = outdir + '{}_nearby_site_distances_forEachPixel_{}-mode_{}Number.nc'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage)
+    outfile = outdir + '{}_nearby_site_distances_forEachPixel_{}-mode_{}Number_{}{}.nc'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage,YYYY,MM)
     
     MapData = nc.Dataset(outfile,'w',format='NETCDF4')
     MapData.TITLE = 'Nearset distance for each pixel from {} sites under {} mode with {} Number'.format(species,nearby_sites_distances_mode,number_of_nearby_sites_forAverage)
@@ -175,12 +225,12 @@ def save_nearby_site_distances_forEachPixel(nearby_distance_map,extent_lat,exten
     Distance[:] = nearby_distance_map
     return
 
-def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,MM:str,):
+def save_rRMSE_uncertainty_Map(Map_rRMSE:np.array,YYYY, MM:str,):
 
-    outdir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/rRMSE_Map/'.format(species,version)
+    outdir = Uncertainty_outdir + '{}/{}/Uncertainty_Results/rRMSE_Map/{}/'.format(species,version,YYYY)
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-    outfile = outdir + 'rRMSE_Map_{}_{}_{}{}.nc'.format(species,version,MM,special_name)
+    outfile = outdir + 'rRMSE_Map_{}_{}_{}{}{}.nc'.format(species,version,YYYY,MM,special_name)
     lat_size = Map_rRMSE.shape[0]
     lon_size = Map_rRMSE.shape[1]
     lat_delta = (Extent[1]-Extent[0])/lat_size
