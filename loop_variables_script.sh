@@ -1,11 +1,16 @@
 #!/bin/bash
 
 # Define the range for the loop
-variables=('GC_PM25' 'GC_NH4' 'GC_SO4' 'GC_SOA'  'GC_OM' 'GC_BC' 'GC_DST' 'GC_SSLT'
-           'NH3_anthro_emi' 'NO_anthro_emi' 'OC_anthro_emi' 'BC_anthro_emi' 
+#variables=('GC_PM25' 'GC_NH4' 'GC_SO4' 'GC_SOA'  'GC_OM' 'GC_BC' 'GC_DST' 'GC_SSLT'
+#           'NH3_anthro_emi' 'NO_anthro_emi' 'OC_anthro_emi' 'BC_anthro_emi' 
+#            'DST_offline_emi' 'PBLH' 'RH' 'T2M' 'U10M' 'V10M' 'PRECTOT'
+#            'Urban_Builtup_Lands' 'Lat' 'Lon' 'elevation' 'Population'
+#            ) # variables for excludion
+
+variables=('elevation' 'NH3_anthro_emi' 'NO_anthro_emi' 'OC_anthro_emi' 'BC_anthro_emi' 
             'DST_offline_emi' 'PBLH' 'RH' 'T2M' 'U10M' 'V10M' 'PRECTOT'
             'Urban_Builtup_Lands' 'Lat' 'Lon' 'elevation' 'Population'
-            ) # variables for excludion
+            ) # variables for inclusion
 
 
 # Job script file
@@ -38,9 +43,9 @@ for ((i=0; i<total_iterations; i++)); do
     echo "Submitting job for variable $var..."
     bsub < $modified_script
 
-    # Pause for 2 seconds before the next submission
-    # echo "Waiting for 2 seconds before the next job..."
-    # sleep 2
+    # Pause for 150 seconds before the next submission
+    echo "Waiting for 2 seconds before the next job..."
+    sleep 150
 
     # Clean up temporary script after submission
     rm $modified_script

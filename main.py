@@ -8,7 +8,7 @@ from visualization_pkg.Evaluation_plot import regression_plot,every_point_regres
 from Evaluation_pkg.Spatial_CrossValidation import AVD_RawDataObs_CrossValidation,Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
 from Evaluation_pkg.Sensitivity_Spatial_CrossValidation import Sensitivity_Test_AVD_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
-from Evaluation_pkg.BLCO_CrossValidation import BLCO_AVD_Spatial_CrossValidation
+from Evaluation_pkg.BLCO_CrossValidation import BLCO_AVD_forRawData_Spatial_CrossValidation,BLCO_AVD_Spatial_CrossValidation
 from Evaluation_pkg.SHAPvalue_analysis import Spatial_CV_SHAP_Analysis
 from Evaluation_pkg.iostream import load_loss_accuracy, load_data_recording, load_month_based_data_recording
 from Evaluation_pkg.utils import *
@@ -105,7 +105,7 @@ if __name__ == '__main__':
             f = open(cfg_outfile,'w')
             toml.dump(cfg, f)
             f.close()
-            BLCO_AVD_Spatial_CrossValidation(buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
+            BLCO_AVD_forRawData_Spatial_CrossValidation(buffer_radius=buffer_radius,BLCO_kfold=BLCO_kfold,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets,
                                              total_channel_names=total_channel_names,main_stream_channel_names=main_stream_channel_names,side_stream_channel_names=side_channel_names)
             #Get_Buffer_sites_number(buffer_radius=buffer_radius,width=width,height=height,sitesnumber=sitesnumber,start_YYYY=start_YYYY,TrainingDatasets=TrainingDatasets)
 

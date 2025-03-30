@@ -47,14 +47,14 @@ Spatial_CV_LossAccuracy_plot_Switch                   = false
 
 [Spatial-CrossValidation.Training_Settings]
 
-Spatial_CV_test_only_Switch                           = false  #False ==> Default. This Switch is for only run specific test time coverage. Have to train first.
+Spatial_CV_test_only_Switch                           = true  #False ==> Default. This Switch is for only run specific test time coverage. Have to train first.
 kfold                                                 = 10
 repeats                                               = 1
 beginyears                                            = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]#[2000,2002,2004,2006,2008,2010,2012,2014]#,2017,2018,2019,2020,2021,2022]
 endyears                                              = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]#[2001,2003,2005,2007,2009,2011,2013,2016]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]#,2017,2018,2019,2020,2021,2022]
 training_months                                       = [[9,10,11,0,1,2,3,4,5,6,7,8]] #[[0,1,2,3,4,5,6,7,8,9,10,11]]#[[0,1,11],[2,3,4],[5,6,7],[8,9,10]] #[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11]] 
-test_beginyears                                       = [2000,2000,2000]
-test_endyears                                         = [2016,2022,2023]
+test_beginyears                                       = [2000, 2000, 2000]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+test_endyears                                         = [2016, 2022, 2023]#[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
 additional_test_regions                               = ['Canada','Contiguous United States','Midwestern United States','Northeastern United States',
                                                         'Northern North America','Northwestern United States','Southern United States','Southwestern United States']
 
@@ -103,11 +103,11 @@ additional_test_regions                               = []
 
 BLCO_CrossValidation_Switch                           = false
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true # Also controls the loading in Uncertainty
-Buffer_size                                           = [150]
+Buffer_size                                           = [200]
 
 [BLCO-CrossValidation.TrainingSettings]
 
-Spatial_CV_test_only_Switch                           = false  #This Switch is for only run specific test time coverage. Have to train first.
+Spatial_CV_test_only_Switch                           = true  #This Switch is for only run specific test time coverage. Have to train first.
 seeds_number                                          = 10
 kfold                                                 = 10 # larger than seeds number
 repeats                                               = 1
@@ -121,7 +121,7 @@ additional_test_regions                               = ['Canada','Contiguous Un
 
 [BLCO-CrossValidation.visualization_Settings]
 
-Test_Train_Buffers_Distributions_plot                 = true
+Test_Train_Buffers_Distributions_plot                 = false
 #########################################################################################################################################################
 
 [FixNumber-SpatialCrossValidation]
@@ -199,7 +199,7 @@ Include_Variables_Sensitivity_Test_Variables          =[["elevation"]]
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = true
+Estimation_Switch                                     = false
 Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
@@ -249,9 +249,10 @@ Analysis_MONTH                                        = [0,1,2,3,4,5,6,7,8,9,10,
 
 [Uncertainty-Settings]
 
-Uncertainty_Switch                                    = false
-Derive_BLISCO_LOWESS_Uncertainty_Switch               = true
-Derive_distances_map_Switch                           = true
+Uncertainty_Switch                                    = true
+Derive_distances_map_Switch                           = false
+Derive_datasets_for_LOWESS_Calculation_Switch         = false  # one radius each time - Cost massive time
+Derive_BLISCO_LOWESS_Uncertainty_Switch               = true # Must get Derive_datasets_for_LOWESS_Calculation_Switch true first. And resubmit with all radii.
 Derive_rRMSE_map_Switch                               = true
 Derive_absolute_Uncertainty_map_Switch                = false
 Uncertainty_visualization_Switch                      = false
@@ -260,10 +261,10 @@ Uncertainty_visualization_Switch                      = false
 nearby_sites_distances_mode                           = 'mean' # 'mean' or 'median' 
 number_of_nearby_sites_forAverage                     = 5
 BLISCO_beginyear                                      = 2000 # Check the BLISCO results
-BLISCO_endyear                                        = 2022 # Check the BLISCO results
+BLISCO_endyear                                        = 2023 # Check the BLISCO results
 BLISCO_kfolds                                         = 10
 BLISCO_seeds_numbers                                  = 10
-Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200] # For loading datasets from BLISCO 
+Buffer_radii_forUncertainty                           = [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200] # [0] for no buffer
 Max_distances_for_Bins                                = 500
 Number_of_Bins                                        = 101
 Low_percentile_remove                                 = 5
@@ -275,13 +276,13 @@ Initial_Estimation_Map_trained_months                 = [[9,10,11,0,1,2,3,4,5,6,
 
 [Uncertainty-Settings.Map_Estimation_Settings]
 
-Estimation_years                                      = [1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
-Estiamtion_months                                     = ['01','02','03','04','05','06','07','08','09','10','11','12']
+Estimation_years                                      = [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+Estiamtion_months                                     = ['Annual']#['01','02','03','04','05','06','07','08','09','10','11','12']
 
 [Uncertainty-Settings.Visualization_Settings]
 
 Uncertainty_Map_plot                                  = false
-Uncertainty_Plot_YEARS                                = [1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022]
+Uncertainty_Plot_YEARS                                = [1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
 Uncertainty_Plot_Extent                               = [10.055,69.945,-169.945,-50.055]
 Uncertainty_Plot_MONTHS                               = ['01','02','03','04','05','06','07','08','09','10','11','12']
 Uncertainty_Plot_Area                                 = 'NA'

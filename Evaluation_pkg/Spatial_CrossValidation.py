@@ -271,10 +271,10 @@ def AVD_Spatial_CrossValidation(width, height, sitesnumber,start_YYYY, TrainingD
                 for iyear in range((endyears[imodel_year]-beginyears[imodel_year]+1)):
                     for imodel_month in range(len(training_months)):
 
-                        yearly_test_index   = Get_month_based_XIndex(index=test_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                        yearly_train_index  = Get_month_based_XIndex(index=train_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                        yearly_test_Yindex  = Get_month_based_YIndex(index=test_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                        yearly_train_Yindex = Get_month_based_YIndex(index=train_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_test_index   = Get_month_based_Index(index=test_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_train_index  = Get_month_based_Index(index=train_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_test_Yindex  = Get_month_based_Index(index=test_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_train_Yindex = Get_month_based_Index(index=train_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
                         yearly_test_input  = Normalized_TrainingData[yearly_test_index,:,:,:]
                         yearly_train_input = Normalized_TrainingData[yearly_train_index,:,:,:]
                         Validation_Prediction = np.full(len(yearly_test_index),np.nan)
@@ -427,10 +427,10 @@ def FixedNumber_AVD_Spatial_CrossValidation(Fixednumber_test_site,Fixednumber_tr
                     save_trained_month_based_FixNumber_model(cnn_model=cnn_model, model_outdir=model_outdir, typeName=typeName, version=version, species=species, nchannel=nchannel, special_name=special_name, count=count, width=width, height=height,fixed_test_number=Fixednumber_test_site,fixed_train_number=Fixednumber_train_site)
                 for iyear in range((endyears[imodel_year]-beginyears[imodel_year]+1)):
                     for imodel_month in range(len(training_months)):
-                        yearly_test_index   = Get_month_based_XIndex(index=test_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                        yearly_train_index  = Get_month_based_XIndex(index=train_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                        yearly_test_Yindex  = Get_month_based_YIndex(index=test_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                        yearly_train_Yindex = Get_month_based_YIndex(index=train_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_test_index   = Get_month_based_Index(index=test_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_train_index  = Get_month_based_Index(index=train_index, beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_test_Yindex  = Get_month_based_Index(index=test_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        yearly_train_Yindex = Get_month_based_Index(index=train_index,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
                         yearly_test_input  = Normalized_TrainingData[yearly_test_index,:,:,:]
                         yearly_train_input = Normalized_TrainingData[yearly_train_index,:,:,:]
                         
