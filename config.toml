@@ -13,7 +13,7 @@ geophysical_biases_data_infile                        = 'gPM25-20240604/v1.7.2/{
 
 [Pathway.TrainingModule-dir]
 
-training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/PM25/RawData-20241015/gPM25-20240604/NA_PM25-v1.7.2/{}-cnn_TrainingData_52channels_11x11_199801-202312_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
+training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/RawData-20241015/gPM25-20240604/NA_PM25-v1.7.2/{}-cnn_TrainingData_52channels_11x11_199801-202312_BenchMark_exclude_N2O_NMVOC_EMI_add_Population.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
 [Pathway.Results-dir]
