@@ -96,6 +96,7 @@ NA_CNN_PM25_input_indir             = '/my-projects/Projects/PM25_Speices_DL_202
 GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GFED4_Emissions_input/'
 Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
 Month_of_Year_input_indir           = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Month_of_Year_input/'
+OpenStreetMap_log_road_indir        = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/OpenStreetMap_log_road_map_data/'
 OpenStreetMap_road_density_indir    = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/OpenStreetMap_RoadDensity_input/'
 OpenStreetMap_nearest_dist_indir    = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/OpenStreetMap_RoadDensity_NearestDistances_forEachPixels_input/'
 
@@ -194,6 +195,25 @@ def inputfiles_table(YYYY, MM):
         'Permanent_Wetlands' : LandCover_input_indir + 'Permanent-Wetlands/Permanent-Wetlands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         'Croplands'          : LandCover_input_indir + 'Croplands/Croplands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         'Urban_Builtup_Lands': LandCover_input_indir + 'Urban-Builtup-Lands/Urban-Builtup-Lands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
+        
+        ##################### [Open Street Map log data] ###################
+        'log_major_roads'      : OpenStreetMap_log_road_indir + 'OpenStreetMap-major_roads-LogRoadMap_001x001.npy',
+        'log_major_roads_dist' : OpenStreetMap_log_road_indir + 'OpenStreetMap-major_roads_NearestDistances-LogRoadMap_001x001.npy',
+        'log_minor_roads'      : OpenStreetMap_log_road_indir + 'OpenStreetMap-minor_roads-LogRoadMap_001x001.npy',
+        'log_minor_roads_dist' : OpenStreetMap_log_road_indir + 'OpenStreetMap-minor_roads_NearestDistances-LogRoadMap_001x001.npy',
+        'log_motorway'         : OpenStreetMap_log_road_indir + 'OpenStreetMap-motorway-LogRoadMap_001x001.npy',
+        'log_motorway_dist'    : OpenStreetMap_log_road_indir + 'OpenStreetMap-motorway_NearestDistances-LogRoadMap_001x001.npy',
+        'log_primary'          : OpenStreetMap_log_road_indir + 'OpenStreetMap-primary-LogRoadMap_001x001.npy',
+        'log_primary_dist'     : OpenStreetMap_log_road_indir + 'OpenStreetMap-primary_NearestDistances-LogRoadMap_001x001.npy',
+        'log_secondary'        : OpenStreetMap_log_road_indir + 'OpenStreetMap-secondary-LogRoadMap_001x001.npy',
+        'log_secondary_dist'   : OpenStreetMap_log_road_indir + 'OpenStreetMap-secondary_NearestDistances-LogRoadMap_001x001.npy',
+        'log_trunk'            : OpenStreetMap_log_road_indir + 'OpenStreetMap-trunk-LogRoadMap_001x001.npy',
+        'log_trunk_dist'       : OpenStreetMap_log_road_indir + 'OpenStreetMap-trunk_NearestDistances-LogRoadMap_001x001.npy',
+        'log_unclassified'     : OpenStreetMap_log_road_indir + 'OpenStreetMap-unclassified-LogRoadMap_001x001.npy',
+        'log_unclassified_dist': OpenStreetMap_log_road_indir + 'OpenStreetMap-unclassified_NearestDistances-LogRoadMap_001x001.npy',
+        'log_residential'      : OpenStreetMap_log_road_indir + 'OpenStreetMap-residential-LogRoadMap_001x001.npy',
+        'log_residential_dist' : OpenStreetMap_log_road_indir + 'OpenStreetMap-residential_NearestDistances-LogRoadMap_001x001.npy',
+
         ##################### [Open Street Map Road Density] ###################
         'major_roads'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-major_roads-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         'minor_roads'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-minor_roads-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
