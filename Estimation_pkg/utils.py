@@ -195,6 +195,8 @@ def inputfiles_table(YYYY, MM):
         'Croplands'          : LandCover_input_indir + 'Croplands/Croplands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         'Urban_Builtup_Lands': LandCover_input_indir + 'Urban-Builtup-Lands/Urban-Builtup-Lands-MCD12C1_LandCover_001x001_NA_{}.npy'.format(YYYY),
         ##################### [Open Street Map Road Density] ###################
+        'major_roads'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-major_roads-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
+        'minor_roads'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-minor_roads-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         'motorway'           : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-motorway-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         'primary'            : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-primary-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         'secondary'          : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-secondary-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
@@ -203,12 +205,15 @@ def inputfiles_table(YYYY, MM):
         'residential'        : OpenStreetMap_road_density_indir + '{}/OpenStreetMap-NorthAmerica-residential-RoadDensityMap_{}.npy'.format(YYYY,YYYY),
         
         ##################### [Open Street Map Road Density nearest distances] ###################
+        'major_roads_dist'   : OpenStreetMap_nearest_dist_indir + 'major_roads/OpenStreetMap-major_roads-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
+        'minor_roads_dist'   : OpenStreetMap_nearest_dist_indir + 'minor_roads/OpenStreetMap-minor_roads-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
         'motorway_dist'      : OpenStreetMap_nearest_dist_indir + 'motorway_NearestDistances/OpenStreetMap-motorway_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
         'primary_dist'       : OpenStreetMap_nearest_dist_indir + 'primary_NearestDistances/OpenStreetMap-primary_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
         'secondary_dist'     : OpenStreetMap_nearest_dist_indir + 'secondary_NearestDistances/OpenStreetMap-secondary_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
         'trunk_dist'         : OpenStreetMap_nearest_dist_indir + 'trunk_NearestDistances/OpenStreetMap-trunk_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
         'unclassified_dist'  : OpenStreetMap_nearest_dist_indir + 'unclassified_NearestDistances/OpenStreetMap-unclassified_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
-        
+        'residential_dist'   : OpenStreetMap_nearest_dist_indir + 'residential_NearestDistances/OpenStreetMap-residential_NearestDistances-NearestDistanceforEachPixel_001x001_NA_{}.npy'.format(YYYY),
+
         ##################### [Geographical Information] ###################
         'S1'                 : Geographical_Variables_input_indir + 'Spherical_Coordinates/Spherical_Coordinates_1.npy',
         'S2'                 : Geographical_Variables_input_indir + 'Spherical_Coordinates/Spherical_Coordinates_2.npy',

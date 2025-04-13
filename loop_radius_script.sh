@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Define the range for the loop
-start_radius=0
-end_radius=200
+start_radius=130
+end_radius=160
 radius_bin=10
 
 # Job script file
-job_script="run_cpu.bsub"
+job_script="run_gpu.bsub"
 
 # Loop through the years
 for (( radius=$start_radius; radius<=$end_radius; radius+=$radius_bin )); do
@@ -19,7 +19,7 @@ for (( radius=$start_radius; radius<=$end_radius; radius+=$radius_bin )); do
 
     # Use sed to replace variables in the script
     sed -i "s/^Buffer_size=.*/Buffer_size=${Buffer_size}/" $modified_script
-    sed -i "s/^#BSUB -J .*/#BSUB -J \"V6.02.03 Uncertainty ${radius}\"/" $modified_script
+    sed -i "s/^#BSUB -J .*/#BSUB -J \"V1.8.1 BLCO ${radius}\"/" $modified_script
 
     # Update the pause_time calculation
     sed -i "s/^pause_time=\$((RANDOM % 30 .*/pause_time=\$((RANDOM % 30 + (${radius} - ${start_radius}) * 12))/" $modified_script

@@ -12,7 +12,7 @@ import torch.nn.functional as F
 
 def train(model, X_train, y_train,X_test,y_test,input_mean, input_std,width,height, BATCH_SIZE, learning_rate, TOTAL_EPOCHS,initial_channel_names,main_stream_channels,side_stream_channels):
     train_loader = DataLoader(Dataset(X_train, y_train), BATCH_SIZE, shuffle=True)
-    validation_loader = DataLoader(Dataset(X_test, y_test), 2000, shuffle=True)
+    validation_loader = DataLoader(Dataset(X_test, y_test), 5000, shuffle=True)
     print('*' * 25, type(train_loader), '*' * 25)
     losses = []
     valid_losses = []
