@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the range for the loop
-start_year=2021
-end_year=2021
+start_year=2023
+end_year=2023
 
 # Job script file
 job_script="run_gpu.bsub"
