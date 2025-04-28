@@ -92,7 +92,7 @@ Meteorology_input_indir             = '/my-projects/Projects/PM25_Speices_DL_202
 LandCover_input_indir               = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/LandCover_input/'
 Geographical_Variables_input_indir  = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Geographical_Variables_input/'
 Global_CNN_PM25_input_indir         = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GL_CNN_PM25/'
-NA_CNN_PM25_input_indir             = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/NorthAmerica_CNN_PM25/v1.0.0/'
+NA_CNN_PM25_input_indir             = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/NorthAmerica_CNN_PM25/{}/'.format(NorthAmerica_PM25_version)
 GFED4_input_indir                   = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/GFED4_Emissions_input/'
 Population_input_indir              = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Population_input/'
 Month_of_Year_input_indir           = '/my-projects/Projects/PM25_Speices_DL_2023/data/input_variables_map/Month_of_Year_input/'
@@ -162,7 +162,7 @@ def inputfiles_table(YYYY, MM):
 
          ##################### [Variables from Global CNN-Based OM25 estimation] ###################
         'GL_CNN_PM25'        : Global_CNN_PM25_input_indir + '/vManuscript-2023May/{}/GL-prediction-cnn-PM25_28Channel_ResNet1111_SigmoidMSELoss_alpha0d005_beta8d0_gamma3d0_lambda1-0d2_ForceSlopeFalse_{}{}_NA.npy'.format(YYYY,YYYY,MM),
-        'NA_CNN_PM25'        : NA_CNN_PM25_input_indir     + '{}/NorthAmerica-prediction-cnn-PM25_NA_{}{}_ResNet_Basic1111_2.npy'.format(YYYY,YYYY,MM),
+        'NA_CNN_PM25'        : NA_CNN_PM25_input_indir     + '{}/NorthAmerica-prediction-cnn-PM25_NA_{}{}{}.npy'.format(YYYY,YYYY,MM,NorthAmerica_PM25_special_name),
         
         ##################### [Variables from CEDS Emissions] ###################
         'NH3_anthro_emi'     : Anthropogenic_Emissions_input_indir + '{}/NH3-em-anthro_CMIP_v2023-04_CEDS_Total_001x001_NA_{}{}.npy'.format(YYYY,YYYY,MM),
