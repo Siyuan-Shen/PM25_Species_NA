@@ -22,7 +22,7 @@ for (( radius=$start_radius; radius<=$end_radius; radius+=$radius_bin )); do
     sed -i "s/^#BSUB -J .*/#BSUB -J \"V1.8.1 BLCO ${radius}\"/" $modified_script
 
     # Update the pause_time calculation
-    sed -i "s/^pause_time=\$((RANDOM % 30 .*/pause_time=\$((RANDOM % 30 + (${radius} - ${start_radius}) * 12))/" $modified_script
+    sed -i "s/^pause_time=\$((RANDOM % 50 .*/pause_time=\$((RANDOM % 30 + (${radius} - ${start_radius}) * 12))/" $modified_script
 
     # Submit the modified script using bsub
     echo "Submitting job for radius $radius..."
