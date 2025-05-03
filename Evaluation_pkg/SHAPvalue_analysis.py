@@ -27,7 +27,7 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
     MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     SPECIES_OBS, lat, lon = load_monthly_obs_data(species=species)
     nchannel   = len(total_channel_names)
-    seed       = 19960130
+    seed       = 19980130
     typeName   = Get_typeName(bias=bias, normalize_bias=normalize_bias,normalize_species=normalize_species, absolute_species=absolute_species, log_species=log_species, species=species)
     if SHAP_Analysis_Calculation_Switch:
         site_index = np.array(range(sitesnumber))
@@ -51,11 +51,11 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
                                                         special_name=special_name, count=count, width=width, height=height)
                     cnn_model.eval()
                     for ifold, (train_index,test_index) in enumerate(rkf.split(imodel_siteindex)):
-                        for iyear in range((endyears[imodel_year]-beginyears[imodel_year]+1)):
-                            yearly_test_index   = Get_month_based_Index(index=test_index, model_beginyear=beginyears[imodel_year],beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                            yearly_train_index  = Get_month_based_Index(index=train_index, model_beginyear=beginyears[imodel_year],beginyear=(beginyears[imodel_year]+iyear),endyear=(beginyears[imodel_year]+iyear),month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                            yearly_test_Yindex  = Get_month_based_Index(index=test_index,model_beginyear=1998,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
-                            yearly_train_Yindex = Get_month_based_Index(index=train_index,model_beginyear=1998,beginyear=(beginyears[imodel_year]+iyear), endyear=(beginyears[imodel_year]+iyear), month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                        
+                            yearly_test_index   = Get_month_based_Index(index=test_index, model_beginyear=beginyears[imodel_year],beginyear=(beginyears[imodel_year]),endyear=(endyears[imodel_year]),month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                            yearly_train_index  = Get_month_based_Index(index=train_index, model_beginyear=beginyears[imodel_year],beginyear=(beginyears[imodel_year]),endyear=(endyears[imodel_year]),month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                            yearly_test_Yindex  = Get_month_based_Index(index=test_index,model_beginyear=1998,beginyear=(beginyears[imodel_year]), endyear=(endyears[imodel_year]), month_index=training_months[imodel_month],sitenumber=sitesnumber)
+                            yearly_train_Yindex = Get_month_based_Index(index=train_index,model_beginyear=1998,beginyear=(beginyears[imodel_year]), endyear=(endyears[imodel_year]), month_index=training_months[imodel_month],sitenumber=sitesnumber)
                             
                             
                             
