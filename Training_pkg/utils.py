@@ -43,6 +43,8 @@ batchsize = HyperParameters['batchsize']
 # Net Structure Settings
 
 net_structure_settings = cfg['Training-Settings']['net_structure_settings']
+CovLayer_padding_mode = net_structure_settings['CovLayer_padding_mode']
+Pooling_padding_mode = net_structure_settings['Pooling_padding_mode']
 
 TwoCombineModels_Settings = net_structure_settings['TwoCombineModels']['Settings']
 TwoCombineModels_Variable = net_structure_settings['TwoCombineModels']['Variable']
