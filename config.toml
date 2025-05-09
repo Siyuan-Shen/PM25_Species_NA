@@ -13,7 +13,6 @@ geophysical_biases_data_infile                        = 'gPM25-20240604/v1.8.0/{
 
 [Pathway.TrainingModule-dir]
 
-
 training_infile                                       = '/my-projects/Projects/PM25_Speices_DL_2023/data/TrainingDatasets/{}/RawData-20241015/gPM25-20240604/NA_PM25-v1.8.0/{}-cnn_TrainingData_58channels_11x11_199801-202312_BenchMark.nc'
 model_outdir                                          = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 
@@ -36,15 +35,15 @@ SHAP_Analysis_outdir                                  = '/my-projects/Projects/P
 NorthAmerica_PM25_version                             = 'v1.8.0'
 NorthAmerica_PM25_special_name                        = '_BenchMark'
 BC_NorthAmerica_PM25_version                          = 'v1.8.0'
-BC_NorthAmerica_PM25_special_name                     = '_BenchMark_forBC_MSE'
+BC_NorthAmerica_PM25_special_name                     = '_BenchMark'
 Estimation_outdir                                     = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 Uncertainty_outdir                                    = '/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/'
 #########################################################################################################################################################
 
 [Spatial-CrossValidation]
 
-Spatial_CrossValidation_Switch                        = true
-Spatial_CV_LossAccuracy_plot_Switch                   = true
+Spatial_CrossValidation_Switch                        = false
+Spatial_CV_LossAccuracy_plot_Switch                   = false
 
 [Spatial-CrossValidation.Training_Settings]
 
@@ -61,7 +60,7 @@ additional_test_regions                               = ['Canada','Contiguous Un
 
 [Spatial-CrossValidation.Visualization_Settings]
 
-regression_plot_switch                                = true
+regression_plot_switch                                = false
 every_point_begin_years                               = 2000
 every_point_end_years                                 = 2023
 
@@ -104,7 +103,7 @@ additional_test_regions                               = []
 
 BLCO_CrossValidation_Switch                           = false
 Utilize_SelfIsolated_Sites_BLCO_Switch                = true # Also controls the loading in Uncertainty
-Buffer_size                                           = [130]
+Buffer_size                                           = [80]
 
 [BLCO-CrossValidation.TrainingSettings]
 
@@ -200,7 +199,7 @@ Include_Variables_Sensitivity_Test_Variables          =[["PM25"]]
 
 [Estimation-Settings]
 
-Estimation_Switch                                     = false
+Estimation_Switch                                     = true
 Train_model_Switch                                    = true
 Map_estimation_Switch                                 = true
 Estimation_visualization_Switch                       = true
@@ -252,9 +251,9 @@ Analysis_MONTH                                        = [0,1,2,3,4,5,6,7,8,9,10,
 
 Uncertainty_Switch                                    = false
 Derive_distances_map_Switch                           = false
-Derive_datasets_for_LOWESS_Calculation_Switch         = false  # one radius each time - Cost massive time
-Derive_BLISCO_LOWESS_Uncertainty_Switch               = true # Must get Derive_datasets_for_LOWESS_Calculation_Switch true first. And resubmit with all radii.
-Derive_rRMSE_map_Switch                               = true
+Derive_datasets_for_LOWESS_Calculation_Switch         = true  # one radius each time - Cost massive time
+Derive_BLISCO_LOWESS_Uncertainty_Switch               = false # Must get Derive_datasets_for_LOWESS_Calculation_Switch true first. And resubmit with all radii.
+Derive_rRMSE_map_Switch                               = false
 Derive_absolute_Uncertainty_map_Switch                = false
 Uncertainty_visualization_Switch                      = false
 
@@ -265,7 +264,7 @@ BLISCO_beginyear                                      = 2000 # Check the BLISCO 
 BLISCO_endyear                                        = 2023 # Check the BLISCO results
 BLISCO_kfolds                                         = 10
 BLISCO_seeds_numbers                                  = 10
-Buffer_radii_forUncertainty                           = [130]
+Buffer_radii_forUncertainty                           = [80]
 Max_distances_for_Bins                                = 500
 Number_of_Bins                                        = 101
 Low_percentile_remove                                 = 5
@@ -297,8 +296,8 @@ Uncertainty_BLISCO_LOWESS_relationship_plot           = true
 
 [Training-Settings.identity]
 
-version                                               = 'v1.8.1'
-special_name                                          = '_BenchMark' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
+version                                               = 'v1.8.2'
+special_name                                          = '_BenchMark_replicate' #'_ResNet_1111_GeoMSE_P1-10d0_Gamma-2d5_P2-3d5_OneYearModel_ForcedSlopeUnity_2000-2022_test'
 
 [Training-Settings.learning-objective]
 
@@ -315,6 +314,10 @@ log_species                                           = false
 # Net Structure Settings. Set one of them ture.
 
 [Training-Settings.net_structure_settings]
+
+CovLayer_padding_mode                                 = 'replicate' # 'replicate' or 'reflect' or 'zeros' or 'circular'
+Pooling_padding_mode                                  = 'replicate' # 'replicate' or 'reflect' or 'constant' or 'circular'
+
 
 ############# Two Combine Models; Classified by variables
 TwoCombineModels.Settings                             = false # Only Available to ResNet and ResNet_MLP; one of those two structures settings must be true.

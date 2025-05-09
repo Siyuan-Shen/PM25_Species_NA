@@ -1,5 +1,6 @@
 import torch
 import torchvision
+import torch.nn.functional as F
 import torchvision.transforms as transforms
 import torch.nn as nn
 import numpy as np
@@ -54,9 +55,9 @@ class BasicBlock(nn.Module):
     expansion = 1  
     def __init__(self, in_channel, out_channel, stride=1,downsample=None,activation='tanh', **kwargs):
         super(BasicBlock, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel,kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel,kernel_size=3, stride=stride, padding=1,padding_mode=CovLayer_padding_mode,bias=False)
         self.bn1 = nn.BatchNorm2d(out_channel)  
-        self.conv2 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel,kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel,kernel_size=3, stride=1, padding=1, padding_mode=CovLayer_padding_mode, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channel)
         if activation == 'relu':
             self.actfunc = nn.ReLU()
@@ -106,7 +107,7 @@ class Bottleneck(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=width,kernel_size=1, stride=1, bias=False)  # squeeze channels
         self.bn1 = nn.BatchNorm2d(width)
         # -----------------------------------------
-        self.conv2 = nn.Conv2d(in_channels=width, out_channels=width, groups=groups,kernel_size=3, stride=stride, bias=False, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=width, out_channels=width, groups=groups,kernel_size=3, stride=stride, bias=False, padding=1,padding_mode=CovLayer_padding_mode)
         self.bn2 = nn.BatchNorm2d(width)
         # -----------------------------------------
         self.conv3 = nn.Conv2d(in_channels=width, out_channels=out_channel * self.expansion,kernel_size=1, stride=1, bias=False)  # unsqueeze channels
@@ -178,11 +179,12 @@ class ResNet(nn.Module):
         #self.tanh = nn.Tanh()
         #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
 
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
@@ -234,6 +236,8 @@ class ResNet(nn.Module):
         #x = self.maxpool(x)
 
         x = self.layer0(x)
+        x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x = self.maxpool(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -289,11 +293,11 @@ class ResNet_MLP(nn.Module):
         #self.tanh = nn.Tanh()
         #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        self.maxpool =  nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
 
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
@@ -352,6 +356,8 @@ class ResNet_MLP(nn.Module):
         #x = self.maxpool(x)
 
         x = self.layer0(x)
+        x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x = self.maxpool(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -401,11 +407,12 @@ class ResNet_Classfication(nn.Module):
         #self.tanh = nn.Tanh()
         #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        self.maxpool =  nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4        
+
 
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
@@ -454,6 +461,8 @@ class ResNet_Classfication(nn.Module):
 
     def forward(self, x):
         x = self.layer0(x)
+        x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x = self.maxpool(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -499,10 +508,11 @@ class MultiHead_ResNet(nn.Module):
         self.bins_number = ResNet_MultiHeadNet_bins_number
         self.bins        = torch.tensor(np.linspace(self.left_bin,self.right_bin,self.bins_number))
 
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, padding_mode=CovLayer_padding_mode,bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
         self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
@@ -552,6 +562,8 @@ class MultiHead_ResNet(nn.Module):
     def forward(self, x):
         
         x = self.layer0(x)
+        x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x = self.maxpool(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -593,17 +605,18 @@ class LateFusion_ResNet(nn.Module):
             self.actfunc = nn.Sigmoid()
         
        
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, padding_mode=CovLayer_padding_mode,bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        self.maxpool1 = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
+        
 
-        self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3, padding_mode=CovLayer_padding_mode,bias=False) #output size:6x6
         #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=5, stride=1,padding=1, bias=False)
         ,nn.BatchNorm2d(self.in_channel_lf)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        self.maxpool2 = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
         self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
@@ -718,11 +731,15 @@ class LateFusion_ResNet(nn.Module):
         #x = self.maxpool(x)
 
         x = self.layer0(x)
+        x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x = self.maxpool1(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
 
         x_lf = self.layer0_lf(x_lf)
+        x_lf = F.pad(x_lf,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x_lf = self.maxpool2(x_lf)
         x_lf = self.layer1_lf(x_lf)
         x_lf = self.layer2_lf(x_lf)
         x_lf = self.layer3_lf(x_lf)
@@ -933,15 +950,16 @@ class MultiHead_LateFusion_ResNet(nn.Module):
         self.bins_number = MultiHeadLateFusion_bins_number
         self.bins        = torch.tensor(np.linspace(self.left_bin,self.right_bin,self.bins_number))
 
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
 
-        self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.maxpool1 = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
+
+        self.layer0_lf = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel_lf)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        self.maxpool2 = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
         
         self.layer1 = self._make_layer(block, 64, blocks_num[0])
         self.layer2 = self._make_layer(block, 128, blocks_num[1], stride=1)
@@ -954,16 +972,16 @@ class MultiHead_LateFusion_ResNet(nn.Module):
         self.fuse_layer = self._make_layer_fused(block, 512, blocks_num[2], stride=1)
 
 
-        self.layer0_clsfy = nn.Sequential(nn.Conv2d(nchannel, self.in_channel_clsfy, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
+        self.layer0_clsfy = nn.Sequential(nn.Conv2d(nchannel, self.in_channel_clsfy, kernel_size=7, stride=2,padding=3, padding_mode=CovLayer_padding_mode,bias=False) #output size:6x6
         ,nn.BatchNorm2d(self.in_channel_clsfy)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
-
-        self.layer0_lf_clsfy = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf_clsfy, kernel_size=7, stride=2,padding=3, bias=False) #output size:6x6
-        ,nn.BatchNorm2d(self.in_channel_lf_clsfy)
-        ,self.actfunc
-        ,nn.MaxPool2d(kernel_size=3, stride=2, padding=1)) # output 4x4
+        ,self.actfunc)
+        self.maxpool_clsfy =  nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
         
+        self.layer0_lf_clsfy = nn.Sequential(nn.Conv2d(nchannel_lf, self.in_channel_lf_clsfy, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
+        ,nn.BatchNorm2d(self.in_channel_lf_clsfy)
+        ,self.actfunc)
+        self.maxpool2_clsfy = nn.MaxPool2d(kernel_size=3, stride=2) # output 4x4
+
         self.layer1_clsfy = self._make_layer_clsfy(block, 64, blocks_num[0])
         self.layer2_clsfy = self._make_layer_clsfy(block, 128, blocks_num[1], stride=1)
         self.layer3_clsfy = self._make_layer_clsfy(block, 256, blocks_num[3], stride=1)
@@ -1159,11 +1177,15 @@ class MultiHead_LateFusion_ResNet(nn.Module):
         #x = self.maxpool(x)
 
         x_r = self.layer0(x)
+        x_r = F.pad(x_r,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x_r = self.maxpool1(x_r)
         x_r = self.layer1(x_r)
         x_r = self.layer2(x_r)
         x_r = self.layer3(x_r)
 
         x_lf_r = self.layer0_lf(x_lf)
+        x_lf_r = F.pad(x_lf_r,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x_lf_r = self.maxpool2(x_lf_r)
         x_lf_r = self.layer1_lf(x_lf_r)
         x_lf_r = self.layer2_lf(x_lf_r)
         x_lf_r = self.layer3_lf(x_lf_r)
@@ -1174,11 +1196,15 @@ class MultiHead_LateFusion_ResNet(nn.Module):
 
         #######################################
         x_c = self.layer0_clsfy(x)
+        x_c = F.pad(x_c,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x_c = self.maxpool_clsfy(x_c)
         x_c = self.layer1_clsfy(x_c)
         x_c = self.layer2_clsfy(x_c)
         x_c = self.layer3_clsfy(x_c)
 
         x_lf_c = self.layer0_lf_clsfy(x_lf)
+        x_lf_c = F.pad(x_lf_c,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        x_lf_c = self.maxpool2_clsfy(x_lf_c)
         x_lf_c = self.layer1_lf_clsfy(x_lf_c)
         x_lf_c = self.layer2_lf_clsfy(x_lf_c)
         x_lf_c = self.layer3_lf_clsfy(x_lf_c)
@@ -1240,7 +1266,7 @@ class Net(nn.Module):
                       out_channels=512,
                       kernel_size=3,
                       stride=1,
-                      padding=1),
+                      padding=1,padding_mode=CovLayer_padding_mode),
             nn.BatchNorm2d(512,momentum=0.1),
             nn.Tanh()
         )
