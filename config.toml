@@ -427,7 +427,7 @@ Sigmoid.Settings                                      = false
 
 [Training-Settings.hyper-parameters]
 
-epoch                                                 = 51
+epoch                                                 = 111
 batchsize                                             = 128
 channel_names                                         =[#'ETA_GCHP','AOD_GCHP', 'GeoPM25_GCHP','ttETAAODBIAS_GCHP','ttETACOASTAL_GCHP','ttETAMIXING_GCHP','ttETASGAODBIAS_GCHP','ttETASGTOPOBIAS_GCHP',#'ttETACONSTEXTTOPO_GCHP','ttETAPROFILE_GCHP','ttETARHSENS_GCHP',
                                                        'AOD', 'EtaAOD_Bias', 'EtaCoastal', 'EtaMixing', 'EtaSGAOD_Bias',  'ETA','EtaSGTOPO_Bias','GeoPM25',
