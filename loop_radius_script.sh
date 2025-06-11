@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the range for the loop
-start_radius=130
-end_radius=160
+start_radius=0
+end_radius=200
 radius_bin=10
 
 # Job script file
@@ -19,7 +19,7 @@ for (( radius=$start_radius; radius<=$end_radius; radius+=$radius_bin )); do
 
     # Use sed to replace variables in the script
     sed -i "s/^Buffer_size=.*/Buffer_size=${Buffer_size}/" $modified_script
-    sed -i "s/^#BSUB -J .*/#BSUB -J \"V1.8.1 BLCO ${radius}\"/" $modified_script
+    sed -i "s/^#BSUB -J .*/#BSUB -J \"V1.8.2 replicate BLCO ${radius}\"/" $modified_script
 
     # Update the pause_time calculation
     sed -i "s/^pause_time=\$((RANDOM % 50 .*/pause_time=\$((RANDOM % 30 + (${radius} - ${start_radius}) * 12))/" $modified_script

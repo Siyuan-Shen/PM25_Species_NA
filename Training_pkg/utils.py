@@ -43,6 +43,8 @@ batchsize = HyperParameters['batchsize']
 # Net Structure Settings
 
 net_structure_settings = cfg['Training-Settings']['net_structure_settings']
+CovLayer_padding_mode = net_structure_settings['CovLayer_padding_mode']
+Pooling_padding_mode = net_structure_settings['Pooling_padding_mode']
 
 TwoCombineModels_Settings = net_structure_settings['TwoCombineModels']['Settings']
 TwoCombineModels_Variable = net_structure_settings['TwoCombineModels']['Variable']
@@ -51,6 +53,11 @@ TwoCombineModels_threshold = net_structure_settings['TwoCombineModels']['thresho
 ResNet_setting      = net_structure_settings['ResNet']['Settings']
 ResNet_Blocks       = net_structure_settings['ResNet']['Blocks']
 ResNet_blocks_num   = net_structure_settings['ResNet']['blocks_num']
+
+NoDownSample_ResNet_setting      = net_structure_settings['NoDownSampleResNet']['Settings']
+NoDownSample_ResNet_Blocks       = net_structure_settings['NoDownSampleResNet']['Blocks']
+NoDownSample_ResNet_blocks_num   = net_structure_settings['NoDownSampleResNet']['blocks_num']
+
 
 ResNet_MLP_setting      = net_structure_settings['ResNet_MLP']['Settings']
 ResNet_MLP_Blocks       = net_structure_settings['ResNet_MLP']['Blocks']
@@ -123,9 +130,13 @@ activation_func_settings = cfg['Training_Settings']['activation_func']
 activation_func_name = activation_func_settings['activation_func_name']
 ReLU_ACF = activation_func_settings['ReLU']['Settings']
 Tanh_ACF = activation_func_settings['Tanh']['Settings']
+UnBoundedTanh_ACF = activation_func_settings['UnBoundedTanh']['Settings']
+UnBoundedTanh_slope = activation_func_settings['UnBoundedTanh']['slope']
 GeLU_ACF = activation_func_settings['GeLU']['Settings']
 Sigmoid_ACF = activation_func_settings['Sigmoid']['Settings']
-
+Mish_ACF = activation_func_settings['Mish']['Settings']
+ELU_ACF = activation_func_settings['ELU']['Settings']
+LeakyReLU_ACF = activation_func_settings['LeakyReLU']['Settings']
 #######################################################################################
 # Learning Objectives Settings
 learning_objective = cfg['Training-Settings']['learning-objective']
@@ -168,10 +179,18 @@ def activation_function_table():
         return 'relu' #nn.ReLU()
     elif Tanh_ACF == True:
         return 'tanh' #nn.Tanh()
+    elif UnBoundedTanh_ACF == True:
+        return 'unbounded_tanh'
     elif GeLU_ACF == True:
         return 'gelu' #nn.GELU()
     elif Sigmoid_ACF == True:
         return 'sigmoid' #nn.Sigmoid()
+    elif Mish_ACF == True:
+        return 'mish'
+    elif ELU_ACF == True:
+        return 'elu'
+    elif LeakyReLU_ACF == True:
+        return 'leaky_relu'
     
 
 def lr_strategy_lookup_table(optimizer):
@@ -201,7 +220,7 @@ def optimizer_lookup(model_parameters,learning_rate):
         return torch.optim.Adam(params=model_parameters,betas=(Adam_beta0, Adam_beta1),eps=Adam_eps, lr=learning_rate)
     
 def Get_channel_names(channels_to_exclude:list):
-    if ResNet_setting or ResNet_MLP_setting or ResNet_Classification_Settings or ResNet_MultiHeadNet_Settings:
+    if ResNet_setting or ResNet_MLP_setting or ResNet_Classification_Settings or ResNet_MultiHeadNet_Settings or NoDownSample_ResNet_setting:
         if len(channels_to_exclude) == 0:
             total_channel_names = channel_names.copy()
             main_stream_channel_names = channel_names.copy()
