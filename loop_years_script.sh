@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the range for the loop
-start_year=2023
+start_year=1998
 end_year=2023
 
 # Job script file
@@ -21,7 +21,7 @@ for year in $(seq $start_year $end_year); do
     # Use sed to replace variables in the script
     sed -i "s/^beginyears_endyears=.*/beginyears_endyears=${beginyears_endyears}/" $modified_script
     sed -i "s/^Estimation_years=.*/Estimation_years=${Estimation_years}/" $modified_script
-    sed -i "s/^#BSUB -J .*/#BSUB -J \"Estiamtion 1.8.0 PM ${year}\"/" $modified_script
+    sed -i "s/^#BSUB -J .*/#BSUB -J \"Estiamtion 1.8.2 replicate ${year}\"/" $modified_script
 
     # Update the pause_time calculation
     sed -i "s/^pause_time=\$((RANDOM % 50 .*/pause_time=\$((RANDOM % 10 + (${year} - ${start_year}) * 150))/" $modified_script

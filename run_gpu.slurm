@@ -1,14 +1,31 @@
 #!/bin/bash
-#BSUB -q general
-#BSUB -R "rusage[mem=150GB] span[hosts=1] select[gpuhost && port8543=1 && hname!='compute1-exec-401.ris.wustl.edu']"
-#BSUB -G compute-rvmartin
-#BSUB -gpu "num=1:j_exclusive=no"
-#BSUB -a 'docker(syword/python3-pytorch:2024.05)'
-#BSUB -J "_BenchMark_sitethreshold5_replicate_padding_Epoch71_avgpooling"
-#BSUB -g /s.siyuan/Test
-#BSUB -N
-#BSUB -u s.siyuan@wustl.edu
-#BSUB -o job_output/job-%J-output.txt
+#SBATCH --job-name="replicate_padding_Penalty1_16_Epoch71_layer0_311_avgpooling_exclude_SGbiases_Elu_LastBlockTanh"
+#SBATCH --partition=general
+#SBATCH --mem=150G
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gpus=1
+#SBATCH --exclude=c2-gpu-[009]
+#SBATCH --output=job_output/job-%j-output.txt
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=s.siyuan@wustl.edu
+#SBATCH --account=compute-rvmartin
+#SBATCH -vvv
+
+
+# If you're using containers with Slurm
+# Uncomment this line if needed:
+#SBATCH --container-image=syword/python3-pytorch:2024.05
+#SBATCH --container-mounts=/storage1/fs1/rvmartin/Active/s.siyuan:/my-projects,/storage1/fs1/rvmartin2/Active/s.siyuan:/my-projects2
+#SBATCH --container-workdir=/my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.8.2
+
+# Optional: mimic host exclusion if needed via constraints or scheduler filters
+
+# Run your code
+cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.8.2
+echo "Entered the directory ......."
+
+# Random pause
 
 /bin/true
 pause_time=$((RANDOM % 50 + 0))
@@ -33,11 +50,10 @@ sed -i '/\[Estimation\-Settings\.Map_Estimation_Settings\]/,/^\[/{/Estiamtion_tr
 sed -i '/\[Estimation\-Settings\.Map_Estimation_Settings\]/,/^\[/{/Estimation_years/s/=.*/= '"$Estimation_years"'/}' config.toml
 sed -i '/\[Estimation\-Settings\.Visualization_Settings\]/,/^\[/{/Map_Plot_YEARS/s/=.*/= '"$beginyears_endyears"'/}' config.toml
 
-cd /my-projects/Projects/PM25_Speices_DL_2023/code/Training_Evaluation_Estimation/PM25/v1.8.2
+end_time=$(date +%s)
+elapsed_time=$((end_time - start_time))
+echo "Configuration updated. Elapsed time for configuration update: $elapsed_time seconds."
+
+
 python3 main.py
 
-
-# NVIDIAA100_SXM4_80GB
-# NVIDIAA40
-# NVIDIAA100_SXM4_40GB
-# TeslaV100_SXM2_32G

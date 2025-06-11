@@ -5,6 +5,7 @@ from Training_pkg.utils import *
 from Training_pkg.iostream import load_TrainingVariables
 from visualization_pkg.Assemble_Func import plot_save_loss_accuracy_figure, plot_save_estimation_map_figure
 from visualization_pkg.Evaluation_plot import regression_plot,every_point_regression_plot
+from visualization_pkg.utils import get_length_of_valid_points
 from Evaluation_pkg.Spatial_CrossValidation import AVD_RawDataObs_CrossValidation,Normal_Spatial_CrossValidation, AVD_Spatial_CrossValidation, FixedNumber_AVD_Spatial_CrossValidation
 from Evaluation_pkg.Sensitivity_Spatial_CrossValidation import Sensitivity_Test_AVD_CrossValidation
 from Evaluation_pkg.BLOO_CrossValidation import BLOO_AVD_Spatial_CrossValidation, Get_Buffer_sites_number
@@ -51,15 +52,16 @@ if __name__ == '__main__':
                                                                  nchannel=nchannel,special_name=special_name,width=width,height=height)
         obs_data, final_data,geo_data_recording,training_final_data_recording,training_obs_data_recording,testing_population_data_recording, lat_recording, lon_recording = load_month_based_data_recording(species=species,version=version,typeName=typeName, beginyear=beginyears[0],endyear=endyears[-1],
                                                                  nchannel=nchannel,special_name=special_name,width=width,height=height)
+        length_of_valid_points = get_length_of_valid_points(obs_data,sitesnumber,kfold,every_point_begin_years,every_point_end_years)
         regression_plot(plot_obs_pm25=annual_obs_data,plot_pre_pm25=annual_final_data,species=species, version=version, typeName=typeName, beginyear='Alltime',
-                        MONTH='Annual', nchannel=nchannel,special_name=special_name,width=width,height=height)
+                        MONTH='Annual', nchannel=nchannel,special_name=special_name,width=width,height=height,length_of_valid_points=length_of_valid_points)
         every_point_regression_plot(plot_obs_pm25=obs_data,plot_pre_pm25=final_data,species=species, version=version, typeName=typeName,plot_beginyear=every_point_begin_years,plot_endyear=every_point_end_years,
                         MONTH='Annual', nchannel=nchannel,special_name=special_name,width=width,height=height)
         for imonth in range(len(MONTH)):
             monthly_obs_data, monthly_final_data = load_data_recording(species=species,version=version,typeName=typeName, beginyear='Alltime', MONTH=MONTH[imonth],
                                                                  nchannel=nchannel,special_name=special_name,width=width,height=height)
             regression_plot(plot_obs_pm25=monthly_obs_data,plot_pre_pm25=monthly_final_data,species=species, version=version, typeName=typeName, beginyear='Alltime',
-                        MONTH=MONTH[imonth], nchannel=nchannel,special_name=special_name,width=width,height=height)
+                        MONTH=MONTH[imonth], nchannel=nchannel,special_name=special_name,width=width,height=height,length_of_valid_points=length_of_valid_points)
             every_point_regression_plot(plot_obs_pm25=obs_data,plot_pre_pm25=final_data,species=species, version=version, typeName=typeName,plot_beginyear=every_point_begin_years,plot_endyear=every_point_end_years,
                         MONTH=MONTH[imonth], nchannel=nchannel,special_name=special_name,width=width,height=height)
 

@@ -136,7 +136,7 @@ def every_point_regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
 
 
 def regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
-                    species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height):
+                    species, version, typeName, beginyear, MONTH, nchannel, special_name, width, height,length_of_valid_points):
     
     fig_output_dir = Loss_Accuracy_outdir + '{}/{}/Figures/figures-Regression/'.format(species, version)
 
@@ -145,8 +145,8 @@ def regression_plot(plot_obs_pm25:np.array,plot_pre_pm25:np.array,
     
     fig_outfile =  fig_output_dir +  '{}-{}-LongtermRegression_Figure_{}_{}_{}x{}_{}Channel{}.png'.format(typeName, species, beginyear, MONTH
                                                                                             ,width, height, nchannel,special_name)
+    mask = np.where((~np.isnan(plot_obs_pm25) & ~np.isnan(plot_pre_pm25) & (length_of_valid_points>=10)))
     
-    mask = ~np.isnan(plot_obs_pm25) & ~np.isnan(plot_pre_pm25)
     plot_obs_pm25 = plot_obs_pm25[mask]
     plot_pre_pm25 = plot_pre_pm25[mask]
     
