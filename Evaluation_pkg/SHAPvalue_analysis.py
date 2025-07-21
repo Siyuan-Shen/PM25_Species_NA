@@ -33,7 +33,6 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
         site_index = np.array(range(sitesnumber))
         Initial_Normalized_TrainingData, input_mean, input_std = normalize_Func(inputarray=TrainingDatasets,observation_data=SPECIES_OBS)
         rkf = RepeatedKFold(n_splits=kfold, n_repeats=repeats, random_state=seed)
-        count = 0
         shap_values_values, shap_values_base,shap_values_data = np.zeros([0,nchannel,width,height],dtype=np.float32),np.array([],dtype=np.float32),np.zeros([0,nchannel,width,height],dtype=np.float32) #initialize_AVD_SHAPValues_DataRecording(beginyear=test_beginyear,endyear=test_endyear)
         
         for imodel_year in range(len(beginyears)):
@@ -46,12 +45,12 @@ def Spatial_CV_SHAP_Analysis(width, height, sitesnumber,start_YYYY, TrainingData
                     ## Different sites to be splited into testing and training datasets.
                     valid_sites_index, temp_index_of_initial_array = Get_valid_index_for_temporal_periods(SPECIES_OBS=SPECIES_OBS,beginyear=beginyears[imodel_year],endyear=endyears[imodel_year],month_range=training_months[imodel_month],sitesnumber=sitesnumber)
                     imodel_siteindex = site_index[valid_sites_index] # This is equivalent to the temp_index_of_initial_array.
-                    cnn_model = load_month_based_model(model_indir=model_outdir,typeName=typeName,beginyear=beginyears[imodel_year],endyear=endyears[imodel_year],
-                                                            month_index=training_months[imodel_month], version=version, species=species, nchannel=nchannel, 
-                                                        special_name=special_name, count=count, width=width, height=height)
-                    cnn_model.eval()
+                    
                     for ifold, (train_index,test_index) in enumerate(rkf.split(imodel_siteindex)):
-                        
+                            cnn_model = load_month_based_model(model_indir=model_outdir,typeName=typeName,beginyear=beginyears[imodel_year],endyear=endyears[imodel_year],
+                                                            month_index=training_months[imodel_month], version=version, species=species, nchannel=nchannel, 
+                                                        special_name=special_name, count=ifold, width=width, height=height)
+                            cnn_model.eval()
                             yearly_test_index   = Get_month_based_Index(index=test_index, model_beginyear=beginyears[imodel_year],beginyear=(beginyears[imodel_year]),endyear=(endyears[imodel_year]),month_index=training_months[imodel_month],sitenumber=sitesnumber)
                             yearly_train_index  = Get_month_based_Index(index=train_index, model_beginyear=beginyears[imodel_year],beginyear=(beginyears[imodel_year]),endyear=(endyears[imodel_year]),month_index=training_months[imodel_month],sitenumber=sitesnumber)
                             yearly_test_Yindex  = Get_month_based_Index(index=test_index,model_beginyear=1998,beginyear=(beginyears[imodel_year]), endyear=(endyears[imodel_year]), month_index=training_months[imodel_month],sitenumber=sitesnumber)

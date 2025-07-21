@@ -181,9 +181,9 @@ class ResNet(nn.Module):
         #self.tanh = nn.Tanh()
         #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         #self.layer0 = nn.Sequential(self.conv1,self.bn1,self.tanh,self.maxpool)
-        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
+        # self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=7, stride=2,padding=3,padding_mode=CovLayer_padding_mode, bias=False) #output size:6x6
         
-        #self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=3, stride=1,padding=1,padding_mode=CovLayer_padding_mode, bias=False)
+        self.layer0 = nn.Sequential(nn.Conv2d(nchannel, self.in_channel, kernel_size=3, stride=1,padding=1,padding_mode=CovLayer_padding_mode, bias=False)
         ,nn.BatchNorm2d(self.in_channel)
         ,self.actfunc)
         
@@ -239,7 +239,7 @@ class ResNet(nn.Module):
         #x = self.maxpool(x)
 
         x = self.layer0(x)
-        #x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
+        # x = F.pad(x,pad=(1,1,1,1),mode=Pooling_padding_mode,value=0)
         # x = self.maxpool(x)
         x = self.avgpool1(x)  # use avgpool instead of maxpool
         x = self.layer1(x)
