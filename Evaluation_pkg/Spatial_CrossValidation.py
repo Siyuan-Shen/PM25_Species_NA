@@ -123,11 +123,15 @@ def AVD_RawDataObs_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
                             
                             Validation_Prediction = np.full(len(yearly_allsites_index),np.nan)
                             Training_Prediction   = np.full(len(yearly_allsites_index),np.nan)
+                            Validation_true_data  = np.full(len(yearly_allsites_index),np.nan)
+                            Training_true_data    = np.full(len(yearly_allsites_index),np.nan)
                             Validation_obs_data   = np.full(len(yearly_allsites_index),np.nan)
                             Training_obs_data     = np.full(len(yearly_allsites_index),np.nan)
                             Geophysical_test_data = np.full(len(yearly_allsites_index),np.nan)
                             population_test_data  = np.full(len(yearly_allsites_index),np.nan)
-                            
+
+                            Validation_true_data[nonan_yearly_test_predictor_datasets_within_time_periods_indices]   = true_input[yearly_test_Yindex[nonan_yearly_test_index]]
+                            Training_true_data[nonan_yearly_train_predictors_datasets_within_time_periods_indices]   = true_input[yearly_train_Yindex[nonan_yearly_train_index]]
                             Validation_obs_data[nonan_yearly_test_predictor_datasets_within_time_periods_indices]   = SPECIES_OBS[yearly_test_Yindex[nonan_yearly_test_index]]
                             Training_obs_data[nonan_yearly_train_predictors_datasets_within_time_periods_indices]   = SPECIES_OBS[yearly_train_Yindex[nonan_yearly_train_index]]
                             Geophysical_test_data[nonan_yearly_test_predictor_datasets_within_time_periods_indices] = geophysical_species[yearly_test_Yindex[nonan_yearly_test_index]]
@@ -135,19 +139,33 @@ def AVD_RawDataObs_CrossValidation(width, height, sitesnumber,start_YYYY, Traini
 
                             Validation_Prediction[nonan_yearly_test_predictor_datasets_within_time_periods_indices]   = predict(inputarray=yearly_test_input[nonan_yearly_test_index,:,:,:], model=cnn_model, batchsize=3000, initial_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_stream_nchannel_names)
                             Training_Prediction[nonan_yearly_train_predictors_datasets_within_time_periods_indices]   = predict(inputarray=yearly_train_input[nonan_yearly_train_index,:,:,:],  model=cnn_model, batchsize=3000, initial_channel_names=total_channel_names,mainstream_channel_names=main_stream_channel_names,sidestream_channel_names=side_stream_nchannel_names)
-                            final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_allsites_Yindex)
-                            train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_allsites_Yindex)
+                            
+                            if ForcedSlopeUnity:
+                                if Force_before_derive_final_data:
+                                    Validation_Prediction = ForcedSlopeUnity_Func(train_final_data=Training_Prediction, train_obs_data=Training_true_data,
+                                                                                  test_final_data=Validation_Prediction, 
+                                                                                  train_area_index=site_index, test_area_index=site_index,
+                                                                                  endyear=beginyears[imodel_year]+iyear, beginyear=beginyears[imodel_year]+iyear, month_index=training_months[imodel_month], EachMonth=EachMonthForcedSlopeUnity)
+                                    final_data = Get_final_output(Validation_Prediction, geophysical_species, bias, normalize_bias, normalize_species, absolute_species, log_species, mean, std, yearly_allsites_Yindex)
+                                    train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_allsites_Yindex)
                         
+                                else:
+                                    train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_allsites_Yindex)
+                                    final_data = Get_final_output(Validation_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean,std,yearly_allsites_Yindex)
+                                    final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=Training_obs_data
+                                                        ,test_final_data=final_data,train_area_index=site_index,test_area_index=site_index,
+                                                        endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,month_index=training_months[imodel_month],EachMonth=EachMonthForcedSlopeUnity)
+                            else:
+                                final_data = Get_final_output(Validation_Prediction, geophysical_species, bias, normalize_bias, normalize_species, absolute_species, log_species, mean, std, yearly_allsites_Yindex)
+                                train_final_data = Get_final_output(Training_Prediction, geophysical_species,bias,normalize_bias,normalize_species,absolute_species,log_species,mean, std,yearly_allsites_Yindex)
+                        
+                            
                             if combine_with_GeophysicalSpeceis_Switch:
                                 nearest_distance = get_nearest_test_distance(area_test_index=test_index,area_train_index=train_index,site_lat=lat,site_lon=lon)
                                 coeficient = get_coefficients(nearest_site_distance=nearest_distance,cutoff_size=cutoff_size,beginyear=beginyears[imodel_year],
                                                     endyear = endyears[imodel_year],months=training_months[imodel_month])
                                 final_data = (1.0-coeficient)*final_data + coeficient * geophysical_species[yearly_test_Yindex]
-                            if ForcedSlopeUnity:
-                                final_data = ForcedSlopeUnity_Func(train_final_data=train_final_data,train_obs_data=Training_obs_data
-                                                        ,test_final_data=final_data,train_area_index=site_index,test_area_index=site_index,
-                                                        endyear=beginyears[imodel_year]+iyear,beginyear=beginyears[imodel_year]+iyear,month_index=training_months[imodel_month],EachMonth=EachMonthForcedSlopeUnity)
-
+                                
                             # *------------------------------------------------------------------------------*#
                             ## Recording observation and prediction for this model this fold.
                             # *------------------------------------------------------------------------------*#

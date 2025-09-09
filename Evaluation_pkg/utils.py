@@ -27,6 +27,7 @@ additional_test_regions = Spatial_Trainning_Settings['additional_test_regions']
 ForcedSlopeUnityTable = cfg['Spatial-CrossValidation']['Forced-Slope-Unity']
 
 ForcedSlopeUnity = ForcedSlopeUnityTable['ForcedSlopeUnity']
+Force_before_derive_final_data = ForcedSlopeUnityTable['Force_before_derive_final_data']
 EachMonthForcedSlopeUnity = ForcedSlopeUnityTable['EachMonthForcedSlopeUnity']
 
 #######################################################################################
