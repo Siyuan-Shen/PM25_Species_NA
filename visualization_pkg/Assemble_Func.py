@@ -38,7 +38,7 @@ def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,ForcedSlopeUnity_Ma
                 Estimation_Map_Figure_outfile = save_estimation_map_figure(typeName=typeName,species=species,
                                                                    version=version,Area=Area,nchannel=len(channel_names),width=width,height=height,
                                                                    special_name=special_name,YYYY=YEAR,MM=MM)
-                SPECIES_Map, lat, lon = load_estimation_map_data(YYYY=YEAR,MM=MM,SPECIES=species,version=version,special_name=special_name)
+                SPECIES_Map, lat, lon = load_estimation_map_data(YYYY=YEAR,MM=MM,SPECIES=species,version=version,special_name=special_name,typeName=typeName)
                 Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=YEAR,MM=MM)
                 month_index = MONTHS.index(MM)
                 temp_Species_Obs = SPECIES_OBS[:,(YEAR-1998)*12+month_index]
@@ -52,7 +52,7 @@ def plot_save_estimation_map_figure(Estimation_Map_Plot:bool,ForcedSlopeUnity_Ma
                                                                    version=version,Area=Area,nchannel=len(channel_names),width=width,height=height,
                                                                    special_name=special_name,YYYY=YEAR,MM=MM)
                 month_index = MONTHS.index(MM)
-                SPECIES_Map, lat, lon = load_ForcedSlopeUnity_estimation_map_data(YYYY=YEAR,MM=MM,SPECIES=species,version=version,special_name=special_name)
+                SPECIES_Map, lat, lon = load_ForcedSlopeUnity_estimation_map_data(YYYY=YEAR,MM=MM,SPECIES=species,version=version,special_name=special_name,typeName=typeName)
                 Population_Map, Pop_lat, Pop_lon = load_Population_MapData(YYYY=YEAR,MM=MM)
                 month_index = MONTHS.index(MM)
                 temp_Species_Obs = SPECIES_OBS[:,(YEAR-1998)*12+month_index]
