@@ -45,9 +45,9 @@ def load_map_data(channel_names, YYYY, MM):
     print('Loading time cost: ', loading_time_end - loading_time_start, 's')
     return output
 
-def load_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_name):
+def load_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_name,typeName):
     indir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
-    infile = indir + '{}_{}_{}{}{}.nc'.format(SPECIES,version,YYYY,MM,special_name)
+    infile = indir + '{}_{}_{}_{}{}{}.nc'.format(SPECIES,typeName,version,YYYY,MM,special_name)
     MapData = nc.Dataset(infile)
     lat = MapData.variables['lat'][:]
     lon = MapData.variables['lon'][:]
@@ -55,9 +55,9 @@ def load_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_
     SPECIES_Map = np.array(SPECIES_Map)
     return SPECIES_Map, lat, lon
 
-def load_ForcedSlopeUnity_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_name):
+def load_ForcedSlopeUnity_estimation_map_data(YYYY:str, MM:str,SPECIES:str, version:str, special_name,typeName):
     indir = Estimation_outdir + '{}/{}/ForcedSlopeUnity_Map_Estimation/{}/'.format(SPECIES,version,YYYY)
-    infile = indir + '{}_{}_{}{}{}_ForcedSlopeUnity.nc'.format(SPECIES,version,YYYY,MM,special_name)
+    infile = indir + '{}_{}_{}_{}{}{}_ForcedSlopeUnity.nc'.format(SPECIES,typeName,version,YYYY,MM,special_name)
     MapData = nc.Dataset(infile)
     lat = MapData.variables['lat'][:]
     lon = MapData.variables['lon'][:]
@@ -66,9 +66,9 @@ def load_ForcedSlopeUnity_estimation_map_data(YYYY:str, MM:str,SPECIES:str, vers
     return SPECIES_Map, lat, lon
 
 
-def load_Annual_estimation_map_data(YYYY:str,SPECIES:str, version:str, special_name):
+def load_Annual_estimation_map_data(YYYY:str,SPECIES:str, version:str, special_name,typeName):
     indir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
-    infile = indir + 'Annual_{}_{}_{}{}.nc'.format(SPECIES,version,YYYY,special_name)
+    infile = indir + 'Annual_{}_{}_{}_{}{}.nc'.format(SPECIES,typeName,version,YYYY,special_name)
     MapData = nc.Dataset(infile)
     lat = MapData.variables['lat'][:]
     lon = MapData.variables['lon'][:]
@@ -117,12 +117,12 @@ def save_trained_month_based_model_forEstimation(cnn_model, model_outdir, typeNa
     return 
 
 
-def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECIES:str, version:str, special_name):
+def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECIES:str, version:str, special_name,typeName):
     outdir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     
     if not os.path.isdir(outdir):
                 os.makedirs(outdir)
-    outfile = outdir + 'Annual_{}_{}_{}{}.nc'.format(SPECIES,version,YYYY,special_name)
+    outfile = outdir + 'Annual_{}_{}_{}_{}{}.nc'.format(SPECIES,typeName,version,YYYY,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
     lat_delta = 0.01 #(extent[1]-extent[0])/(lat_size-1)
@@ -153,12 +153,12 @@ def save_annual_final_map_data(final_data:np.array, YYYY:str, extent:list, SPECI
     PM25[:] = final_data
     return
     
-def save_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPECIES:str, version:str, special_name):
+def save_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPECIES:str, version:str, special_name,typeName):
     outdir = Estimation_outdir + '{}/{}/Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-    outfile = outdir + '{}_{}_{}{}{}.nc'.format(SPECIES,version,YYYY,MM,special_name)
+    outfile = outdir + '{}_{}_{}_{}{}{}.nc'.format(SPECIES,typeName,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
     lat_delta = 0.01
@@ -189,12 +189,12 @@ def save_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPEC
     PM25[:] = final_data
     return
 
-def save_ForcedSlopeUnity_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPECIES:str, version:str, special_name):
+def save_ForcedSlopeUnity_final_map_data(final_data:np.array, YYYY:str, MM:str, extent:list, SPECIES:str, version:str, special_name,typeName):
     outdir = Estimation_outdir + '{}/{}/ForcedSlopeUnity_Map_Estimation/{}/'.format(SPECIES,version,YYYY)
     
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-    outfile = outdir + '{}_{}_{}{}{}_ForcedSlopeUnity.nc'.format(SPECIES,version,YYYY,MM,special_name)
+    outfile = outdir + '{}_{}_{}_{}{}{}_ForcedSlopeUnity.nc'.format(SPECIES,typeName,version,YYYY,MM,special_name)
     lat_size = final_data.shape[0]
     lon_size = final_data.shape[1]
     lat_delta = 0.01
