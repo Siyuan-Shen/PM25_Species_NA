@@ -73,9 +73,9 @@ Analysis_MONTH                                        = PWM_PM_Calculation_Setti
 #######################################################################################################################
 #######################################################################################################################
 
-NorthAmerica_PM25_version           = NorthAmerica_PM25_version#'v1.5.0'#
+NorthAmerica_PM25_version           = NorthAmerica_PM25_version #'v1.5.0'#
 NorthAmerica_PM25_special_name      = NorthAmerica_PM25_special_name #'_MSE_forBC_add_Population'#'_BenchMark'# #  
-BC_NorthAmerica_PM25_version           = BC_NorthAmerica_PM25_version#'v1.5.0' #'v1.7.2'
+BC_NorthAmerica_PM25_version           = BC_NorthAmerica_PM25_version #'v1.5.0' #'v1.7.2'
 BC_NorthAmerica_PM25_special_name      = BC_NorthAmerica_PM25_special_name #  '_MSE_forBC_add_Population'#'_BenchMark' #  
 
 GeoPM25_AOD_ETA_version             = 'gPM25-20240604'
